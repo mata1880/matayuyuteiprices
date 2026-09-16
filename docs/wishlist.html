@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Collection — Weiss Schwarz</title>
+<title>My Wishlist — Weiss Schwarz</title>
 <link rel="stylesheet" href="assets/wsdata.css">
 </head>
 <body>
@@ -11,16 +11,16 @@
 <header>
   <div class="header-top">
     <div>
-      <h1>My <span>Collection</span></h1>
-      <p>Cards you own — from every set you've scraped.</p>
+      <h1>My <span>Wishlist</span></h1>
+      <p>Cards you've marked ♥ — from every set you've scraped.</p>
     </div>
     <div id="status-pill">loading…</div>
   </div>
   <nav class="pagenav">
     <a href="index.html">Prices</a>
     <a href="browse.html">Browse</a>
-    <a href="wishlist.html">Wishlist</a>
-    <a href="collection.html" class="active">Collection</a>
+    <a href="wishlist.html" class="active">Wishlist</a>
+    <a href="collection.html">Collection</a>
   </nav>
 </header>
 
@@ -89,7 +89,7 @@
   let perPage = 24;
 
   function refresh(){
-    currentRows = allRows.filter(r => W.getEntry(W.cardKey(r)).owned > 0);
+    currentRows = allRows.filter(r => W.getEntry(W.cardKey(r)).wishlist);
     populateRarities();
     page = 1;
     render();
@@ -143,7 +143,7 @@
     if (allRarities.length && selectedRarities.size > 0) rows = rows.filter(r => r.rarity && selectedRarities.has(r.rarity));
 
     if (!rows.length) {
-      showEmpty(q ? `No cards match "${q}".` : 'Nothing in your collection yet — browse cards and tap the + to add some.');
+      showEmpty(q ? `No cards match "${q}".` : 'Your wishlist is empty — browse cards and tap the heart to add some.');
       return;
     }
     emptyState.style.display = 'none';
@@ -151,9 +151,8 @@
     const totalPages = Math.max(1, Math.ceil(rows.length / perPage));
     if (page > totalPages) page = totalPages;
     const pageRows = W.paginate(rows, page, perPage);
-    const totalCopies = rows.reduce((s,r) => s + (W.getEntry(W.cardKey(r)).owned || 0), 0);
 
-    summary.innerHTML = `<strong>${rows.length}</strong> card${rows.length===1?'':'s'} owned — <strong>${totalCopies}</strong> total cop${totalCopies===1?'y':'ies'} · page <strong>${page}</strong> of ${totalPages}`;
+    summary.innerHTML = `<strong>${rows.length}</strong> card${rows.length===1?'':'s'} on your wishlist · page <strong>${page}</strong> of ${totalPages}`;
     grid.innerHTML = pageRows.map(W.cardTileHtml).join('');
 
     const rowsByKey = {};

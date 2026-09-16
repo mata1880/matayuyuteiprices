@@ -1,0 +1,169 @@
+:root{
+  --paper:#f7f4ee;
+  --ink:#1c1a16;
+  --ink-soft:#5c5648;
+  --line:#ddd6c6;
+  --line-soft:#e9e4d6;
+  --red:#b23a2e;
+  --red-deep:#8c2c22;
+  --green:#3d6b4a;
+  --gold:#a5772f;
+  --card-bg:#ffffff;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans: "Zen Kaku Gothic New", "Hiragino Sans", "Segoe UI", sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.45;min-height:100vh;}
+
+header{
+  border-bottom:2px solid var(--ink);
+  padding:20px clamp(16px,4vw,48px) 0;
+}
+header .header-top{
+  display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  padding-bottom:16px;
+}
+header h1{margin:0;font-size:clamp(20px,3vw,28px);font-weight:700;letter-spacing:-0.01em;}
+header h1 span{color:var(--red);}
+header p{margin:4px 0 0;color:var(--ink-soft);font-size:13.5px;}
+#status-pill{font-size:12px;color:var(--ink-soft);border:1px solid var(--line);background:var(--card-bg);padding:5px 10px;border-radius:999px;white-space:nowrap;}
+
+nav.pagenav{display:flex;gap:2px;}
+nav.pagenav a{
+  font-family:var(--sans);font-size:13.5px;padding:9px 16px;color:var(--ink-soft);
+  text-decoration:none;border-bottom:2px solid transparent;margin-bottom:-2px;
+}
+nav.pagenav a:hover{color:var(--ink);}
+nav.pagenav a.active{color:var(--ink);border-bottom-color:var(--red);font-weight:600;}
+
+main{padding:20px clamp(16px,4vw,48px) 64px;max-width:1500px;margin:0 auto;}
+
+.controls{
+  display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:14px;
+  padding:16px;background:var(--card-bg);border:1px solid var(--line);
+}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);}
+select, input[type="search"], input[type="text"]{
+  font-family:var(--sans);font-size:14px;padding:8px 10px;border:1px solid var(--line);
+  background:var(--paper);color:var(--ink);min-width:140px;
+}
+select:focus, input:focus{outline:2px solid var(--red);outline-offset:1px;}
+.field.search{flex:1;min-width:180px;}
+.field.search input{width:100%;}
+
+.mode-toggle{display:flex;border:1px solid var(--ink);}
+.mode-toggle button{
+  font-family:var(--sans);font-size:13px;padding:8px 13px;background:var(--paper);color:var(--ink);
+  border:none;border-right:1px solid var(--ink);cursor:pointer;
+}
+.mode-toggle button:last-child{border-right:none;}
+.mode-toggle button.active{background:var(--ink);color:var(--paper);}
+
+.multiselect{position:relative;}
+.multiselect > button{
+  font-family:var(--sans);font-size:14px;padding:8px 12px;border:1px solid var(--line);
+  background:var(--paper);color:var(--ink);cursor:pointer;min-width:140px;text-align:left;
+}
+.panel{
+  position:absolute;top:100%;left:0;margin-top:2px;background:var(--card-bg);border:1px solid var(--ink);
+  max-height:320px;overflow-y:auto;z-index:30;min-width:220px;
+}
+.panel .none{padding:9px 12px;color:var(--ink-soft);font-size:13px;}
+.panel label{display:flex;align-items:flex-start;gap:8px;padding:7px 12px;font-size:13.5px;cursor:pointer;}
+.panel label:hover{background:#fbf8f0;}
+.panel-actions{
+  display:flex;gap:10px;padding:4px 12px 8px;border-bottom:1px solid var(--line-soft);margin-bottom:4px;
+}
+.panel-actions button{font-size:11px;color:var(--red);background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;}
+.panel-search{padding:8px 10px;border-bottom:1px solid var(--line-soft);}
+.panel-search input{width:100%;font-size:13px;padding:6px 8px;border:1px solid var(--line);background:var(--paper);}
+.panel .set-meta{display:flex;flex-direction:column;gap:1px;}
+.panel .set-meta .code{font-family:var(--mono);font-size:10.5px;color:var(--ink-soft);}
+
+#summary{font-size:13px;color:var(--ink-soft);margin:0 0 12px;}
+#summary strong{color:var(--ink);}
+
+.empty-state{padding:64px 20px;text-align:center;color:var(--ink-soft);font-size:14px;}
+
+/* ---- card grid ---- */
+.card-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));
+  gap:18px;
+}
+.card-tile{
+  background:var(--card-bg);border:1px solid var(--line);
+  display:flex;flex-direction:column;
+  transition:box-shadow 0.15s ease;
+}
+.card-tile:hover{box-shadow:0 4px 16px rgba(0,0,0,0.08);}
+.tile-media{position:relative;aspect-ratio:5/7;background:var(--line-soft);cursor:pointer;overflow:hidden;}
+.tile-media img{width:100%;height:100%;object-fit:cover;display:block;}
+.tile-noimg{display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-soft);font-size:12px;}
+.tile-add, .tile-wish{
+  position:absolute;top:8px;width:30px;height:30px;border-radius:50%;border:none;cursor:pointer;
+  font-family:var(--sans);font-size:15px;font-weight:700;line-height:1;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 1px 4px rgba(0,0,0,0.35);
+}
+.tile-add{left:8px;background:rgba(255,255,255,0.92);color:var(--green);}
+.tile-add.has-owned{background:var(--green);color:#fff;font-size:13px;}
+.tile-wish{right:8px;background:rgba(255,255,255,0.92);color:var(--line);font-size:17px;}
+.tile-wish.active{color:var(--red);}
+.tile-info{padding:10px 10px 12px;display:flex;flex-direction:column;gap:4px;flex:1;}
+.tile-name{font-weight:600;font-size:13px;line-height:1.3;min-height:2.6em;}
+.tile-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.rarity-badge{font-family:var(--mono);font-size:10.5px;padding:1px 5px;border:1px solid var(--ink);white-space:nowrap;}
+.tile-number{font-family:var(--mono);font-size:10.5px;color:var(--ink-soft);}
+.tile-prices{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-top:auto;padding-top:6px;border-top:1px solid var(--line-soft);}
+
+/* ---- pagination ---- */
+.pagination{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:28px;flex-wrap:wrap;}
+.pagination button{
+  font-family:var(--sans);font-size:13px;padding:7px 12px;border:1px solid var(--line);
+  background:var(--card-bg);color:var(--ink);cursor:pointer;min-width:36px;
+}
+.pagination button:hover:not(:disabled){border-color:var(--ink);}
+.pagination button.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+.pagination button:disabled{opacity:0.35;cursor:default;}
+.pagination .ellipsis{padding:7px 4px;color:var(--ink-soft);}
+
+/* ---- modal ---- */
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(20,18,14,0.55);z-index:100;
+  display:flex;align-items:center;justify-content:center;padding:20px;
+}
+.modal-backdrop[hidden]{display:none;}
+.modal{
+  background:var(--card-bg);max-width:560px;width:100%;max-height:88vh;overflow-y:auto;
+  border:1px solid var(--ink);position:relative;
+}
+.modal-close{
+  position:absolute;top:10px;right:10px;background:none;border:none;font-size:22px;
+  cursor:pointer;color:var(--ink-soft);line-height:1;padding:4px;
+}
+.modal-close:hover{color:var(--red);}
+.modal-body{display:flex;gap:16px;padding:20px;flex-wrap:wrap;}
+.modal-body img{width:180px;flex-shrink:0;border:1px solid var(--line);}
+.modal-info{flex:1;min-width:220px;}
+.modal-info h2{margin:0 0 4px;font-size:17px;}
+.modal-info .modal-number{font-family:var(--mono);font-size:12px;color:var(--ink-soft);margin-bottom:8px;}
+.modal-stats{font-family:var(--mono);font-size:12.5px;color:var(--ink-soft);margin-bottom:10px;}
+.modal-traits{font-size:12px;color:var(--gold);margin-bottom:10px;}
+.modal-text{font-size:13.5px;line-height:1.6;margin-bottom:10px;white-space:normal;}
+.modal-flavor{font-style:italic;color:var(--ink-soft);font-size:12.5px;margin-bottom:10px;}
+.modal-prices{display:flex;gap:16px;font-family:var(--mono);font-size:13px;border-top:1px solid var(--line-soft);padding-top:10px;}
+
+.backup-actions{display:flex;gap:8px;align-items:center;}
+.backup-actions button, .backup-actions label{
+  font-family:var(--sans);font-size:12.5px;padding:7px 12px;border:1px solid var(--ink);
+  background:var(--paper);color:var(--ink);cursor:pointer;
+}
+.backup-actions button:hover, .backup-actions label:hover{background:var(--ink);color:var(--paper);}
+.backup-actions input[type="file"]{display:none;}
+.backup-note{font-size:11.5px;color:var(--ink-soft);}
+
+footer{padding:20px clamp(16px,4vw,48px) 40px;color:var(--ink-soft);font-size:12px;border-top:1px solid var(--line);}
+footer a{color:var(--ink-soft);}

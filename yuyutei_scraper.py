@@ -626,10 +626,20 @@ def scrape_by_card_code(session: requests.Session, game: str, card_code: str, mo
 
     records = merge_rows(sell_rows, buy_rows, mode)
 
-    set_code = records[0].setCode if records else None
-    set_name = lookup_set_name(session, game, set_code, delay) if set_code else None
+    # A broad query like "OSK" can genuinely match cards across several
+    # real yuyu-tei sets (e.g. osk, osk2.0, osk3.0) at once — group by each
+    # card's own set rather than mislabeling everything with just the
+    # first match's set.
+    by_set = {}
+    for rec in records:
+        by_set.setdefault(rec.setCode, []).append(rec)
 
-    return records, set_code, set_name
+    groups = []
+    for set_code, recs in by_set.items():
+        set_name = lookup_set_name(session, game, set_code, delay) if set_code else None
+        groups.append((set_code, set_name, recs))
+
+    return records, groups
 
 
 def write_output(records, out_path: str):
@@ -676,13 +686,15 @@ def main():
     session = requests.Session()
 
     if args.card_code:
-        records, set_code, set_name = scrape_by_card_code(session, args.game, args.card_code, args.mode, args.delay, args.debug)
+        records, groups = scrape_by_card_code(session, args.game, args.card_code, args.mode, args.delay, args.debug)
         if not records:
             print(f'No cards found for "{args.card_code}".')
             return
-        print(f'\n{len(records)} card(s) found' + (f' — "{set_name}" ({set_code})' if set_name else ''))
-        if args.site:
-            update_site_data(records, args.game, set_code, args.mode, set_name, args.site_dir, alias=args.card_code)
+        print(f'\n{len(records)} card(s) found across {len(groups)} set(s):')
+        for set_code, set_name, recs in groups:
+            print(f'  {set_code:15s} ({len(recs):3d} cards)  {set_name or ""}')
+            if args.site:
+                update_site_data(recs, args.game, set_code, args.mode, set_name, args.site_dir, alias=args.card_code)
         write_output(records, args.out)
         return
 

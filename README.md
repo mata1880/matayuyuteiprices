@@ -185,25 +185,39 @@ and stats once both scrapers have run.
 This is entirely optional — prices work fine without it. It's purely an
 enrichment layer for the collection page.
 
-## Collection & Wishlist (`collection.html`)
+## Collection & Wishlist — Browse / Wishlist / Collection pages
 
-A second page for personal tracking, linked from the top of the price
-viewer. Same underlying data — nothing extra to scrape.
+Three linked pages (nav bar at the top of every page), all reading the
+same scraped data:
 
-- **Browse all**: pick sets (multi-select, same as the price viewer) and
-  tick a "−/+" counter to mark how many copies you own, or tap the heart
-  to add something to your wishlist.
-- **My Collection** / **My Wishlist** tabs: show only what you've marked,
-  searched across *every* set you've scraped, regardless of which sets are
-  selected in the Sets dropdown.
+- **`browse.html`** — a card grid (bigger artwork, closer to how yuyu-tei
+  or a card-database site displays cards) of everything in your selected
+  sets, paginated (24/48/96 per page), filterable by set/rarity/name.
+  Each card has a **+** (top-left, add to collection) and a **♥**
+  (top-right, add to wishlist) right on the tile. Click the card image
+  itself to open a detail popup with full card text and stats (needs the
+  catalog scraper to have run for that card — see below).
+- **`wishlist.html`** — the same grid, but only cards you've hearted,
+  pulled from every set you've scraped (not just what's selected in
+  Browse).
+- **`collection.html`** — same idea for cards you've added with **+**,
+  and shows your total owned copies.
+
+On the **+** button: click adds a copy, right-click removes one. The
+number shown on the button is how many you own.
+
+These three pages share one JS/CSS file (`assets/wsdata.js` /
+`assets/wsdata.css`) — if you ever edit filtering or tile behavior, that's
+the one file to change; the pages themselves are thin wrappers around it.
 
 **Important limitation:** your collection and wishlist are saved with
 `localStorage`, meaning **only in the browser you used to mark them** — not
 synced anywhere, and wiped if that browser's site data is ever cleared.
-Use the **Export backup** button regularly to save a JSON file, and
-**Import backup** to restore it (in the same browser after clearing data,
-or to carry your collection into a different browser/computer). This
-isn't automatic — it's on you to export when you want a backup.
+Use the **Export backup** button (on the Wishlist/Collection pages)
+regularly to save a JSON file, and **Import backup** to restore it (in the
+same browser after clearing data, or to carry your collection into a
+different browser/computer). This isn't automatic — it's on you to export
+when you want a backup.
 
 If you outgrow this later, the fix is a small backend (there's a note
 about this in the price-viewer section above) so your collection is

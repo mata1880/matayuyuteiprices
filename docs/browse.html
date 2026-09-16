@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Browse — Weiss Schwarz</title>
+<link rel="stylesheet" href="assets/wsdata.css">
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div>
+      <h1>Browse <span>Weiss Schwarz</span> Cards</h1>
+      <p>From sets you've scraped locally.</p>
+    </div>
+    <div id="status-pill">loading…</div>
+  </div>
+  <nav class="pagenav">
+    <a href="index.html">Prices</a>
+    <a href="browse.html" class="active">Browse</a>
+    <a href="wishlist.html">Wishlist</a>
+    <a href="collection.html">Collection</a>
+  </nav>
+</header>
+
+<main>
+  <div class="controls">
+    <div class="field">
+      <label>Sets</label>
+      <div class="multiselect" id="sets-multiselect">
+        <button type="button" id="sets-toggle">Loading…</button>
+        <div class="panel" id="sets-panel" hidden>
+          <div class="panel-search"><input type="text" id="sets-panel-search" placeholder="Filter sets…" autocomplete="off"></div>
+          <div class="panel-actions">
+            <button type="button" data-act="all">Select all</button>
+            <button type="button" data-act="none">Clear</button>
+          </div>
+          <div id="sets-panel-list"></div>
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Rarity</label>
+      <div class="multiselect" id="rarity-multiselect">
+        <button type="button" id="rarity-toggle">All rarities</button>
+        <div class="panel" id="rarity-panel" hidden></div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Show</label>
+      <div class="mode-toggle" id="mode-toggle">
+        <button data-mode="both" class="active">Both</button>
+        <button data-mode="sell">Sell</button>
+        <button data-mode="buy">Buylist</button>
+      </div>
+    </div>
+    <div class="field">
+      <label for="perpage-select">Per page</label>
+      <select id="perpage-select">
+        <option value="24" selected>24</option>
+        <option value="48">48</option>
+        <option value="96">96</option>
+      </select>
+    </div>
+    <div class="field search">
+      <label for="search-input">Filter by name / number</label>
+      <input type="search" id="search-input" placeholder="e.g. ピカチュウ or OSK/S133-002SSP">
+    </div>
+  </div>
+
+  <p id="summary"></p>
+  <div class="card-grid" id="card-grid"></div>
+  <div class="empty-state" id="empty-state" style="display:none;"></div>
+  <div class="pagination" id="pagination"></div>
+</main>
+
+<footer>
+  Data scraped from <a href="https://yuyu-tei.jp" target="_blank" rel="noopener">yuyu-tei.jp</a> (prices) and
+  <a href="https://ws-tcg.com" target="_blank" rel="noopener">ws-tcg.com</a> (card details) using local Python scripts.
+  ♥ and + marks are saved only in this browser's local storage.
+</footer>
+
+<script src="assets/wsdata.js"></script>
+<script>
+(function(){
+  const W = window.WS;
+  const setsToggle = document.getElementById('sets-toggle');
+  const setsPanel = document.getElementById('sets-panel');
+  const setsPanelSearch = document.getElementById('sets-panel-search');
+  const setsPanelList = document.getElementById('sets-panel-list');
+  const rarityToggle = document.getElementById('rarity-toggle');
+  const rarityPanel = document.getElementById('rarity-panel');
+  const modeToggle = document.getElementById('mode-toggle');
+  const perPageSelect = document.getElementById('perpage-select');
+  const searchInput = document.getElementById('search-input');
+  const grid = document.getElementById('card-grid');
+  const emptyState = document.getElementById('empty-state');
+  const summary = document.getElementById('summary');
+  const statusPill = document.getElementById('status-pill');
+  const paginationEl = document.getElementById('pagination');
+
+  let manifest = [];
+  let currentRows = [];
+  let allRarities = [];
+  let selectedRarities = new Set();
+  let selectedSetKeys = new Set();
+  let mode = 'both';
+  let page = 1;
+  let perPage = 24;
+
+  function loadManifestAndInit(){
+    W.loadManifest().then(m => {
+      manifest = m;
+      statusPill.textContent = manifest.length ? manifest.length + ' set(s) available' : 'no data yet';
+      if (manifest.length) {
+        selectedSetKeys = new Set([W.setKey(manifest[0])]);
+        renderSetsPanel();
+        updateSetsToggleLabel();
+        loadSelectedSets();
+      } else {
+        setsToggle.textContent = 'No sets yet';
+        showEmpty('No sets scraped yet. Run the scraper locally with --site, then commit & push (see README).');
+      }
+    });
+  }
+
+  function matchSetsList(query){
+    const q = W.normForMatch(query);
+    if (!q) return manifest;
+    return manifest.filter(m => {
+      const haystacks = [m.name, m.set, ...(m.aliases||[])].map(W.normForMatch);
+      return haystacks.some(h => h.includes(q));
+    });
+  }
+  function renderSetsPanel(){
+    const matches = matchSetsList(setsPanelSearch.value);
+    if (!matches.length) { setsPanelList.innerHTML = '<div class="none">No sets match.</div>'; return; }
+    setsPanelList.innerHTML = matches.map(m => `
+      <label>
+        <input type="checkbox" value="${W.escapeHtml(W.setKey(m))}" ${selectedSetKeys.has(W.setKey(m)) ? 'checked' : ''}>
+        <span class="set-meta">
+          <span>${W.escapeHtml(m.name || m.set)}</span>
+          <span class="code">${W.escapeHtml(m.set)} · ${m.count} cards · updated ${W.fmtDate(m.scrapedAt)}</span>
+        </span>
+      </label>`).join('');
+    setsPanelList.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        if (cb.checked) selectedSetKeys.add(cb.value); else selectedSetKeys.delete(cb.value);
+        updateSetsToggleLabel();
+        loadSelectedSets();
+      });
+    });
+  }
+  function updateSetsToggleLabel(){
+    if (!manifest.length) { setsToggle.textContent = 'No sets yet'; return; }
+    if (selectedSetKeys.size === 0) setsToggle.textContent = 'No sets selected';
+    else if (selectedSetKeys.size === manifest.length) setsToggle.textContent = 'All sets';
+    else if (selectedSetKeys.size === 1) {
+      const m = manifest.find(m => W.setKey(m) === [...selectedSetKeys][0]);
+      setsToggle.textContent = m ? (m.name || m.set) : '1 set';
+    } else setsToggle.textContent = selectedSetKeys.size + ' sets selected';
+  }
+  setsToggle.addEventListener('click', () => {
+    setsPanel.hidden = !setsPanel.hidden;
+    if (!setsPanel.hidden) setsPanelSearch.focus();
+  });
+  setsPanelSearch.addEventListener('input', renderSetsPanel);
+  setsPanel.querySelector('[data-act="all"]').addEventListener('click', () => {
+    selectedSetKeys = new Set(manifest.map(W.setKey));
+    renderSetsPanel(); updateSetsToggleLabel(); loadSelectedSets();
+  });
+  setsPanel.querySelector('[data-act="none"]').addEventListener('click', () => {
+    selectedSetKeys = new Set();
+    renderSetsPanel(); updateSetsToggleLabel(); loadSelectedSets();
+  });
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#sets-multiselect')) setsPanel.hidden = true;
+    if (!e.target.closest('#rarity-multiselect')) rarityPanel.hidden = true;
+  });
+
+  function loadSelectedSets(){
+    const entries = manifest.filter(m => selectedSetKeys.has(W.setKey(m)));
+    if (!entries.length) {
+      currentRows = [];
+      allRarities = []; selectedRarities = new Set();
+      renderRarityPanel(); updateRarityToggleLabel();
+      showEmpty('No sets selected — pick one or more from the Sets dropdown.');
+      return;
+    }
+    grid.innerHTML = '';
+    emptyState.style.display = 'none';
+    summary.textContent = 'Loading…';
+    Promise.all(entries.map(W.fetchSetRows)).then(arrs => {
+      currentRows = arrs.flat();
+      populateRarities();
+      page = 1;
+      render();
+    });
+  }
+
+  function populateRarities(){
+    const seen = [];
+    for (const r of currentRows) if (r.rarity && !seen.includes(r.rarity)) seen.push(r.rarity);
+    allRarities = seen;
+    selectedRarities = new Set();
+    renderRarityPanel();
+    updateRarityToggleLabel();
+  }
+  function renderRarityPanel(){
+    if (!allRarities.length) { rarityPanel.innerHTML = '<div class="none">No rarity data for this set.</div>'; return; }
+    const actions = `<div class="panel-actions"><button type="button" data-act="all">Select all</button><button type="button" data-act="none">Clear</button></div>`;
+    const boxes = allRarities.map(r => `<label><input type="checkbox" value="${W.escapeHtml(r)}" ${selectedRarities.has(r)?'checked':''}> ${W.escapeHtml(r)}</label>`).join('');
+    rarityPanel.innerHTML = actions + boxes;
+    rarityPanel.querySelector('[data-act="all"]').addEventListener('click', () => { selectedRarities = new Set(allRarities); renderRarityPanel(); updateRarityToggleLabel(); page=1; render(); });
+    rarityPanel.querySelector('[data-act="none"]').addEventListener('click', () => { selectedRarities = new Set(); renderRarityPanel(); updateRarityToggleLabel(); page=1; render(); });
+    rarityPanel.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        if (cb.checked) selectedRarities.add(cb.value); else selectedRarities.delete(cb.value);
+        updateRarityToggleLabel(); page = 1; render();
+      });
+    });
+  }
+  function updateRarityToggleLabel(){
+    if (!allRarities.length) { rarityToggle.textContent = 'No rarities'; return; }
+    if (selectedRarities.size === 0 || selectedRarities.size === allRarities.length) rarityToggle.textContent = 'All rarities';
+    else rarityToggle.textContent = [...selectedRarities].join(', ');
+  }
+  rarityToggle.addEventListener('click', () => { rarityPanel.hidden = !rarityPanel.hidden; });
+
+  modeToggle.addEventListener('click', e => {
+    const btn = e.target.closest('button'); if (!btn) return;
+    mode = btn.dataset.mode;
+    [...modeToggle.children].forEach(b => b.classList.toggle('active', b === btn));
+    page = 1; render();
+  });
+  perPageSelect.addEventListener('change', () => { perPage = Number(perPageSelect.value); page = 1; render(); });
+  searchInput.addEventListener('input', () => { page = 1; render(); });
+
+  function showEmpty(msg){
+    grid.innerHTML = '';
+    paginationEl.innerHTML = '';
+    emptyState.style.display = 'block';
+    emptyState.textContent = msg;
+    summary.textContent = '';
+  }
+
+  function render(){
+    let rows = currentRows.slice();
+    const q = searchInput.value.trim().toLowerCase();
+    if (q) rows = rows.filter(r => (r.name||'').toLowerCase().includes(q) || (r.cardNumber||'').toLowerCase().includes(q));
+    if (allRarities.length && selectedRarities.size > 0) rows = rows.filter(r => r.rarity && selectedRarities.has(r.rarity));
+    if (mode === 'sell') rows = rows.filter(r => r.sellPriceJpy !== null && r.sellPriceJpy !== undefined);
+    if (mode === 'buy') rows = rows.filter(r => r.buyPriceJpy !== null && r.buyPriceJpy !== undefined);
+
+    if (!rows.length) {
+      showEmpty(q ? `No cards match "${q}".` : 'No cards for this selection.');
+      return;
+    }
+    emptyState.style.display = 'none';
+
+    const totalPages = Math.max(1, Math.ceil(rows.length / perPage));
+    if (page > totalPages) page = totalPages;
+    const pageRows = W.paginate(rows, page, perPage);
+
+    summary.innerHTML = `<strong>${rows.length}</strong> card${rows.length===1?'':'s'} · page <strong>${page}</strong> of ${totalPages}`;
+    grid.innerHTML = pageRows.map(W.cardTileHtml).join('');
+
+    const rowsByKey = {};
+    pageRows.forEach(r => rowsByKey[W.cardKey(r)] = r);
+    W.attachTileHandlers(grid, rowsByKey, render);
+
+    W.renderPagination(paginationEl, page, totalPages, (p) => { page = p; render(); window.scrollTo({top:0, behavior:'smooth'}); });
+  }
+
+  W.loadState();
+  W.loadCatalog();
+  loadManifestAndInit();
+})();
+</script>
+
+</body>
+</html>
