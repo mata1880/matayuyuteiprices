@@ -72,7 +72,7 @@ from bs4 import BeautifulSoup
 # command line. They're only used when you run the script with no --game/
 # --set/etc. arguments; anything you type on the command line overrides them.
 # =============================================================================
-DEFAULT_GAME = "ws"              # e.g. ws, poc, ygo, opc, dm, ua, vg, digi, bs
+DEFAULT_GAME = "ws"              # locked to Weiss Schwarz
 DEFAULT_SETS = ["osk3.0"]        # one or more set codes, e.g. ["osk3.0", "key20th"]
 DEFAULT_MODE = "both"            # "sell", "buy", or "both"
 DEFAULT_OUT = "cards.csv"        # output file, .csv or .json
@@ -153,9 +153,14 @@ def find_container(a_tag):
 def parse_listing_page(html: str, game: str, set_code: str, listing_type: str):
     """
     listing_type: "sell" or "buy"
-    Returns a list of dicts with raw scraped fields for one listing page.
+    Returns (rows, set_name) — set_name is the human-readable set title,
+    pulled from the page's <title> tag (e.g. "【推しの子】Vol.3").
     """
     soup = BeautifulSoup(html, "html.parser")
+
+    set_name = None
+    if soup.title and soup.title.string:
+        set_name = soup.title.string.split("|")[0].split("｜")[0].strip() or None
 
     current_rarity = None
     seen_card_ids = set()
@@ -185,6 +190,10 @@ def parse_listing_page(html: str, game: str, set_code: str, listing_type: str):
         container = find_container(el)
         block_text = container.get_text("\n", strip=True)
         lines = [l for l in block_text.split("\n") if l.strip()]
+
+        # Use the card's OWN set code from its link (not the page-level
+        # set_code param) — matters for mixed-set pages like search results.
+        row_set_code = url_set or set_code
 
         # Card number is usually the first short line (e.g. "OSK/S133-002SSP")
         card_number = None
@@ -238,7 +247,7 @@ def parse_listing_page(html: str, game: str, set_code: str, listing_type: str):
         rows.append(
             {
                 "game": game,
-                "setCode": set_code,
+                "setCode": row_set_code,
                 "cardId": card_id,
                 "cardNumber": card_number or "",
                 "name": name or "",
@@ -254,28 +263,51 @@ def parse_listing_page(html: str, game: str, set_code: str, listing_type: str):
         )
         seen_card_ids.add(key)
 
-    return rows
+    return rows, set_name
+
+
+def lookup_set_name(session: requests.Session, game: str, set_code: str, delay: float) -> Optional[str]:
+    """Quick single-request check: fetch the sell listing page and return
+    just the set's real name, without scraping any cards. Use this before
+    a full scrape to confirm a code points at the set you think it does."""
+    url = f"{BASE_URL}/sell/{game}/s/{set_code}"
+    html = fetch(session, url, delay)
+    soup = BeautifulSoup(html, "html.parser")
+    if soup.title and soup.title.string:
+        name = soup.title.string.split("|")[0].split("｜")[0].strip()
+        return name or None
+    return None
 
 
 def scrape_set(session: requests.Session, game: str, set_code: str, mode: str,
                 delay: float, debug: bool = False):
     sell_rows, buy_rows = [], []
+    set_name = None
 
     if mode in ("sell", "both"):
         url = f"{BASE_URL}/sell/{game}/s/{set_code}"
         print(f"Fetching sell listing: {url}")
         html = fetch(session, url, delay, debug)
-        sell_rows = parse_listing_page(html, game, set_code, "sell")
-        print(f"  -> parsed {len(sell_rows)} sell rows")
+        sell_rows, set_name = parse_listing_page(html, game, set_code, "sell")
+        before = len(sell_rows)
+        sell_rows = [r for r in sell_rows if r["setCode"].lower() == set_code.lower()]
+        dropped = before - len(sell_rows)
+        print(f"  -> parsed {len(sell_rows)} sell rows" + (f' ("{set_name}")' if set_name else "")
+              + (f"  [dropped {dropped} unrelated/pickup cards]" if dropped else ""))
 
     if mode in ("buy", "both"):
         url = f"{BASE_URL}/buy/{game}/s/{set_code}"
         print(f"Fetching buylist: {url}")
         html = fetch(session, url, delay, debug)
-        buy_rows = parse_listing_page(html, game, set_code, "buy")
-        print(f"  -> parsed {len(buy_rows)} buy rows")
+        buy_rows, buy_set_name = parse_listing_page(html, game, set_code, "buy")
+        set_name = set_name or buy_set_name
+        before = len(buy_rows)
+        buy_rows = [r for r in buy_rows if r["setCode"].lower() == set_code.lower()]
+        dropped = before - len(buy_rows)
+        print(f"  -> parsed {len(buy_rows)} buy rows"
+              + (f"  [dropped {dropped} unrelated/pickup cards]" if dropped else ""))
 
-    return merge_rows(sell_rows, buy_rows, mode)
+    return merge_rows(sell_rows, buy_rows, mode), set_name
 
 
 def merge_rows(sell_rows, buy_rows, mode):
@@ -325,7 +357,8 @@ def merge_rows(sell_rows, buy_rows, mode):
     return records
 
 
-def update_site_data(records, game: str, set_code: str, mode: str, site_dir: str = "docs"):
+def update_site_data(records, game: str, set_code: str, mode: str, set_name: Optional[str] = None,
+                      site_dir: str = "docs"):
     """
     Writes per-set JSON into <site_dir>/data/ and keeps data/manifest.json
     up to date, so the index.html viewer can list available game/set
@@ -353,6 +386,7 @@ def update_site_data(records, game: str, set_code: str, mode: str, site_dir: str
     manifest.append({
         "game": game,
         "set": set_code,
+        "name": set_name or set_code,
         "file": f"data/{fname}",
         "mode": mode,
         "count": len(records),
@@ -364,6 +398,89 @@ def update_site_data(records, game: str, set_code: str, mode: str, site_dir: str
         json.dump(manifest, f, ensure_ascii=False, indent=2)
 
     print(f"Updated site data -> {fpath} (+ manifest.json, {len(manifest)} set(s) total)")
+
+
+def _normalize_for_match(s: str) -> str:
+    return re.sub(r"[\s/\-]", "", s or "").lower()
+
+
+def find_sets_by_keyword(session: requests.Session, game: str, keyword: str, delay: float):
+    """
+    Searches yuyu-tei's own keyword search (works for Japanese card names,
+    and often for the printed set code like "OSK/S133" too, since it's part
+    of the visible card text) and reports which actual set code(s) the
+    matching cards belong to — so you can go from the code printed on a
+    card straight to the URL slug yuyu-tei uses internally.
+
+    Filters out unrelated cards from "pickup"/"recommended" panels that
+    yuyu-tei shows alongside real results, by requiring the keyword to
+    actually appear in each card's own number or name.
+    """
+    url = f"{BASE_URL}/sell/{game}/s/search"
+    resp = session.get(url, params={"search_word": keyword, "kizu": "0"}, headers=HEADERS, timeout=30)
+    resp.raise_for_status()
+    time.sleep(delay)
+    rows, _ = parse_listing_page(resp.text, game, "search", "sell")
+
+    kw_norm = _normalize_for_match(keyword)
+    tally = {}  # setCode -> {"count": n, "example": name}
+    for r in rows:
+        haystack = _normalize_for_match(r["cardNumber"]) + _normalize_for_match(r["name"])
+        if kw_norm not in haystack:
+            continue  # not an actual match — likely a pickup/recommended card
+        sc = r["setCode"]
+        if sc not in tally:
+            tally[sc] = {"count": 0, "example": r["name"]}
+        tally[sc]["count"] += 1
+
+    return tally
+
+
+def scrape_by_card_code(session: requests.Session, game: str, card_code: str, mode: str,
+                         delay: float, debug: bool = False):
+    """
+    Scrapes directly using the code printed on the card (e.g. "OSK/S133"),
+    via yuyu-tei's own keyword search — no need to first translate it into
+    yuyu-tei's internal URL slug. Filters out anything that doesn't
+    actually contain the searched code (pickup/recommended cards).
+    """
+    kw_norm = _normalize_for_match(card_code)
+    sell_rows, buy_rows = [], []
+
+    if mode in ("sell", "both"):
+        url = f"{BASE_URL}/sell/{game}/s/search"
+        print(f'Searching sell listings for "{card_code}": {url}')
+        resp = session.get(url, params={"search_word": card_code, "kizu": "0"}, headers=HEADERS, timeout=30)
+        resp.raise_for_status()
+        time.sleep(delay)
+        if debug:
+            with open("debug_page.html", "w", encoding="utf-8") as f:
+                f.write(resp.text)
+            print("[debug] saved raw HTML -> debug_page.html")
+        rows, _ = parse_listing_page(resp.text, game, "search", "sell")
+        before = len(rows)
+        sell_rows = [r for r in rows
+                     if kw_norm in _normalize_for_match(r["cardNumber"]) + _normalize_for_match(r["name"])]
+        print(f"  -> matched {len(sell_rows)} sell rows (dropped {before - len(sell_rows)} unrelated)")
+
+    if mode in ("buy", "both"):
+        url = f"{BASE_URL}/buy/{game}/s/search"
+        print(f'Searching buylist for "{card_code}": {url}')
+        resp = session.get(url, params={"search_word": card_code, "kizu": "0"}, headers=HEADERS, timeout=30)
+        resp.raise_for_status()
+        time.sleep(delay)
+        rows, _ = parse_listing_page(resp.text, game, "search", "buy")
+        before = len(rows)
+        buy_rows = [r for r in rows
+                    if kw_norm in _normalize_for_match(r["cardNumber"]) + _normalize_for_match(r["name"])]
+        print(f"  -> matched {len(buy_rows)} buy rows (dropped {before - len(buy_rows)} unrelated)")
+
+    records = merge_rows(sell_rows, buy_rows, mode)
+
+    set_code = records[0].setCode if records else None
+    set_name = lookup_set_name(session, game, set_code, delay) if set_code else None
+
+    return records, set_code, set_name
 
 
 def write_output(records, out_path: str):
@@ -397,20 +514,66 @@ def main():
     parser.add_argument("--site", action="store_true",
                          help="Also write per-set JSON + manifest.json into docs/data/ for the index.html viewer")
     parser.add_argument("--site-dir", default="docs", help="Folder the GitHub Pages site lives in (default: docs)")
+    parser.add_argument("--lookup", metavar="SET_CODE",
+                         help="Just check what a set code's real name is (1 quick request), don't scrape cards")
+    parser.add_argument("--find-set", metavar="KEYWORD",
+                         help='Find yuyu-tei\'s internal set code from the code printed on a card, '
+                              'e.g. --find-set "OSK/S133" (or a Japanese card name)')
+    parser.add_argument("--card-code", metavar="CODE",
+                         help='Scrape directly using the code printed on the card, e.g. '
+                              '--card-code "OSK/S133" — skips needing the internal slug at all')
     args = parser.parse_args()
+
+    session = requests.Session()
+
+    if args.card_code:
+        records, set_code, set_name = scrape_by_card_code(session, args.game, args.card_code, args.mode, args.delay, args.debug)
+        if not records:
+            print(f'No cards found for "{args.card_code}".')
+            return
+        print(f'\n{len(records)} card(s) found' + (f' — "{set_name}" ({set_code})' if set_name else ''))
+        if args.site:
+            update_site_data(records, args.game, set_code, args.mode, set_name, args.site_dir)
+        write_output(records, args.out)
+        return
+
+    if args.find_set:
+        print(f'Searching yuyu-tei for "{args.find_set}"...')
+        tally = find_sets_by_keyword(session, args.game, args.find_set, args.delay)
+        if not tally:
+            print("No matches. If you used the printed set code, try just part of it, "
+                  "or search by a Japanese card name from that set instead.")
+            return
+        print(f"Found cards from {len(tally)} set(s):")
+        for set_code, info in sorted(tally.items(), key=lambda kv: -kv[1]["count"]):
+            name = lookup_set_name(session, args.game, set_code, args.delay) or "?"
+            print(f'  {set_code:15s} ({info["count"]:3d} matching cards)  -> {name}')
+        print("\nRun this for whichever one is right:")
+        best = max(tally.items(), key=lambda kv: kv[1]["count"])[0]
+        print(f"  python yuyutei_scraper.py --game {args.game} --set {best} --mode both --site")
+        return
+
+    if args.lookup:
+        name = lookup_set_name(session, args.game, args.lookup, args.delay)
+        if name:
+            print(f'\n"{args.lookup}" is: {name}\n')
+            print(f"If that's the right set, run:")
+            print(f"  python yuyutei_scraper.py --game {args.game} --set {args.lookup} --mode both --site")
+        else:
+            print(f'Could not find a set name for "{args.lookup}" — double check the code.')
+        return
 
     if not args.sets:
         args.sets = DEFAULT_SETS
 
-    session = requests.Session()
     all_records = []
 
     for set_code in args.sets:
         try:
-            records = scrape_set(session, args.game, set_code, args.mode, args.delay, args.debug)
+            records, set_name = scrape_set(session, args.game, set_code, args.mode, args.delay, args.debug)
             all_records.extend(records)
             if args.site:
-                update_site_data(records, args.game, set_code, args.mode, args.site_dir)
+                update_site_data(records, args.game, set_code, args.mode, set_name, args.site_dir)
         except requests.HTTPError as e:
             print(f"[error] HTTP error scraping {set_code}: {e}", file=sys.stderr)
         except requests.RequestException as e:

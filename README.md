@@ -5,6 +5,14 @@ for sell prices and buylist (kaitori) prices by set code, and merges them
 into one row per card, matching the shape of the `lulzasaur/yuyutei-scraper`
 Apify actor's output. Runs entirely on your machine, no Apify account or fee.
 
+## Please use responsibly
+
+Yuyu-tei's `robots.txt` asks automated tools not to crawl the site. This
+script is meant for light, personal, occasional use — checking prices on a
+handful of sets you actually care about, not bulk-downloading their whole
+catalog. Keep `--delay` at a reasonable value (1.5s+), don't run it on a
+schedule/cron, and don't hammer it with many sets back-to-back.
+
 ## Setup
 
 ```bash
@@ -51,23 +59,76 @@ already encodes set + collector number + rarity, so it's a reliable join key.
 
 ## Web viewer (GitHub Pages)
 
-There's also a static site in `docs/` — a table you can filter by game, set,
-and sell/buylist/both, similar in spirit to a page like
-[riley31415.github.io/wuwa_calc](https://riley31415.github.io/wuwa_calc/).
-Important difference: **it's not live** — GitHub Pages can't run Python or
-call yuyu-tei.jp for you (no server, and the browser would be blocked by
-CORS anyway). The page just reads JSON files you generate locally.
+There's also a static site in `docs/` — locked to Weiss Schwarz, with a single
+search box: start typing a set's name or code and it suggests matches from
+sets you've already scraped. Important difference from something like a live
+calculator app: **it's not live** — GitHub Pages can't run Python or call
+yuyu-tei.jp for you (no server, and the browser would be blocked by CORS
+anyway). The page just reads JSON files you generate locally, and it can
+only suggest sets that are already in `docs/data/`.
 
-### Workflow
+### Workflow: scrape directly using the code printed on the card (simplest)
 
-1. Scrape a set with `--site` added, which writes into `docs/data/`:
+Yuyu-tei's own search already filters cleanly to just that set, so there's
+no real need to translate the card's code into their internal slug first —
+just scrape straight from the search results:
+
+```bash
+python yuyutei_scraper.py --card-code "OSK/S133" --mode both --site
+```
+```
+Searching sell listings for "OSK/S133": ...
+  -> matched 24 sell rows (dropped 6 unrelated)
+Searching buylist for "OSK/S133": ...
+  -> matched 24 buy rows (dropped 5 unrelated)
+
+24 card(s) found — "【推しの子】Vol.3" (osk3.0)
+```
+One command, done — this both scrapes the set and adds it (with its real
+name) to `docs/data/` for the website's search box. This is what you'll
+use most of the time.
+
+### Workflow: find yuyu-tei's internal code without scraping yet
+
+If you just want to check what a printed code maps to, without committing
+to a full scrape yet:
+
+```bash
+python yuyutei_scraper.py --find-set "OSK/S133"
+```
+```
+Searching yuyu-tei for "OSK/S133"...
+Found cards from 1 set(s):
+  osk3.0          ( 24 matching cards)  -> 【推しの子】Vol.3
+
+Run this for whichever one is right:
+  python yuyutei_scraper.py --game ws --set osk3.0 --mode both --site
+```
+
+### Workflow: already know the internal code
+
+If you'd rather just double-check a code you already have:
+
+```bash
+python yuyutei_scraper.py --lookup key20th
+```
+```
+"key20th" is: Key 20th Anniversary
+
+If that's the right set, run:
+  python yuyutei_scraper.py --game ws --set key20th --mode both --site
+```
+
+### Full setup
+
+1. Look up and scrape whichever sets you care about (repeat as needed):
    ```bash
+   python yuyutei_scraper.py --lookup osk3.0
    python yuyutei_scraper.py --game ws --set osk3.0 --mode both --site
-   python yuyutei_scraper.py --game poc --set sv08a --mode both --site
    ```
-   Each run adds/updates `docs/data/<game>_<set>.json` and refreshes
-   `docs/data/manifest.json` (the index the page uses to fill the dropdowns).
-   Re-run any time to refresh a set's prices.
+   Each scrape adds/updates `docs/data/ws_<code>.json` and refreshes
+   `docs/data/manifest.json` (what the search box reads from). Re-run the
+   same command any time to refresh a set's prices.
 
 2. Preview locally before pushing anything, from the `docs/` folder:
    ```bash
@@ -77,25 +138,27 @@ CORS anyway). The page just reads JSON files you generate locally.
    Open `http://localhost:8000` — opening `index.html` directly by
    double-clicking won't work, browsers block `fetch()` on `file://` pages.
 
-3. Push it to GitHub:
+3. Push it to GitHub (repeatable — just `git add`, `commit`, `push` each
+   time you scrape something new):
+   ```bash
+   git add .
+   git commit -m "update prices"
+   git push
+   ```
+   First-time setup if you haven't already:
    ```bash
    git init
-   git add .
-   git commit -m "Yuyu-tei price viewer"
    git branch -M main
    git remote add origin https://github.com/<you>/<repo>.git
    git push -u origin main
    ```
    Then on GitHub: **Settings → Pages → Build and deployment → Source:
    Deploy from a branch → Branch: `main`, folder: `/docs`** → Save.
-   Your page goes live at `https://<you>.github.io/<repo>/`.
-
-4. To refresh prices later: re-run step 1 for whichever sets you want
-   updated, then `git add docs/data && git commit -m "update prices" && git push`.
+   The repo (and Pages) must be **public** on a free GitHub account.
 
 The repo ships with one sample set already in `docs/data/` so the page
 isn't empty the first time you open it — delete `docs/data/ws_sample.json`
-and its entry in `manifest.json` once you've scraped real sets.
+and its entry in `manifest.json` once you've scraped a real set.
 
 ## If it comes back with 0 results
 

@@ -2,14 +2,16 @@
   {
     "game": "ws",
     "set": "osk3.0",
+    "name": "【推しの子】Vol.3",
     "file": "data/ws_osk3.0.json",
     "mode": "both",
-    "count": 258,
-    "scrapedAt": "2026-09-16T17:09:18.601900+00:00"
+    "count": 257,
+    "scrapedAt": "2026-09-16T18:02:52.243911+00:00"
   },
   {
     "game": "ws",
     "set": "sample",
+    "name": "【推しの子】Vol.3 (sample data)",
     "file": "data/ws_sample.json",
     "mode": "both",
     "count": 3,

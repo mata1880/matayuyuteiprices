@@ -120,6 +120,42 @@
   }
   .field.search{flex:1;min-width:200px;}
   .field.search input{width:100%;}
+  .suggestions{
+    position:absolute;
+    top:100%;left:0;right:0;
+    margin-top:2px;
+    background:var(--card-bg);
+    border:1px solid var(--ink);
+    max-height:280px;
+    overflow-y:auto;
+    z-index:20;
+  }
+  .suggestions button{
+    display:block;
+    width:100%;
+    text-align:left;
+    padding:9px 12px;
+    background:none;
+    border:none;
+    border-bottom:1px solid var(--line-soft);
+    font-family:var(--sans);
+    font-size:13.5px;
+    color:var(--ink);
+    cursor:pointer;
+  }
+  .suggestions button:last-child{border-bottom:none;}
+  .suggestions button:hover, .suggestions button.hl{background:#fbf8f0;}
+  .suggestions button .code{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--ink-soft);
+    margin-left:8px;
+  }
+  .suggestions .none{
+    padding:9px 12px;
+    color:var(--ink-soft);
+    font-size:13px;
+  }
 
   #summary{
     font-size:13px;
@@ -206,20 +242,17 @@
 <header>
   <div>
     <h1>Yuyu<span>-tei</span> Price Viewer</h1>
-    <p>Sell &amp; buylist prices, scraped locally — pick a set below.</p>
+    <p>Weiss Schwarz sell &amp; buylist prices, scraped locally — start typing a set name or code.</p>
   </div>
   <div id="status-pill">loading manifest…</div>
 </header>
 
 <main>
   <div class="controls">
-    <div class="field">
-      <label for="game-select">Game</label>
-      <select id="game-select"><option>Loading…</option></select>
-    </div>
-    <div class="field">
-      <label for="set-select">Set</label>
-      <select id="set-select"><option>—</option></select>
+    <div class="field search" style="position:relative;">
+      <label for="set-search">Set name or code</label>
+      <input type="text" id="set-search" autocomplete="off" placeholder="e.g. 推しの子 or osk3.0">
+      <div id="set-suggestions" class="suggestions" hidden></div>
     </div>
     <div class="field">
       <label>Show</label>
@@ -229,8 +262,12 @@
         <button data-mode="buy">Buylist</button>
       </div>
     </div>
+    <div class="field">
+      <label for="rarity-select">Rarity</label>
+      <select id="rarity-select"><option value="">All rarities</option></select>
+    </div>
     <div class="field search">
-      <label for="search-input">Search card name / number</label>
+      <label for="search-input">Filter cards in this set</label>
       <input type="search" id="search-input" placeholder="e.g. ピカチュウ or OSK/S133-002SSP">
     </div>
   </div>
@@ -265,9 +302,10 @@
 
 <script>
 (function(){
-  const gameSelect = document.getElementById('game-select');
-  const setSelect = document.getElementById('set-select');
+  const setSearch = document.getElementById('set-search');
+  const suggestionsBox = document.getElementById('set-suggestions');
   const searchInput = document.getElementById('search-input');
+  const raritySelect = document.getElementById('rarity-select');
   const tbody = document.getElementById('card-tbody');
   const table = document.getElementById('card-table');
   const emptyState = document.getElementById('empty-state');
@@ -275,17 +313,13 @@
   const statusPill = document.getElementById('status-pill');
   const modeToggle = document.getElementById('mode-toggle');
 
-  const GAME_NAMES = {
-    ws:'Weiss Schwarz', poc:'Pokémon', ygo:'Yu-Gi-Oh', opc:'One Piece',
-    dm:'Duel Masters', ua:'Union Arena', vg:'Vanguard', digi:'Digimon',
-    bs:'Battle Spirits', wx:'WIXOSS', hocg:'hololive OCG', gcg:'Genshin'
-  };
-
-  let manifest = [];
+  let manifest = [];       // all scraped WS sets: {game,set,name,file,count,...}
   let currentRows = [];
+  let currentEntry = null;
   let mode = 'both';
   let sortKey = 'name';
   let sortDir = 1;
+  let hlIndex = -1;
 
   function fmtYen(v){
     if (v === null || v === undefined || v === '') return '—';
@@ -298,11 +332,18 @@
     fetch('data/manifest.json', {cache:'no-store'})
       .then(r => { if(!r.ok) throw new Error('no manifest'); return r.json(); })
       .then(data => {
-        manifest = data;
-        populateGames();
+        manifest = data.filter(m => m.game === 'ws');
         statusPill.textContent = manifest.length
           ? manifest.length + ' set(s) available'
           : 'no data yet';
+        if (manifest.length) {
+          // load the most recently scraped set by default
+          const latest = manifest.slice().sort((a,b) => (b.scrapedAt||'').localeCompare(a.scrapedAt||''))[0];
+          setSearch.value = latest.name || latest.set;
+          loadSetEntry(latest);
+        } else {
+          showEmpty('No sets scraped yet. Run the scraper locally with --site, then commit & push (see README).');
+        }
       })
       .catch(() => {
         statusPill.textContent = 'no data yet — run the scraper with --site';
@@ -311,39 +352,75 @@
       });
   }
 
-  function populateGames(){
-    const games = [...new Set(manifest.map(m => m.game))].sort();
-    gameSelect.innerHTML = games.map(g =>
-      `<option value="${g}">${GAME_NAMES[g] || g} (${g})</option>`
-    ).join('');
-    if (games.length) {
-      gameSelect.value = games[0];
-      populateSets();
+  function matchSets(query){
+    const q = query.trim().toLowerCase();
+    if (!q) return manifest.slice(0, 8);
+    return manifest.filter(m =>
+      (m.name || '').toLowerCase().includes(q) ||
+      (m.set || '').toLowerCase().includes(q)
+    ).slice(0, 8);
+  }
+
+  function renderSuggestions(){
+    const matches = matchSets(setSearch.value);
+    hlIndex = -1;
+    if (!matches.length) {
+      suggestionsBox.innerHTML = '<div class="none">No scraped set matches — check README for how to add one.</div>';
+      suggestionsBox.hidden = false;
+      return;
     }
-  }
-
-  function populateSets(){
-    const game = gameSelect.value;
-    const sets = manifest.filter(m => m.game === game);
-    setSelect.innerHTML = sets.map(m =>
-      `<option value="${m.set}">${m.set} (${m.count} cards)</option>`
+    suggestionsBox.innerHTML = matches.map((m, i) =>
+      `<button type="button" data-idx="${i}">${escapeHtml(m.name||m.set)}<span class="code">${escapeHtml(m.set)} · ${m.count} cards</span></button>`
     ).join('');
-    if (sets.length) loadSet();
+    suggestionsBox.hidden = false;
+    [...suggestionsBox.children].forEach((btn, i) => {
+      btn.addEventListener('click', () => {
+        setSearch.value = matches[i].name || matches[i].set;
+        suggestionsBox.hidden = true;
+        loadSetEntry(matches[i]);
+      });
+    });
+    suggestionsBox._matches = matches;
   }
 
-  function loadSet(){
-    const game = gameSelect.value;
-    const setCode = setSelect.value;
-    const entry = manifest.find(m => m.game === game && m.set === setCode);
-    if (!entry) return;
+  setSearch.addEventListener('focus', renderSuggestions);
+  setSearch.addEventListener('input', renderSuggestions);
+  setSearch.addEventListener('keydown', e => {
+    const matches = suggestionsBox._matches || [];
+    if (suggestionsBox.hidden || !matches.length) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); hlIndex = Math.min(hlIndex+1, matches.length-1); updateHl(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); hlIndex = Math.max(hlIndex-1, 0); updateHl(); }
+    else if (e.key === 'Enter' && hlIndex >= 0) { e.preventDefault(); suggestionsBox.children[hlIndex].click(); }
+    else if (e.key === 'Escape') { suggestionsBox.hidden = true; }
+  });
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.field.search')) suggestionsBox.hidden = true;
+  });
+  function updateHl(){
+    [...suggestionsBox.children].forEach((b,i) => b.classList.toggle('hl', i===hlIndex));
+  }
+
+  function loadSetEntry(entry){
+    currentEntry = entry;
     tbody.innerHTML = '<tr><td colspan="8" style="padding:20px;color:var(--ink-soft);">Loading…</td></tr>';
+    table.style.display = 'table';
+    emptyState.style.display = 'none';
     fetch(entry.file, {cache:'no-store'})
       .then(r => r.json())
-      .then(rows => {
-        currentRows = rows;
-        render();
-      })
+      .then(rows => { currentRows = rows; populateRarities(); render(); })
       .catch(() => showEmpty('Could not load ' + entry.file + '.'));
+  }
+
+  function populateRarities(){
+    // Unique rarities, in the order they first appear (which already
+    // follows the set's own printed rarity order, since that's the order
+    // the scraper reads them off the page in).
+    const seen = [];
+    for (const r of currentRows) {
+      if (r.rarity && !seen.includes(r.rarity)) seen.push(r.rarity);
+    }
+    raritySelect.innerHTML = '<option value="">All rarities</option>' +
+      seen.map(r => `<option value="${escapeHtml(r)}">${escapeHtml(r)}</option>`).join('');
   }
 
   function showEmpty(msg){
@@ -367,6 +444,8 @@
     if (mode === 'sell') rows = rows.filter(r => r.sellPriceJpy !== null && r.sellPriceJpy !== undefined);
     if (mode === 'buy')  rows = rows.filter(r => r.buyPriceJpy !== null && r.buyPriceJpy !== undefined);
 
+    if (raritySelect.value) rows = rows.filter(r => r.rarity === raritySelect.value);
+
     rows.sort((a,b) => {
       let av = a[sortKey], bv = b[sortKey];
       if (av === null || av === undefined) av = sortKey.includes('Jpy') ? -Infinity : '';
@@ -384,7 +463,8 @@
     table.style.display = 'table';
     emptyState.style.display = 'none';
 
-    summary.innerHTML = `<strong>${rows.length}</strong> card${rows.length===1?'':'s'} shown`;
+    const setLabel = currentEntry ? (currentEntry.name || currentEntry.set) : '';
+    summary.innerHTML = `<strong>${rows.length}</strong> card${rows.length===1?'':'s'} shown — ${escapeHtml(setLabel)}`;
 
     tbody.innerHTML = rows.map(r => {
       const avail = (r.availability || '').toLowerCase().includes('sold') ? 'out' : 'in';
@@ -409,9 +489,8 @@
     }[c]));
   }
 
-  gameSelect.addEventListener('change', populateSets);
-  setSelect.addEventListener('change', loadSet);
   searchInput.addEventListener('input', render);
+  raritySelect.addEventListener('change', render);
 
   modeToggle.addEventListener('click', e => {
     const btn = e.target.closest('button');
