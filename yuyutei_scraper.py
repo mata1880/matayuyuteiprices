@@ -162,12 +162,145 @@ def parse_listing_page(html: str, game: str, set_code: str, listing_type: str):
     if soup.title and soup.title.string:
         set_name = soup.title.string.split("|")[0].split("｜")[0].strip() or None
 
+    # yuyu-tei renders each card as <div class="card-product">...</div>.
+    # This is confirmed against real page source (not guessed), so use it
+    # as the primary path; fall back to a generic anchor-based heuristic
+    # only if a page doesn't use this structure at all.
+    if soup.select("div.card-product"):
+        rows = _parse_card_product_tiles(soup, game, set_code, listing_type)
+    else:
+        rows = _parse_listing_page_generic(soup, game, set_code, listing_type)
+
+    return rows, set_name
+
+
+def _parse_card_product_tiles(soup: BeautifulSoup, game: str, set_code: str, listing_type: str):
     current_rarity = None
     seen_card_ids = set()
     rows = []
 
     for el in soup.descendants:
-        # Track the most recent "XXX Card List" heading text as we walk the DOM.
+        if isinstance(el, str):
+            m = RARITY_HEADING_RE.match(el.strip())
+            if m:
+                current_rarity = m.group(1)
+            continue
+
+        if el.name != "div" or "card-product" not in (el.get("class") or []):
+            continue
+        container = el
+
+        link = container.find("a", href=CARD_LINK_RE)
+        if not link:
+            continue
+        href = link.get("href", "")
+        m = CARD_LINK_RE.search(href)
+        if not m:
+            continue
+        _type, url_game, url_set, card_id = m.groups()
+        key = (url_game, url_set, card_id)
+        if key in seen_card_ids:
+            continue
+        seen_card_ids.add(key)
+
+        row_set_code = url_set or set_code
+
+        # Each tile has TWO <img> tags: a small favorite/star icon first,
+        # then the real card image (whose alt text is "CODE RARITY Name").
+        # Skip the star icon — that was the actual bug before this fix.
+        img_tag = None
+        for im in container.find_all("img"):
+            alt = (im.get("alt") or "").strip()
+            if alt and alt.lower() != "star":
+                img_tag = im
+                break
+        alt_text = (img_tag.get("alt") or "").strip() if img_tag else ""
+
+        block_text = container.get_text("\n", strip=True)
+        lines = [l for l in block_text.split("\n") if l.strip()]
+
+        card_number = None
+        for l in lines:
+            if re.match(r"^[A-Za-z0-9][A-Za-z0-9/._\-]{2,25}$", l) and "円" not in l:
+                card_number = l
+                break
+
+        name = None
+        rarity = current_rarity
+        if card_number and alt_text.startswith(card_number):
+            rest = alt_text[len(card_number):].strip()
+            parts = rest.split(" ", 1)
+            if len(parts) == 2 and len(parts[0]) <= 8:
+                rarity = parts[0]
+                name = parts[1]
+            elif rest:
+                name = rest
+        if not name:
+            candidates = [l for l in lines if "円" not in l and l != card_number]
+            name = max(candidates, key=len) if candidates else (card_number or "")
+
+        prices = [int(x.replace(",", "")) for x in YEN_RE.findall(block_text)]
+
+        # Stock: yuyu-tei shows "×" (sold out), "◯" (plenty, no exact count),
+        # or "N 点" (exact count) in a dedicated 在庫 (stock) label.
+        stock = None
+        availability = "In Stock"
+        zaiko = container.find(class_=re.compile("zaiko"))
+        if zaiko:
+            zt = zaiko.get_text(" ", strip=True)
+            if "×" in zt:
+                stock = 0
+                availability = "Sold Out"
+            else:
+                mnum = re.search(r"(\d+)\s*点", zt)
+                if mnum:
+                    stock = int(mnum.group(1))
+        else:
+            classes_str = " ".join(container.get("class") or []).lower()
+            if "sold-out" in classes_str or "SOLD OUT" in block_text.upper() or "売り切れ" in block_text:
+                stock = 0
+                availability = "Sold Out"
+
+        boosted = "PRICE UP" in block_text.upper()
+
+        image_url = None
+        if img_tag:
+            image_url = img_tag.get("src") or img_tag.get("data-src")
+            if image_url and image_url.startswith("//"):
+                image_url = "https:" + image_url
+            elif image_url and image_url.startswith("/"):
+                image_url = BASE_URL + image_url
+
+        rows.append(
+            {
+                "game": game,
+                "setCode": row_set_code,
+                "cardId": card_id,
+                "cardNumber": card_number or "",
+                "name": name or "",
+                "rarity": rarity,
+                "prices": prices,
+                "boosted": boosted,
+                "stock": stock,
+                "availability": availability,
+                "imageUrl": image_url,
+                "url": BASE_URL + href if href.startswith("/") else href,
+                "listing_type": listing_type,
+            }
+        )
+
+    return rows
+
+
+def _parse_listing_page_generic(soup: BeautifulSoup, game: str, set_code: str, listing_type: str):
+    """Fallback for page types that don't use the div.card-product structure
+    (unverified against real markup — used only if the primary parser finds
+    nothing to work with)."""
+    current_rarity = None
+    seen_card_ids = set()
+    rows = []
+
+    for el in soup.descendants:
         if isinstance(el, str):
             stripped = el.strip()
             m = RARITY_HEADING_RE.match(stripped)
@@ -191,23 +324,20 @@ def parse_listing_page(html: str, game: str, set_code: str, listing_type: str):
         block_text = container.get_text("\n", strip=True)
         lines = [l for l in block_text.split("\n") if l.strip()]
 
-        # Use the card's OWN set code from its link (not the page-level
-        # set_code param) — matters for mixed-set pages like search results.
         row_set_code = url_set or set_code
 
-        # Card number is usually the first short line (e.g. "OSK/S133-002SSP")
         card_number = None
         for l in lines:
             if re.match(r"^[A-Za-z0-9][A-Za-z0-9/._\-]{2,25}$", l) and "円" not in l:
                 card_number = l
                 break
 
-        # Name + rarity live in the card image's alt text, e.g.
-        # alt="OSK/S133-001SSP SSP Merry Christmas 有馬かな(サイン入り)" — NOT
-        # in any visible text, so this has to come from the <img> tag itself,
-        # not from get_text(). Fall back to a visible "CODE RARITY Name" line
-        # (some page types render it that way) if there's no usable alt text.
-        img_tag = container.find("img")
+        img_tag = None
+        for im in container.find_all("img"):
+            alt = (im.get("alt") or "").strip()
+            if alt and alt.lower() != "star":
+                img_tag = im
+                break
         alt_text = (img_tag.get("alt") or "").strip() if img_tag else ""
 
         source_text = None
@@ -235,19 +365,15 @@ def parse_listing_page(html: str, game: str, set_code: str, listing_type: str):
 
         rarity = rarity_from_text or current_rarity
 
-        # Prices: collect all yen amounts in the block, in order of appearance.
         prices = [int(x.replace(",", "")) for x in YEN_RE.findall(block_text)]
 
-        # Stock / availability heuristics
         sold_out = ("SOLD OUT" in block_text.upper()) or ("売り切れ" in block_text)
-        has_cart_button = ("カートへ" in block_text) or ("買取リストへ" in block_text)
         has_qty_stepper = "- +" in block_text or re.search(r"[-−]\s*\+", block_text)
-
         if sold_out or not has_qty_stepper:
             stock = 0
             availability = "Sold Out"
         else:
-            stock = None  # yuyu-tei doesn't expose exact qty on listing pages beyond in/out of stock
+            stock = None
             availability = "In Stock"
 
         boosted = "PRICE UP" in block_text.upper()
@@ -279,7 +405,7 @@ def parse_listing_page(html: str, game: str, set_code: str, listing_type: str):
         )
         seen_card_ids.add(key)
 
-    return rows, set_name
+    return rows
 
 
 def lookup_set_name(session: requests.Session, game: str, set_code: str, delay: float) -> Optional[str]:
