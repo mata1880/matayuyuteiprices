@@ -34,17 +34,5 @@
     "mode": "both",
     "count": 211,
     "scrapedAt": "2026-09-16T22:52:22.900500+00:00"
-  },
-  {
-    "game": "ws",
-    "set": "sample",
-    "name": "【推しの子】Vol.3 (sample data)",
-    "aliases": [
-      "OSK/S133"
-    ],
-    "file": "data/ws_sample.json",
-    "mode": "both",
-    "count": 3,
-    "scrapedAt": "2026-09-16T00:00:00Z"
   }
 ]
