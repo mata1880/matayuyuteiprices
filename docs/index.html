@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yuyu-tei Price Viewer</title>
+<style>
+  :root{
+    --paper:#f7f4ee;
+    --ink:#1c1a16;
+    --ink-soft:#5c5648;
+    --line:#ddd6c6;
+    --line-soft:#e9e4d6;
+    --red:#b23a2e;
+    --red-deep:#8c2c22;
+    --green:#3d6b4a;
+    --card-bg:#ffffff;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: "Zen Kaku Gothic New", "Hiragino Sans", "Segoe UI", sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.45;
+    min-height:100vh;
+  }
+
+  header{
+    border-bottom:2px solid var(--ink);
+    padding:28px clamp(16px,4vw,48px) 20px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:12px;
+  }
+  header h1{
+    margin:0;
+    font-size:clamp(22px,3vw,30px);
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+  header h1 span{color:var(--red);}
+  header p{
+    margin:4px 0 0;
+    color:var(--ink-soft);
+    font-size:14px;
+  }
+  #status-pill{
+    font-size:12px;
+    color:var(--ink-soft);
+    border:1px solid var(--line);
+    background:var(--card-bg);
+    padding:5px 10px;
+    border-radius:999px;
+    white-space:nowrap;
+  }
+
+  main{
+    padding:24px clamp(16px,4vw,48px) 64px;
+    max-width:1400px;
+    margin:0 auto;
+  }
+
+  .controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+    align-items:flex-end;
+    margin-bottom:22px;
+    padding:18px;
+    background:var(--card-bg);
+    border:1px solid var(--line);
+  }
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .field label{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:var(--ink-soft);
+  }
+  select, input[type="search"]{
+    font-family:var(--sans);
+    font-size:14px;
+    padding:8px 10px;
+    border:1px solid var(--line);
+    background:var(--paper);
+    color:var(--ink);
+    min-width:150px;
+  }
+  select:focus, input:focus{
+    outline:2px solid var(--red);
+    outline-offset:1px;
+  }
+  .mode-toggle{
+    display:flex;
+    border:1px solid var(--ink);
+  }
+  .mode-toggle button{
+    font-family:var(--sans);
+    font-size:13px;
+    padding:8px 14px;
+    background:var(--paper);
+    color:var(--ink);
+    border:none;
+    border-right:1px solid var(--ink);
+    cursor:pointer;
+  }
+  .mode-toggle button:last-child{border-right:none;}
+  .mode-toggle button.active{
+    background:var(--ink);
+    color:var(--paper);
+  }
+  .field.search{flex:1;min-width:200px;}
+  .field.search input{width:100%;}
+
+  #summary{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin:0 0 10px;
+  }
+  #summary strong{color:var(--ink);}
+
+  .table-wrap{
+    border:1px solid var(--line);
+    background:var(--card-bg);
+    overflow-x:auto;
+  }
+  table{
+    border-collapse:collapse;
+    width:100%;
+    min-width:960px;
+    font-size:13.5px;
+  }
+  thead th{
+    position:sticky;
+    top:0;
+    background:var(--ink);
+    color:var(--paper);
+    text-align:left;
+    padding:10px 12px;
+    font-weight:600;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    cursor:pointer;
+    white-space:nowrap;
+    user-select:none;
+  }
+  thead th:hover{background:var(--red-deep);}
+  thead th .arrow{opacity:0.6;font-size:10px;margin-left:4px;}
+  tbody tr{border-top:1px solid var(--line-soft);}
+  tbody tr:hover{background:#fbf8f0;}
+  td{padding:9px 12px;vertical-align:middle;}
+  td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap;}
+  td.card-cell{display:flex;align-items:center;gap:10px;min-width:220px;}
+  td.card-cell img{
+    width:36px;height:50px;object-fit:cover;
+    border:1px solid var(--line);
+    background:var(--line-soft);
+    flex-shrink:0;
+  }
+  td.card-cell a{color:var(--ink);text-decoration:none;font-weight:600;}
+  td.card-cell a:hover{color:var(--red);text-decoration:underline;}
+  .rarity-badge{
+    font-family:var(--mono);
+    font-size:11px;
+    padding:2px 6px;
+    border:1px solid var(--ink);
+    white-space:nowrap;
+  }
+  .avail{font-size:12px;font-weight:600;}
+  .avail.in{color:var(--green);}
+  .avail.out{color:var(--red);}
+  .empty-state{
+    padding:48px 20px;
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:14px;
+  }
+  .boosted-tag{
+    font-size:10px;
+    color:var(--red);
+    border:1px solid var(--red);
+    padding:1px 4px;
+    margin-left:6px;
+  }
+  footer{
+    padding:20px clamp(16px,4vw,48px) 40px;
+    color:var(--ink-soft);
+    font-size:12px;
+    border-top:1px solid var(--line);
+  }
+  footer a{color:var(--ink-soft);}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Yuyu<span>-tei</span> Price Viewer</h1>
+    <p>Sell &amp; buylist prices, scraped locally — pick a set below.</p>
+  </div>
+  <div id="status-pill">loading manifest…</div>
+</header>
+
+<main>
+  <div class="controls">
+    <div class="field">
+      <label for="game-select">Game</label>
+      <select id="game-select"><option>Loading…</option></select>
+    </div>
+    <div class="field">
+      <label for="set-select">Set</label>
+      <select id="set-select"><option>—</option></select>
+    </div>
+    <div class="field">
+      <label>Show</label>
+      <div class="mode-toggle" id="mode-toggle">
+        <button data-mode="both" class="active">Both</button>
+        <button data-mode="sell">Sell</button>
+        <button data-mode="buy">Buylist</button>
+      </div>
+    </div>
+    <div class="field search">
+      <label for="search-input">Search card name / number</label>
+      <input type="search" id="search-input" placeholder="e.g. ピカチュウ or OSK/S133-002SSP">
+    </div>
+  </div>
+
+  <p id="summary"></p>
+
+  <div class="table-wrap">
+    <table id="card-table">
+      <thead>
+        <tr>
+          <th data-key="name">Card</th>
+          <th data-key="cardNumber">Number</th>
+          <th data-key="rarity">Rarity</th>
+          <th data-key="setCode">Set</th>
+          <th data-key="sellPriceJpy" class="num">Sell (JPY)</th>
+          <th data-key="buyPriceJpy" class="num">Buylist (JPY)</th>
+          <th data-key="spreadJpy" class="num">Spread</th>
+          <th data-key="availability">Availability</th>
+        </tr>
+      </thead>
+      <tbody id="card-tbody"></tbody>
+    </table>
+    <div class="empty-state" id="empty-state" style="display:none;"></div>
+  </div>
+</main>
+
+<footer>
+  Data scraped from <a href="https://yuyu-tei.jp" target="_blank" rel="noopener">yuyu-tei.jp</a> using a local Python
+  script — this page just displays whatever's in <code>data/</code>. Re-run the scraper with <code>--site</code>
+  to refresh a set, then commit &amp; push.
+</footer>
+
+<script>
+(function(){
+  const gameSelect = document.getElementById('game-select');
+  const setSelect = document.getElementById('set-select');
+  const searchInput = document.getElementById('search-input');
+  const tbody = document.getElementById('card-tbody');
+  const table = document.getElementById('card-table');
+  const emptyState = document.getElementById('empty-state');
+  const summary = document.getElementById('summary');
+  const statusPill = document.getElementById('status-pill');
+  const modeToggle = document.getElementById('mode-toggle');
+
+  const GAME_NAMES = {
+    ws:'Weiss Schwarz', poc:'Pokémon', ygo:'Yu-Gi-Oh', opc:'One Piece',
+    dm:'Duel Masters', ua:'Union Arena', vg:'Vanguard', digi:'Digimon',
+    bs:'Battle Spirits', wx:'WIXOSS', hocg:'hololive OCG', gcg:'Genshin'
+  };
+
+  let manifest = [];
+  let currentRows = [];
+  let mode = 'both';
+  let sortKey = 'name';
+  let sortDir = 1;
+
+  function fmtYen(v){
+    if (v === null || v === undefined || v === '') return '—';
+    const n = Number(v);
+    if (Number.isNaN(n)) return '—';
+    return '¥' + n.toLocaleString('en-US');
+  }
+
+  function loadManifest(){
+    fetch('data/manifest.json', {cache:'no-store'})
+      .then(r => { if(!r.ok) throw new Error('no manifest'); return r.json(); })
+      .then(data => {
+        manifest = data;
+        populateGames();
+        statusPill.textContent = manifest.length
+          ? manifest.length + ' set(s) available'
+          : 'no data yet';
+      })
+      .catch(() => {
+        statusPill.textContent = 'no data yet — run the scraper with --site';
+        showEmpty('No data files found. Run the scraper locally with the --site flag ' +
+                  '(see README) to generate data/manifest.json, then commit and push.');
+      });
+  }
+
+  function populateGames(){
+    const games = [...new Set(manifest.map(m => m.game))].sort();
+    gameSelect.innerHTML = games.map(g =>
+      `<option value="${g}">${GAME_NAMES[g] || g} (${g})</option>`
+    ).join('');
+    if (games.length) {
+      gameSelect.value = games[0];
+      populateSets();
+    }
+  }
+
+  function populateSets(){
+    const game = gameSelect.value;
+    const sets = manifest.filter(m => m.game === game);
+    setSelect.innerHTML = sets.map(m =>
+      `<option value="${m.set}">${m.set} (${m.count} cards)</option>`
+    ).join('');
+    if (sets.length) loadSet();
+  }
+
+  function loadSet(){
+    const game = gameSelect.value;
+    const setCode = setSelect.value;
+    const entry = manifest.find(m => m.game === game && m.set === setCode);
+    if (!entry) return;
+    tbody.innerHTML = '<tr><td colspan="8" style="padding:20px;color:var(--ink-soft);">Loading…</td></tr>';
+    fetch(entry.file, {cache:'no-store'})
+      .then(r => r.json())
+      .then(rows => {
+        currentRows = rows;
+        render();
+      })
+      .catch(() => showEmpty('Could not load ' + entry.file + '.'));
+  }
+
+  function showEmpty(msg){
+    table.style.display = 'none';
+    emptyState.style.display = 'block';
+    emptyState.textContent = msg;
+    summary.textContent = '';
+  }
+
+  function render(){
+    let rows = currentRows.slice();
+
+    const q = searchInput.value.trim().toLowerCase();
+    if (q) {
+      rows = rows.filter(r =>
+        (r.name || '').toLowerCase().includes(q) ||
+        (r.cardNumber || '').toLowerCase().includes(q)
+      );
+    }
+
+    if (mode === 'sell') rows = rows.filter(r => r.sellPriceJpy !== null && r.sellPriceJpy !== undefined);
+    if (mode === 'buy')  rows = rows.filter(r => r.buyPriceJpy !== null && r.buyPriceJpy !== undefined);
+
+    rows.sort((a,b) => {
+      let av = a[sortKey], bv = b[sortKey];
+      if (av === null || av === undefined) av = sortKey.includes('Jpy') ? -Infinity : '';
+      if (bv === null || bv === undefined) bv = sortKey.includes('Jpy') ? -Infinity : '';
+      if (typeof av === 'number' || typeof bv === 'number') {
+        return (av - bv) * sortDir;
+      }
+      return String(av).localeCompare(String(bv), 'ja') * sortDir;
+    });
+
+    if (!rows.length) {
+      showEmpty(q ? 'No cards match "' + q + '".' : 'No cards for this set / mode.');
+      return;
+    }
+    table.style.display = 'table';
+    emptyState.style.display = 'none';
+
+    summary.innerHTML = `<strong>${rows.length}</strong> card${rows.length===1?'':'s'} shown`;
+
+    tbody.innerHTML = rows.map(r => {
+      const avail = (r.availability || '').toLowerCase().includes('sold') ? 'out' : 'in';
+      const img = r.imageUrl ? `<img src="${r.imageUrl}" alt="" loading="lazy">` : '';
+      const boosted = r.buyPriceBoosted ? '<span class="boosted-tag">UP</span>' : '';
+      return `<tr>
+        <td class="card-cell">${img}<a href="${r.url||'#'}" target="_blank" rel="noopener">${escapeHtml(r.name||'')}</a></td>
+        <td>${escapeHtml(r.cardNumber||'')}</td>
+        <td>${r.rarity ? `<span class="rarity-badge">${escapeHtml(r.rarity)}</span>` : ''}</td>
+        <td>${escapeHtml(r.setCode||'')}</td>
+        <td class="num">${mode==='buy' ? '' : fmtYen(r.sellPriceJpy)}</td>
+        <td class="num">${mode==='sell' ? '' : fmtYen(r.buyPriceJpy)}${mode==='sell'?'':boosted}</td>
+        <td class="num">${mode==='both' ? fmtYen(r.spreadJpy) : ''}</td>
+        <td class="avail ${avail}">${escapeHtml(r.availability||'')}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, c => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[c]));
+  }
+
+  gameSelect.addEventListener('change', populateSets);
+  setSelect.addEventListener('change', loadSet);
+  searchInput.addEventListener('input', render);
+
+  modeToggle.addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    mode = btn.dataset.mode;
+    [...modeToggle.children].forEach(b => b.classList.toggle('active', b === btn));
+    render();
+  });
+
+  table.querySelector('thead').addEventListener('click', e => {
+    const th = e.target.closest('th');
+    if (!th) return;
+    const key = th.dataset.key;
+    if (sortKey === key) sortDir *= -1; else { sortKey = key; sortDir = 1; }
+    render();
+  });
+
+  loadManifest();
+})();
+</script>
+
+</body>
+</html>
