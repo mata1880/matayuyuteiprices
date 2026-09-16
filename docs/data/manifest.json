@@ -1,6 +1,18 @@
 [
   {
     "game": "ws",
+    "set": "osk",
+    "name": "【推しの子】",
+    "aliases": [
+      "OSK"
+    ],
+    "file": "data/ws_osk.json",
+    "mode": "both",
+    "count": 230,
+    "scrapedAt": "2026-09-16T22:52:22.890866+00:00"
+  },
+  {
+    "game": "ws",
     "set": "osk2.0",
     "name": "【推しの子】Vol.2",
     "aliases": [
@@ -8,8 +20,20 @@
     ],
     "file": "data/ws_osk2.0.json",
     "mode": "both",
-    "count": 659,
-    "scrapedAt": "2026-09-16T22:23:00.889011+00:00"
+    "count": 218,
+    "scrapedAt": "2026-09-16T22:52:22.880324+00:00"
+  },
+  {
+    "game": "ws",
+    "set": "osk3.0",
+    "name": "【推しの子】Vol.3",
+    "aliases": [
+      "OSK"
+    ],
+    "file": "data/ws_osk3.0.json",
+    "mode": "both",
+    "count": 211,
+    "scrapedAt": "2026-09-16T22:52:22.900500+00:00"
   },
   {
     "game": "ws",
