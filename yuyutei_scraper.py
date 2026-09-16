@@ -202,16 +202,27 @@ def parse_listing_page(html: str, game: str, set_code: str, listing_type: str):
                 card_number = l
                 break
 
-        # Name + rarity: the <a> tag's own text is usually "CODE RARITY Name",
-        # e.g. "OSK/S133-001SSP SSP Merry Christmas 有馬かな(サイン入り)".
-        # Pull rarity from here directly — this is the ONLY source of rarity
-        # on pages that don't group cards under "XX Card List" headings
-        # (like search-result pages), and a reliable one even when they do.
+        # Name + rarity live in the card image's alt text, e.g.
+        # alt="OSK/S133-001SSP SSP Merry Christmas 有馬かな(サイン入り)" — NOT
+        # in any visible text, so this has to come from the <img> tag itself,
+        # not from get_text(). Fall back to a visible "CODE RARITY Name" line
+        # (some page types render it that way) if there's no usable alt text.
+        img_tag = container.find("img")
+        alt_text = (img_tag.get("alt") or "").strip() if img_tag else ""
+
+        source_text = None
+        if card_number and alt_text.startswith(card_number):
+            source_text = alt_text
+        elif card_number:
+            for l in lines:
+                if l.startswith(card_number + " "):
+                    source_text = l
+                    break
+
         name = None
         rarity_from_text = None
-        a_text = el.get_text(" ", strip=True)
-        if card_number and a_text.startswith(card_number):
-            rest = a_text[len(card_number):].strip()
+        if source_text:
+            rest = source_text[len(card_number):].strip()
             parts = rest.split(" ", 1)
             if len(parts) == 2 and len(parts[0]) <= 8:
                 rarity_from_text = parts[0]
@@ -220,7 +231,7 @@ def parse_listing_page(html: str, game: str, set_code: str, listing_type: str):
                 name = rest
         if not name:
             candidates = [l for l in lines if "円" not in l and l != card_number]
-            name = max(candidates, key=len) if candidates else a_text
+            name = max(candidates, key=len) if candidates else (card_number or "")
 
         rarity = rarity_from_text or current_rarity
 
@@ -241,7 +252,6 @@ def parse_listing_page(html: str, game: str, set_code: str, listing_type: str):
 
         boosted = "PRICE UP" in block_text.upper()
 
-        img_tag = container.find("img")
         image_url = None
         if img_tag:
             image_url = img_tag.get("src") or img_tag.get("data-src")
