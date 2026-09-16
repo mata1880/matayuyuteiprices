@@ -163,6 +163,28 @@ The repo ships with one sample set already in `docs/data/` so the page
 isn't empty the first time you open it — delete `docs/data/ws_sample.json`
 and its entry in `manifest.json` once you've scraped a real set.
 
+## Card catalog (`wstcg_scraper.py`) — official card details
+
+A second, separate scraper pulls from **ws-tcg.com**, the official
+Bushiroad card database — a real JSON API, unlike yuyu-tei's scraped HTML.
+This gets you things yuyu-tei doesn't have at all: full card text, traits,
+level/cost/power/soul/color/trigger, and the real expansion name (fetched
+automatically from the site's own filter-options endpoint and cached
+locally — no manual copying needed).
+
+```bash
+python wstcg_scraper.py --query OSK --site
+```
+`--query` matches whatever you'd type into ws-tcg.com's own search box —
+a title code like `OSK`, or a card/series name. `--site` writes into
+`docs/data/catalog_<query>.json` (+ `catalog_manifest.json`), which
+`collection.html` automatically cross-references against your price data
+by card number — click the ⓘ next to a card's name to see its full text
+and stats once both scrapers have run.
+
+This is entirely optional — prices work fine without it. It's purely an
+enrichment layer for the collection page.
+
 ## Collection & Wishlist (`collection.html`)
 
 A second page for personal tracking, linked from the top of the price

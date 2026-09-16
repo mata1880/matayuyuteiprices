@@ -4,12 +4,12 @@
     "set": "osk2.0",
     "name": "【推しの子】Vol.2",
     "aliases": [
-      "OSK/S121"
+      "OSK"
     ],
     "file": "data/ws_osk2.0.json",
     "mode": "both",
-    "count": 226,
-    "scrapedAt": "2026-09-16T19:44:59.405056+00:00"
+    "count": 659,
+    "scrapedAt": "2026-09-16T22:23:00.889011+00:00"
   },
   {
     "game": "ws",
