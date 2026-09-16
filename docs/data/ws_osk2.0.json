@@ -5,18 +5,18 @@
     "cardId": "10219",
     "cardNumber": "OSK/S121-006EX",
     "name": "怒涛の撮影スケジュール MEMちょ(サイン入り)",
-    "rarity": null,
+    "rarity": "SEC+",
     "condition": "near_mint",
     "sellPriceJpy": 34800,
     "buyPriceJpy": 25000,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 9800,
-    "stock": null,
+    "stock": 1,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10219.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10219",
-    "scrapedAt": "2026-09-16T18:29:13.513740+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462404+00:00"
   },
   {
     "game": "ws",
@@ -24,18 +24,18 @@
     "cardId": "10220",
     "cardNumber": "OSK/S121-030EX",
     "name": "導かれし双星 アクア&ルビー(サイン入り)",
-    "rarity": null,
+    "rarity": "SEC+",
     "condition": "near_mint",
     "sellPriceJpy": 79800,
     "buyPriceJpy": 55000,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 24800,
-    "stock": null,
+    "stock": 1,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10220.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10220",
-    "scrapedAt": "2026-09-16T18:29:13.513765+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462426+00:00"
   },
   {
     "game": "ws",
@@ -43,18 +43,18 @@
     "cardId": "10213",
     "cardNumber": "OSK/S121-002SSP",
     "name": "どれにしようかな？MEMちょ(サイン入り)",
-    "rarity": null,
+    "rarity": "SSP",
     "condition": "near_mint",
     "sellPriceJpy": 6980,
     "buyPriceJpy": 3500,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 3480,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10213.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10213",
-    "scrapedAt": "2026-09-16T18:29:13.513773+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462434+00:00"
   },
   {
     "game": "ws",
@@ -62,18 +62,18 @@
     "cardId": "10214",
     "cardNumber": "OSK/S121-027SSP",
     "name": "聖夜の待ち合わせ アイ(サイン入り)",
-    "rarity": null,
+    "rarity": "SSP",
     "condition": "near_mint",
     "sellPriceJpy": 79800,
     "buyPriceJpy": 64000,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 15800,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10214.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10214",
-    "scrapedAt": "2026-09-16T18:29:13.513778+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462439+00:00"
   },
   {
     "game": "ws",
@@ -81,18 +81,18 @@
     "cardId": "10215",
     "cardNumber": "OSK/S121-028SSP",
     "name": "水族館デート 有馬かな(サイン入り)",
-    "rarity": null,
+    "rarity": "SSP",
     "condition": "near_mint",
     "sellPriceJpy": 39800,
     "buyPriceJpy": 25000,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 14800,
-    "stock": null,
+    "stock": 1,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10215.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10215",
-    "scrapedAt": "2026-09-16T18:29:13.513783+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462444+00:00"
   },
   {
     "game": "ws",
@@ -100,18 +100,18 @@
     "cardId": "10216",
     "cardNumber": "OSK/S121-029SSP",
     "name": "自然とのふれあい ルビー(サイン入り)",
-    "rarity": null,
+    "rarity": "SSP",
     "condition": "near_mint",
     "sellPriceJpy": 9980,
     "buyPriceJpy": 3600,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 6380,
-    "stock": null,
+    "stock": 5,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10216.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10216",
-    "scrapedAt": "2026-09-16T18:29:13.513787+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462448+00:00"
   },
   {
     "game": "ws",
@@ -119,18 +119,18 @@
     "cardId": "10217",
     "cardNumber": "OSK/S121-065SSP",
     "name": "コーヒーを片手に アクア(サイン入り)",
-    "rarity": null,
+    "rarity": "SSP",
     "condition": "near_mint",
     "sellPriceJpy": 19800,
     "buyPriceJpy": 12000,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 7800,
-    "stock": null,
+    "stock": 2,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10217.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10217",
-    "scrapedAt": "2026-09-16T18:29:13.513791+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462453+00:00"
   },
   {
     "game": "ws",
@@ -138,18 +138,18 @@
     "cardId": "10218",
     "cardNumber": "OSK/S121-067SSP",
     "name": "星降る夜に 黒川あかね(サイン入り)",
-    "rarity": null,
+    "rarity": "SSP",
     "condition": "near_mint",
     "sellPriceJpy": 34800,
     "buyPriceJpy": 20000,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 14800,
-    "stock": null,
+    "stock": 2,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10218.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10218",
-    "scrapedAt": "2026-09-16T18:29:13.513795+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462457+00:00"
   },
   {
     "game": "ws",
@@ -157,18 +157,18 @@
     "cardId": "10207",
     "cardNumber": "OSK/S121-001SP",
     "name": "役者としての矜持 有馬かな(サイン入り)",
-    "rarity": null,
+    "rarity": "SP",
     "condition": "near_mint",
     "sellPriceJpy": 6980,
     "buyPriceJpy": 3500,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 3480,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10207.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10207",
-    "scrapedAt": "2026-09-16T18:29:13.513799+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462461+00:00"
   },
   {
     "game": "ws",
@@ -176,18 +176,18 @@
     "cardId": "10208",
     "cardNumber": "OSK/S121-003SP",
     "name": "自分だけの色 ルビー(サイン入り)",
-    "rarity": null,
+    "rarity": "SP",
     "condition": "near_mint",
     "sellPriceJpy": 3980,
     "buyPriceJpy": 2500,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 1480,
-    "stock": null,
+    "stock": 2,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10208.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10208",
-    "scrapedAt": "2026-09-16T18:29:13.513802+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462471+00:00"
   },
   {
     "game": "ws",
@@ -195,18 +195,18 @@
     "cardId": "10209",
     "cardNumber": "OSK/S121-005SP",
     "name": "人気配信者への道 MEMちょ(サイン入り)",
-    "rarity": null,
+    "rarity": "SP",
     "condition": "near_mint",
     "sellPriceJpy": 2480,
     "buyPriceJpy": 1100,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 1380,
-    "stock": null,
+    "stock": 2,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10209.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10209",
-    "scrapedAt": "2026-09-16T18:29:13.513806+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462475+00:00"
   },
   {
     "game": "ws",
@@ -214,18 +214,18 @@
     "cardId": "10210",
     "cardNumber": "OSK/S121-035SP",
     "name": "願い続けた夢 アイ(サイン入り)",
-    "rarity": null,
+    "rarity": "SP",
     "condition": "near_mint",
     "sellPriceJpy": 4980,
     "buyPriceJpy": 3000,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 1980,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10210.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10210",
-    "scrapedAt": "2026-09-16T18:29:13.513811+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462480+00:00"
   },
   {
     "game": "ws",
@@ -233,18 +233,18 @@
     "cardId": "10211",
     "cardNumber": "OSK/S121-066SP",
     "name": "役者としての矜持 黒川あかね(サイン入り)",
-    "rarity": null,
+    "rarity": "SP",
     "condition": "near_mint",
     "sellPriceJpy": 4980,
     "buyPriceJpy": 3000,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 1980,
-    "stock": null,
+    "stock": 2,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10211.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10211",
-    "scrapedAt": "2026-09-16T18:29:13.513815+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462484+00:00"
   },
   {
     "game": "ws",
@@ -252,18 +252,18 @@
     "cardId": "10212",
     "cardNumber": "OSK/S121-074SP",
     "name": "強烈な感情演技 アクア -刀鬼-(サイン入り)",
-    "rarity": null,
+    "rarity": "SP",
     "condition": "near_mint",
     "sellPriceJpy": 2480,
     "buyPriceJpy": 1100,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 1380,
-    "stock": null,
+    "stock": 1,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10212.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10212",
-    "scrapedAt": "2026-09-16T18:29:13.513818+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462487+00:00"
   },
   {
     "game": "ws",
@@ -271,18 +271,18 @@
     "cardId": "10221",
     "cardNumber": "OSK/S121-101A",
     "name": "アイドル(直筆サイン入り/シリアルナンバー付き)",
-    "rarity": null,
+    "rarity": "AGR",
     "condition": "near_mint",
     "sellPriceJpy": 1480000,
     "buyPriceJpy": null,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": null,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/noimage_100_140.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10221",
-    "scrapedAt": "2026-09-16T18:29:13.513822+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462491+00:00"
   },
   {
     "game": "ws",
@@ -290,18 +290,18 @@
     "cardId": "10202",
     "cardNumber": "OSK/S121-023EX",
     "name": "テコ入れプラン",
-    "rarity": null,
+    "rarity": "RRR+",
     "condition": "near_mint",
     "sellPriceJpy": 4980,
     "buyPriceJpy": 2200,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 2780,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10202.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10202",
-    "scrapedAt": "2026-09-16T18:29:13.513825+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462495+00:00"
   },
   {
     "game": "ws",
@@ -309,18 +309,18 @@
     "cardId": "10203",
     "cardNumber": "OSK/S121-061EX",
     "name": "巨星の演技",
-    "rarity": null,
+    "rarity": "RRR+",
     "condition": "near_mint",
     "sellPriceJpy": 29800,
     "buyPriceJpy": 18000,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 11800,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10203.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10203",
-    "scrapedAt": "2026-09-16T18:29:13.513829+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462499+00:00"
   },
   {
     "game": "ws",
@@ -328,18 +328,18 @@
     "cardId": "10204",
     "cardNumber": "OSK/S121-062EX",
     "name": "夜に堕つ星",
-    "rarity": null,
+    "rarity": "RRR+",
     "condition": "near_mint",
     "sellPriceJpy": 19800,
     "buyPriceJpy": 12000,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 7800,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10204.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10204",
-    "scrapedAt": "2026-09-16T18:29:13.513832+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462502+00:00"
   },
   {
     "game": "ws",
@@ -347,18 +347,18 @@
     "cardId": "10205",
     "cardNumber": "OSK/S121-063EX",
     "name": "普通の幸せ",
-    "rarity": null,
+    "rarity": "RRR+",
     "condition": "near_mint",
     "sellPriceJpy": 9980,
     "buyPriceJpy": 6000,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 3980,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10205.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10205",
-    "scrapedAt": "2026-09-16T18:29:13.513836+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462506+00:00"
   },
   {
     "game": "ws",
@@ -366,18 +366,18 @@
     "cardId": "10206",
     "cardNumber": "OSK/S121-097EX",
     "name": "傷移しの鞘",
-    "rarity": null,
+    "rarity": "RRR+",
     "condition": "near_mint",
     "sellPriceJpy": 24800,
     "buyPriceJpy": 15000,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 9800,
-    "stock": null,
+    "stock": 1,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10206.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10206",
-    "scrapedAt": "2026-09-16T18:29:13.513840+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462512+00:00"
   },
   {
     "game": "ws",
@@ -385,18 +385,18 @@
     "cardId": "10190",
     "cardNumber": "OSK/S121-023R",
     "name": "テコ入れプラン",
-    "rarity": null,
+    "rarity": "RRR",
     "condition": "near_mint",
     "sellPriceJpy": 420,
     "buyPriceJpy": 150,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 270,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10190.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10190",
-    "scrapedAt": "2026-09-16T18:29:13.513843+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462516+00:00"
   },
   {
     "game": "ws",
@@ -404,18 +404,18 @@
     "cardId": "10191",
     "cardNumber": "OSK/S121-024R",
     "name": "情熱の再燃",
-    "rarity": null,
+    "rarity": "RRR",
     "condition": "near_mint",
     "sellPriceJpy": 320,
     "buyPriceJpy": 100,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 220,
-    "stock": null,
+    "stock": 1,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10191.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10191",
-    "scrapedAt": "2026-09-16T18:29:13.513846+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462520+00:00"
   },
   {
     "game": "ws",
@@ -423,18 +423,18 @@
     "cardId": "10192",
     "cardNumber": "OSK/S121-025R",
     "name": "撮影の合間に",
-    "rarity": null,
+    "rarity": "RRR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": null,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": null,
-    "stock": null,
+    "stock": 8,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10192.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10192",
-    "scrapedAt": "2026-09-16T18:29:13.513851+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462524+00:00"
   },
   {
     "game": "ws",
@@ -442,18 +442,18 @@
     "cardId": "10193",
     "cardNumber": "OSK/S121-026R",
     "name": "POP IN 2",
-    "rarity": null,
+    "rarity": "RRR",
     "condition": "near_mint",
     "sellPriceJpy": 220,
     "buyPriceJpy": 10,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 210,
-    "stock": null,
+    "stock": 4,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10193.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10193",
-    "scrapedAt": "2026-09-16T18:29:13.513855+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462528+00:00"
   },
   {
     "game": "ws",
@@ -461,18 +461,18 @@
     "cardId": "10194",
     "cardNumber": "OSK/S121-061R",
     "name": "巨星の演技",
-    "rarity": null,
+    "rarity": "RRR",
     "condition": "near_mint",
     "sellPriceJpy": 3980,
     "buyPriceJpy": 2500,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 1480,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10194.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10194",
-    "scrapedAt": "2026-09-16T18:29:13.513862+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462531+00:00"
   },
   {
     "game": "ws",
@@ -480,18 +480,18 @@
     "cardId": "10195",
     "cardNumber": "OSK/S121-062R",
     "name": "夜に堕つ星",
-    "rarity": null,
+    "rarity": "RRR",
     "condition": "near_mint",
     "sellPriceJpy": 980,
     "buyPriceJpy": 300,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 680,
-    "stock": null,
+    "stock": 4,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10195.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10195",
-    "scrapedAt": "2026-09-16T18:29:13.513866+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462535+00:00"
   },
   {
     "game": "ws",
@@ -499,18 +499,18 @@
     "cardId": "10196",
     "cardNumber": "OSK/S121-063R",
     "name": "普通の幸せ",
-    "rarity": null,
+    "rarity": "RRR",
     "condition": "near_mint",
     "sellPriceJpy": 680,
     "buyPriceJpy": 300,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 380,
-    "stock": null,
+    "stock": 2,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10196.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10196",
-    "scrapedAt": "2026-09-16T18:29:13.513871+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462539+00:00"
   },
   {
     "game": "ws",
@@ -518,18 +518,18 @@
     "cardId": "10197",
     "cardNumber": "OSK/S121-064R",
     "name": "全てを懸けた魅せ所",
-    "rarity": null,
+    "rarity": "RRR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": null,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": null,
-    "stock": null,
+    "stock": 10,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10197.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10197",
-    "scrapedAt": "2026-09-16T18:29:13.513874+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462543+00:00"
   },
   {
     "game": "ws",
@@ -537,18 +537,18 @@
     "cardId": "10198",
     "cardNumber": "OSK/S121-097R",
     "name": "傷移しの鞘",
-    "rarity": null,
+    "rarity": "RRR",
     "condition": "near_mint",
     "sellPriceJpy": 3980,
     "buyPriceJpy": 1800,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 2180,
-    "stock": null,
+    "stock": 2,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10198.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10198",
-    "scrapedAt": "2026-09-16T18:29:13.513878+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462547+00:00"
   },
   {
     "game": "ws",
@@ -556,18 +556,18 @@
     "cardId": "10199",
     "cardNumber": "OSK/S121-098R",
     "name": "演劇の魅力",
-    "rarity": null,
+    "rarity": "RRR",
     "condition": "near_mint",
     "sellPriceJpy": 500,
     "buyPriceJpy": 200,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 300,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10199.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10199",
-    "scrapedAt": "2026-09-16T18:29:13.513881+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462550+00:00"
   },
   {
     "game": "ws",
@@ -575,18 +575,18 @@
     "cardId": "10200",
     "cardNumber": "OSK/S121-099R",
     "name": "対比構造",
-    "rarity": null,
+    "rarity": "RRR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": null,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": null,
-    "stock": null,
+    "stock": 5,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10200.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10200",
-    "scrapedAt": "2026-09-16T18:29:13.513885+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462554+00:00"
   },
   {
     "game": "ws",
@@ -594,18 +594,18 @@
     "cardId": "10201",
     "cardNumber": "OSK/S121-100R",
     "name": "復讐の果てに",
-    "rarity": null,
+    "rarity": "RRR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": null,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": null,
-    "stock": null,
+    "stock": 10,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10201.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10201",
-    "scrapedAt": "2026-09-16T18:29:13.513889+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462557+00:00"
   },
   {
     "game": "ws",
@@ -613,7 +613,7 @@
     "cardId": "10102",
     "cardNumber": "OSK/S121-001S",
     "name": "役者としての矜持 有馬かな",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 420,
     "buyPriceJpy": 20,
@@ -622,9 +622,9 @@
     "spreadJpy": 400,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10102.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10102",
-    "scrapedAt": "2026-09-16T18:29:13.513893+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462561+00:00"
   },
   {
     "game": "ws",
@@ -632,18 +632,18 @@
     "cardId": "10103",
     "cardNumber": "OSK/S121-002S",
     "name": "どれにしようかな？MEMちょ",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 320,
     "buyPriceJpy": 100,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 220,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10103.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10103",
-    "scrapedAt": "2026-09-16T18:29:13.513896+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462565+00:00"
   },
   {
     "game": "ws",
@@ -651,18 +651,18 @@
     "cardId": "10104",
     "cardNumber": "OSK/S121-003S",
     "name": "自分だけの色 ルビー",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 220,
     "buyPriceJpy": 20,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 200,
-    "stock": null,
+    "stock": 2,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10104.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10104",
-    "scrapedAt": "2026-09-16T18:29:13.513900+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462568+00:00"
   },
   {
     "game": "ws",
@@ -670,18 +670,18 @@
     "cardId": "10105",
     "cardNumber": "OSK/S121-004S",
     "name": "Happy Halloween！ ルビー",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": null,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": null,
-    "stock": null,
+    "stock": 7,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10105.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10105",
-    "scrapedAt": "2026-09-16T18:29:13.513904+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462572+00:00"
   },
   {
     "game": "ws",
@@ -689,18 +689,18 @@
     "cardId": "10106",
     "cardNumber": "OSK/S121-005S",
     "name": "人気配信者への道 MEMちょ",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": 5,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 175,
-    "stock": null,
+    "stock": 5,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10106.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10106",
-    "scrapedAt": "2026-09-16T18:29:13.513907+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462575+00:00"
   },
   {
     "game": "ws",
@@ -708,18 +708,18 @@
     "cardId": "10107",
     "cardNumber": "OSK/S121-006S",
     "name": "怒涛の撮影スケジュール MEMちょ",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": null,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": null,
-    "stock": null,
+    "stock": 6,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10107.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10107",
-    "scrapedAt": "2026-09-16T18:29:13.513911+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462581+00:00"
   },
   {
     "game": "ws",
@@ -727,18 +727,18 @@
     "cardId": "10108",
     "cardNumber": "OSK/S121-007S",
     "name": "Happy Halloween！ MEMちょ",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 220,
     "buyPriceJpy": 50,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 170,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10108.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10108",
-    "scrapedAt": "2026-09-16T18:29:13.513914+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462584+00:00"
   },
   {
     "game": "ws",
@@ -746,18 +746,18 @@
     "cardId": "10109",
     "cardNumber": "OSK/S121-008S",
     "name": "朝霧の邂逅 ルビー",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 780,
     "buyPriceJpy": 350,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 430,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10109.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10109",
-    "scrapedAt": "2026-09-16T18:29:13.513918+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462588+00:00"
   },
   {
     "game": "ws",
@@ -765,18 +765,18 @@
     "cardId": "10110",
     "cardNumber": "OSK/S121-009S",
     "name": "ルームツアー動画 有馬かな",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 420,
     "buyPriceJpy": 150,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 270,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10110.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10110",
-    "scrapedAt": "2026-09-16T18:29:13.513921+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462591+00:00"
   },
   {
     "game": "ws",
@@ -784,18 +784,18 @@
     "cardId": "10111",
     "cardNumber": "OSK/S121-010S",
     "name": "恋バナ ルビー",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": 5,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 175,
-    "stock": null,
+    "stock": 4,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10111.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10111",
-    "scrapedAt": "2026-09-16T18:29:13.513930+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462595+00:00"
   },
   {
     "game": "ws",
@@ -803,7 +803,7 @@
     "cardId": "10112",
     "cardNumber": "OSK/S121-011S",
     "name": "クリエイター仲間 MEMちょ",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 120,
     "buyPriceJpy": null,
@@ -812,9 +812,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10112.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10112",
-    "scrapedAt": "2026-09-16T18:29:13.513935+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462598+00:00"
   },
   {
     "game": "ws",
@@ -822,18 +822,18 @@
     "cardId": "10113",
     "cardNumber": "OSK/S121-012S",
     "name": "映像クリエイター アネモネ・モネモネ",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 120,
     "buyPriceJpy": null,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": null,
-    "stock": null,
+    "stock": 10,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10113.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10113",
-    "scrapedAt": "2026-09-16T18:29:13.513940+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462604+00:00"
   },
   {
     "game": "ws",
@@ -841,18 +841,18 @@
     "cardId": "10114",
     "cardNumber": "OSK/S121-013S",
     "name": "レスバ強者 有馬かな",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 220,
     "buyPriceJpy": 50,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 170,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10114.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10114",
-    "scrapedAt": "2026-09-16T18:29:13.513944+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462607+00:00"
   },
   {
     "game": "ws",
@@ -860,7 +860,7 @@
     "cardId": "10115",
     "cardNumber": "OSK/S121-014S",
     "name": "デート服選び 有馬かな",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -869,9 +869,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10115.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10115",
-    "scrapedAt": "2026-09-16T18:29:13.513948+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462611+00:00"
   },
   {
     "game": "ws",
@@ -879,7 +879,7 @@
     "cardId": "10116",
     "cardNumber": "OSK/S121-015S",
     "name": "夜のお散歩 ルビー",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 120,
     "buyPriceJpy": null,
@@ -888,9 +888,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10116.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10116",
-    "scrapedAt": "2026-09-16T18:29:13.513952+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462614+00:00"
   },
   {
     "game": "ws",
@@ -898,7 +898,7 @@
     "cardId": "10117",
     "cardNumber": "OSK/S121-016S",
     "name": "謹賀新年 MEMちょ",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -907,9 +907,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10117.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10117",
-    "scrapedAt": "2026-09-16T18:29:13.513955+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462617+00:00"
   },
   {
     "game": "ws",
@@ -917,18 +917,18 @@
     "cardId": "10118",
     "cardNumber": "OSK/S121-017S",
     "name": "POP IN 2 MEMちょ",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 120,
     "buyPriceJpy": 5,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 115,
-    "stock": null,
+    "stock": 2,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10118.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10118",
-    "scrapedAt": "2026-09-16T18:29:13.513959+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462621+00:00"
   },
   {
     "game": "ws",
@@ -936,18 +936,18 @@
     "cardId": "10119",
     "cardNumber": "OSK/S121-018S",
     "name": "POP IN 2 有馬かな",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 220,
     "buyPriceJpy": 5,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 215,
-    "stock": null,
+    "stock": 10,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10119.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10119",
-    "scrapedAt": "2026-09-16T18:29:13.513962+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462624+00:00"
   },
   {
     "game": "ws",
@@ -955,18 +955,18 @@
     "cardId": "10120",
     "cardNumber": "OSK/S121-019S",
     "name": "POP IN 2 ルビー",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 220,
     "buyPriceJpy": 50,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 170,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10120.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10120",
-    "scrapedAt": "2026-09-16T18:29:13.513966+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462628+00:00"
   },
   {
     "game": "ws",
@@ -974,18 +974,18 @@
     "cardId": "10121",
     "cardNumber": "OSK/S121-020S",
     "name": "だだっ子 ルビー",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 120,
     "buyPriceJpy": null,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": null,
-    "stock": null,
+    "stock": 10,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10121.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10121",
-    "scrapedAt": "2026-09-16T18:29:13.513969+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462631+00:00"
   },
   {
     "game": "ws",
@@ -993,18 +993,18 @@
     "cardId": "10122",
     "cardNumber": "OSK/S121-021S",
     "name": "よくある話 有馬かな",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 120,
     "buyPriceJpy": null,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": null,
-    "stock": null,
+    "stock": 10,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10122.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10122",
-    "scrapedAt": "2026-09-16T18:29:13.513973+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462635+00:00"
   },
   {
     "game": "ws",
@@ -1012,7 +1012,7 @@
     "cardId": "10123",
     "cardNumber": "OSK/S121-022S",
     "name": "注目のきっかけ",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 120,
     "buyPriceJpy": null,
@@ -1021,9 +1021,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10123.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10123",
-    "scrapedAt": "2026-09-16T18:29:13.513976+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462638+00:00"
   },
   {
     "game": "ws",
@@ -1031,18 +1031,18 @@
     "cardId": "10124",
     "cardNumber": "OSK/S121-027S",
     "name": "聖夜の待ち合わせ アイ",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 4980,
     "buyPriceJpy": 3000,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 1980,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10124.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10124",
-    "scrapedAt": "2026-09-16T18:29:13.513980+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462641+00:00"
   },
   {
     "game": "ws",
@@ -1050,18 +1050,18 @@
     "cardId": "10125",
     "cardNumber": "OSK/S121-028S",
     "name": "水族館デート 有馬かな",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 1480,
     "buyPriceJpy": 800,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 680,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10125.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10125",
-    "scrapedAt": "2026-09-16T18:29:13.513983+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462646+00:00"
   },
   {
     "game": "ws",
@@ -1069,18 +1069,18 @@
     "cardId": "10126",
     "cardNumber": "OSK/S121-029S",
     "name": "自然とのふれあい ルビー",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 320,
     "buyPriceJpy": 20,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 300,
-    "stock": null,
+    "stock": 4,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10126.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10126",
-    "scrapedAt": "2026-09-16T18:29:13.513987+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462650+00:00"
   },
   {
     "game": "ws",
@@ -1088,18 +1088,18 @@
     "cardId": "10127",
     "cardNumber": "OSK/S121-030S",
     "name": "導かれし双星 アクア&ルビー",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 980,
     "buyPriceJpy": 500,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 480,
-    "stock": null,
+    "stock": 2,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10127.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10127",
-    "scrapedAt": "2026-09-16T18:29:13.513991+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462654+00:00"
   },
   {
     "game": "ws",
@@ -1107,18 +1107,18 @@
     "cardId": "10128",
     "cardNumber": "OSK/S121-031S",
     "name": "謹賀新年 有馬かな",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 1480,
     "buyPriceJpy": 700,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 780,
-    "stock": null,
+    "stock": 1,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10128.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10128",
-    "scrapedAt": "2026-09-16T18:29:13.513995+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462657+00:00"
   },
   {
     "game": "ws",
@@ -1126,18 +1126,18 @@
     "cardId": "10129",
     "cardNumber": "OSK/S121-032S",
     "name": "復讐の炎 ルビー",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 320,
     "buyPriceJpy": 100,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 220,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10129.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10129",
-    "scrapedAt": "2026-09-16T18:29:13.513998+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462661+00:00"
   },
   {
     "game": "ws",
@@ -1145,7 +1145,7 @@
     "cardId": "10130",
     "cardNumber": "OSK/S121-033S",
     "name": "謹賀新年 ルビー",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 120,
     "buyPriceJpy": null,
@@ -1154,9 +1154,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10130.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10130",
-    "scrapedAt": "2026-09-16T18:29:13.514003+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462666+00:00"
   },
   {
     "game": "ws",
@@ -1164,18 +1164,18 @@
     "cardId": "10131",
     "cardNumber": "OSK/S121-034S",
     "name": "あと、もう少しだけ… 有馬かな",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 1480,
     "buyPriceJpy": 700,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 780,
-    "stock": null,
+    "stock": 1,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10131.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10131",
-    "scrapedAt": "2026-09-16T18:29:13.514007+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462669+00:00"
   },
   {
     "game": "ws",
@@ -1183,7 +1183,7 @@
     "cardId": "10132",
     "cardNumber": "OSK/S121-035S",
     "name": "願い続けた夢 アイ",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -1192,9 +1192,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10132.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10132",
-    "scrapedAt": "2026-09-16T18:29:13.514010+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462673+00:00"
   },
   {
     "game": "ws",
@@ -1202,18 +1202,18 @@
     "cardId": "10133",
     "cardNumber": "OSK/S121-036S",
     "name": "双子の絆 アクア＆ルビー",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 680,
     "buyPriceJpy": 300,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 380,
-    "stock": null,
+    "stock": 1,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10133.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10133",
-    "scrapedAt": "2026-09-16T18:29:13.514014+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462677+00:00"
   },
   {
     "game": "ws",
@@ -1221,7 +1221,7 @@
     "cardId": "10134",
     "cardNumber": "OSK/S121-037S",
     "name": "素直な感想 アイ",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -1230,9 +1230,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10134.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10134",
-    "scrapedAt": "2026-09-16T18:29:13.514017+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462681+00:00"
   },
   {
     "game": "ws",
@@ -1240,18 +1240,18 @@
     "cardId": "10135",
     "cardNumber": "OSK/S121-038S",
     "name": "授業参観 ルビー",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 220,
     "buyPriceJpy": 50,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 170,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10135.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10135",
-    "scrapedAt": "2026-09-16T18:29:13.514021+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462684+00:00"
   },
   {
     "game": "ws",
@@ -1259,7 +1259,7 @@
     "cardId": "10136",
     "cardNumber": "OSK/S121-039S",
     "name": "ホワイトデー アクア",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": null,
@@ -1268,9 +1268,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10136.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10136",
-    "scrapedAt": "2026-09-16T18:29:13.514024+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462688+00:00"
   },
   {
     "game": "ws",
@@ -1278,7 +1278,7 @@
     "cardId": "10137",
     "cardNumber": "OSK/S121-040S",
     "name": "朝食の準備 ルビー",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -1287,9 +1287,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10137.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10137",
-    "scrapedAt": "2026-09-16T18:29:13.514028+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462691+00:00"
   },
   {
     "game": "ws",
@@ -1297,7 +1297,7 @@
     "cardId": "10138",
     "cardNumber": "OSK/S121-041S",
     "name": "舞台に生きる 有馬かな",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -1306,9 +1306,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10138.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10138",
-    "scrapedAt": "2026-09-16T18:29:13.514031+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462695+00:00"
   },
   {
     "game": "ws",
@@ -1316,18 +1316,18 @@
     "cardId": "10139",
     "cardNumber": "OSK/S121-042S",
     "name": "残念な第一印象 ルビー",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 120,
     "buyPriceJpy": null,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": null,
-    "stock": null,
+    "stock": 7,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10139.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10139",
-    "scrapedAt": "2026-09-16T18:29:13.514035+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462698+00:00"
   },
   {
     "game": "ws",
@@ -1335,18 +1335,18 @@
     "cardId": "10140",
     "cardNumber": "OSK/S121-043S",
     "name": "ホームパーティー 有馬かな",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": null,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": null,
-    "stock": null,
+    "stock": 8,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10140.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10140",
-    "scrapedAt": "2026-09-16T18:29:13.514039+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462702+00:00"
   },
   {
     "game": "ws",
@@ -1354,7 +1354,7 @@
     "cardId": "10141",
     "cardNumber": "OSK/S121-044S",
     "name": "調整役 有馬かな -ツルギ-",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -1363,9 +1363,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10141.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10141",
-    "scrapedAt": "2026-09-16T18:29:13.514042+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462705+00:00"
   },
   {
     "game": "ws",
@@ -1373,7 +1373,7 @@
     "cardId": "10142",
     "cardNumber": "OSK/S121-045S",
     "name": "近況報告 ルビー",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 120,
     "buyPriceJpy": null,
@@ -1382,9 +1382,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10142.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10142",
-    "scrapedAt": "2026-09-16T18:29:13.514046+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462709+00:00"
   },
   {
     "game": "ws",
@@ -1392,18 +1392,18 @@
     "cardId": "10143",
     "cardNumber": "OSK/S121-046S",
     "name": "ルームツアー動画 ルビー",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 120,
     "buyPriceJpy": null,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": null,
-    "stock": null,
+    "stock": 7,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10143.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10143",
-    "scrapedAt": "2026-09-16T18:29:13.514049+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462714+00:00"
   },
   {
     "game": "ws",
@@ -1411,18 +1411,18 @@
     "cardId": "10144",
     "cardNumber": "OSK/S121-047S",
     "name": "“ブレイド”姫川大輝",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 680,
     "buyPriceJpy": 300,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 380,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10144.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10144",
-    "scrapedAt": "2026-09-16T18:29:13.514053+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462718+00:00"
   },
   {
     "game": "ws",
@@ -1430,18 +1430,18 @@
     "cardId": "10145",
     "cardNumber": "OSK/S121-048S",
     "name": "夕涼み アクア",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 120,
     "buyPriceJpy": null,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": null,
-    "stock": null,
+    "stock": 10,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10145.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10145",
-    "scrapedAt": "2026-09-16T18:29:13.514056+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462722+00:00"
   },
   {
     "game": "ws",
@@ -1449,7 +1449,7 @@
     "cardId": "10146",
     "cardNumber": "OSK/S121-049S",
     "name": "新衣装 有馬かな",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -1458,9 +1458,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10146.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10146",
-    "scrapedAt": "2026-09-16T18:29:13.514060+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462725+00:00"
   },
   {
     "game": "ws",
@@ -1468,18 +1468,18 @@
     "cardId": "10147",
     "cardNumber": "OSK/S121-050S",
     "name": "眩い太陽 有馬かな -ツルギ-",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 120,
     "buyPriceJpy": null,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": null,
-    "stock": null,
+    "stock": 10,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10147.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10147",
-    "scrapedAt": "2026-09-16T18:29:13.514063+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462728+00:00"
   },
   {
     "game": "ws",
@@ -1487,7 +1487,7 @@
     "cardId": "10148",
     "cardNumber": "OSK/S121-051S",
     "name": "血縁関係 姫川大輝",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 120,
     "buyPriceJpy": null,
@@ -1496,9 +1496,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10148.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10148",
-    "scrapedAt": "2026-09-16T18:29:13.514068+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462732+00:00"
   },
   {
     "game": "ws",
@@ -1506,18 +1506,18 @@
     "cardId": "10149",
     "cardNumber": "OSK/S121-052S",
     "name": "“可愛く”魅せる 有馬かな",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 220,
     "buyPriceJpy": 50,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 170,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10149.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10149",
-    "scrapedAt": "2026-09-16T18:29:13.514072+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462735+00:00"
   },
   {
     "game": "ws",
@@ -1525,18 +1525,18 @@
     "cardId": "10150",
     "cardNumber": "OSK/S121-053S",
     "name": "スマートなエスコート アクア",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": 30,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 150,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10150.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10150",
-    "scrapedAt": "2026-09-16T18:29:13.514076+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462739+00:00"
   },
   {
     "game": "ws",
@@ -1544,18 +1544,18 @@
     "cardId": "10151",
     "cardNumber": "OSK/S121-054S",
     "name": "胸の内のもや 有馬かな",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 120,
     "buyPriceJpy": 5,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 115,
-    "stock": null,
+    "stock": 2,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10151.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10151",
-    "scrapedAt": "2026-09-16T18:29:13.514079+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462742+00:00"
   },
   {
     "game": "ws",
@@ -1563,7 +1563,7 @@
     "cardId": "10152",
     "cardNumber": "OSK/S121-055S",
     "name": "力不足 鳴嶋メルト",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 120,
     "buyPriceJpy": null,
@@ -1572,9 +1572,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10152.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10152",
-    "scrapedAt": "2026-09-16T18:29:13.514083+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462746+00:00"
   },
   {
     "game": "ws",
@@ -1582,7 +1582,7 @@
     "cardId": "10153",
     "cardNumber": "OSK/S121-056S",
     "name": "“キザミ”鳴嶋メルト",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -1591,9 +1591,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10153.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10153",
-    "scrapedAt": "2026-09-16T18:29:13.514086+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462749+00:00"
   },
   {
     "game": "ws",
@@ -1601,18 +1601,18 @@
     "cardId": "10154",
     "cardNumber": "OSK/S121-057S",
     "name": "喪失感 アクア",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": null,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": null,
-    "stock": null,
+    "stock": 9,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10154.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10154",
-    "scrapedAt": "2026-09-16T18:29:13.514090+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462752+00:00"
   },
   {
     "game": "ws",
@@ -1620,18 +1620,18 @@
     "cardId": "10155",
     "cardNumber": "OSK/S121-058S",
     "name": "Happy Halloween！ 有馬かな",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 120,
     "buyPriceJpy": null,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": null,
-    "stock": null,
+    "stock": 7,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10155.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10155",
-    "scrapedAt": "2026-09-16T18:29:13.514093+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462756+00:00"
   },
   {
     "game": "ws",
@@ -1639,18 +1639,18 @@
     "cardId": "10156",
     "cardNumber": "OSK/S121-059S",
     "name": "稽古中 有馬かな",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 220,
     "buyPriceJpy": 50,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 170,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10156.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10156",
-    "scrapedAt": "2026-09-16T18:29:13.514099+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462762+00:00"
   },
   {
     "game": "ws",
@@ -1658,7 +1658,7 @@
     "cardId": "10157",
     "cardNumber": "OSK/S121-060S",
     "name": "謎の少女",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": null,
@@ -1667,9 +1667,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10157.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10157",
-    "scrapedAt": "2026-09-16T18:29:13.514103+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462765+00:00"
   },
   {
     "game": "ws",
@@ -1677,18 +1677,18 @@
     "cardId": "10158",
     "cardNumber": "OSK/S121-065S",
     "name": "コーヒーを片手に アクア",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 3480,
     "buyPriceJpy": 2200,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 1280,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10158.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10158",
-    "scrapedAt": "2026-09-16T18:29:13.514106+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462769+00:00"
   },
   {
     "game": "ws",
@@ -1696,18 +1696,18 @@
     "cardId": "10159",
     "cardNumber": "OSK/S121-066S",
     "name": "役者としての矜持 黒川あかね",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": 30,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 150,
-    "stock": null,
+    "stock": 2,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10159.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10159",
-    "scrapedAt": "2026-09-16T18:29:13.514110+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462772+00:00"
   },
   {
     "game": "ws",
@@ -1715,18 +1715,18 @@
     "cardId": "10160",
     "cardNumber": "OSK/S121-067S",
     "name": "星降る夜に 黒川あかね",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 1480,
     "buyPriceJpy": 600,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 880,
-    "stock": null,
+    "stock": 4,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10160.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10160",
-    "scrapedAt": "2026-09-16T18:29:13.514113+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462775+00:00"
   },
   {
     "game": "ws",
@@ -1734,7 +1734,7 @@
     "cardId": "10161",
     "cardNumber": "OSK/S121-068S",
     "name": "役の作り込み 黒川あかね",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 120,
     "buyPriceJpy": null,
@@ -1743,9 +1743,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10161.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10161",
-    "scrapedAt": "2026-09-16T18:29:13.514117+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462780+00:00"
   },
   {
     "game": "ws",
@@ -1753,18 +1753,18 @@
     "cardId": "10162",
     "cardNumber": "OSK/S121-069S",
     "name": "宮崎観光 アクア&黒川あかね",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 1480,
     "buyPriceJpy": 700,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 780,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10162.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10162",
-    "scrapedAt": "2026-09-16T18:29:13.514125+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462784+00:00"
   },
   {
     "game": "ws",
@@ -1772,18 +1772,18 @@
     "cardId": "10163",
     "cardNumber": "OSK/S121-070S",
     "name": "舞台に生きる 黒川あかね",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 1480,
     "buyPriceJpy": 700,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 780,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10163.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10163",
-    "scrapedAt": "2026-09-16T18:29:13.514128+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462788+00:00"
   },
   {
     "game": "ws",
@@ -1791,18 +1791,18 @@
     "cardId": "10164",
     "cardNumber": "OSK/S121-071S",
     "name": "観劇デート 黒川あかね",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 220,
     "buyPriceJpy": 50,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 170,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10164.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10164",
-    "scrapedAt": "2026-09-16T18:29:13.514132+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462791+00:00"
   },
   {
     "game": "ws",
@@ -1810,7 +1810,7 @@
     "cardId": "10165",
     "cardNumber": "OSK/S121-072S",
     "name": "観劇デート アクア",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -1819,9 +1819,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10165.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10165",
-    "scrapedAt": "2026-09-16T18:29:13.514136+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462795+00:00"
   },
   {
     "game": "ws",
@@ -1829,18 +1829,18 @@
     "cardId": "10166",
     "cardNumber": "OSK/S121-073S",
     "name": "クリスマスデート 黒川あかね",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 1280,
     "buyPriceJpy": 600,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 680,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10166.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10166",
-    "scrapedAt": "2026-09-16T18:29:13.514141+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462799+00:00"
   },
   {
     "game": "ws",
@@ -1848,7 +1848,7 @@
     "cardId": "10167",
     "cardNumber": "OSK/S121-074S",
     "name": "強烈な感情演技 アクア -刀鬼-",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -1857,9 +1857,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10167.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10167",
-    "scrapedAt": "2026-09-16T18:29:13.514144+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462802+00:00"
   },
   {
     "game": "ws",
@@ -1867,18 +1867,18 @@
     "cardId": "10168",
     "cardNumber": "OSK/S121-075S",
     "name": "天才の演技 黒川あかね -鞘姫-",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 3480,
     "buyPriceJpy": 2200,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 1280,
-    "stock": null,
+    "stock": 1,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10168.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10168",
-    "scrapedAt": "2026-09-16T18:29:13.514148+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462806+00:00"
   },
   {
     "game": "ws",
@@ -1886,18 +1886,18 @@
     "cardId": "10169",
     "cardNumber": "OSK/S121-076S",
     "name": "恩人 吉祥寺頼子",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": 20,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 160,
-    "stock": null,
+    "stock": 4,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10169.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10169",
-    "scrapedAt": "2026-09-16T18:29:13.514152+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462809+00:00"
   },
   {
     "game": "ws",
@@ -1905,18 +1905,18 @@
     "cardId": "10170",
     "cardNumber": "OSK/S121-077S",
     "name": "プクーッ 黒川あかね",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 220,
     "buyPriceJpy": 50,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 170,
-    "stock": null,
+    "stock": 1,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10170.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10170",
-    "scrapedAt": "2026-09-16T18:29:13.514155+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462813+00:00"
   },
   {
     "game": "ws",
@@ -1924,18 +1924,18 @@
     "cardId": "10171",
     "cardNumber": "OSK/S121-078S",
     "name": "これからのこと　黒川あかね",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 500,
     "buyPriceJpy": 200,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 300,
-    "stock": null,
+    "stock": 1,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10171.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10171",
-    "scrapedAt": "2026-09-16T18:29:13.514159+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462816+00:00"
   },
   {
     "game": "ws",
@@ -1943,7 +1943,7 @@
     "cardId": "10172",
     "cardNumber": "OSK/S121-079S",
     "name": "不完全な恋愛感情 黒川あかね",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -1952,9 +1952,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10172.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10172",
-    "scrapedAt": "2026-09-16T18:29:13.514162+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462820+00:00"
   },
   {
     "game": "ws",
@@ -1962,18 +1962,18 @@
     "cardId": "10173",
     "cardNumber": "OSK/S121-080S",
     "name": "別れ話 アクア",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 2980,
     "buyPriceJpy": 2000,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 980,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10173.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10173",
-    "scrapedAt": "2026-09-16T18:29:13.514166+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462823+00:00"
   },
   {
     "game": "ws",
@@ -1981,18 +1981,18 @@
     "cardId": "10174",
     "cardNumber": "OSK/S121-081S",
     "name": "“付き合ってる”の意味 アクア",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 120,
     "buyPriceJpy": null,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": null,
-    "stock": null,
+    "stock": 10,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10174.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10174",
-    "scrapedAt": "2026-09-16T18:29:13.514169+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462826+00:00"
   },
   {
     "game": "ws",
@@ -2000,18 +2000,18 @@
     "cardId": "10175",
     "cardNumber": "OSK/S121-082S",
     "name": "“カノジョ”として 黒川あかね",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 320,
     "buyPriceJpy": 100,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 220,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10175.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10175",
-    "scrapedAt": "2026-09-16T18:29:13.514173+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462830+00:00"
   },
   {
     "game": "ws",
@@ -2019,18 +2019,18 @@
     "cardId": "10176",
     "cardNumber": "OSK/S121-083S",
     "name": "公演成功のため 雷田澄彰",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": 10,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 170,
-    "stock": null,
+    "stock": 3,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10176.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10176",
-    "scrapedAt": "2026-09-16T18:29:13.514176+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462833+00:00"
   },
   {
     "game": "ws",
@@ -2038,18 +2038,18 @@
     "cardId": "10177",
     "cardNumber": "OSK/S121-084S",
     "name": "原作者 鮫島アビ子",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": null,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": null,
-    "stock": null,
+    "stock": 5,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10177.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10177",
-    "scrapedAt": "2026-09-16T18:29:13.514179+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462836+00:00"
   },
   {
     "game": "ws",
@@ -2057,18 +2057,18 @@
     "cardId": "10178",
     "cardNumber": "OSK/S121-085S",
     "name": "売れっ子脚本家 GOA",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": null,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": null,
-    "stock": null,
+    "stock": 7,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10178.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10178",
-    "scrapedAt": "2026-09-16T18:29:13.514181+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462840+00:00"
   },
   {
     "game": "ws",
@@ -2076,18 +2076,18 @@
     "cardId": "10179",
     "cardNumber": "OSK/S121-086S",
     "name": "それぞれの戦い方 アクア-刀鬼-",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": null,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": null,
-    "stock": null,
+    "stock": 9,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10179.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10179",
-    "scrapedAt": "2026-09-16T18:29:13.514184+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462845+00:00"
   },
   {
     "game": "ws",
@@ -2095,18 +2095,18 @@
     "cardId": "10180",
     "cardNumber": "OSK/S121-087S",
     "name": "心の枷 アクア",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": null,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": null,
-    "stock": null,
+    "stock": 10,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10180.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10180",
-    "scrapedAt": "2026-09-16T18:29:13.514186+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462848+00:00"
   },
   {
     "game": "ws",
@@ -2114,18 +2114,18 @@
     "cardId": "10181",
     "cardNumber": "OSK/S121-088S",
     "name": "揺れ動くファン心 黒川あかね -鞘姫-",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": null,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": null,
-    "stock": null,
+    "stock": 9,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10181.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10181",
-    "scrapedAt": "2026-09-16T18:29:13.514188+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462853+00:00"
   },
   {
     "game": "ws",
@@ -2133,7 +2133,7 @@
     "cardId": "10182",
     "cardNumber": "OSK/S121-089S",
     "name": "“匁”鴨志田朔夜",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -2142,9 +2142,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10182.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10182",
-    "scrapedAt": "2026-09-16T18:29:13.514190+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462856+00:00"
   },
   {
     "game": "ws",
@@ -2152,7 +2152,7 @@
     "cardId": "10183",
     "cardNumber": "OSK/S121-090S",
     "name": "キスの意味 黒川あかね",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -2161,9 +2161,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10183.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10183",
-    "scrapedAt": "2026-09-16T18:29:13.514193+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462860+00:00"
   },
   {
     "game": "ws",
@@ -2171,18 +2171,18 @@
     "cardId": "10184",
     "cardNumber": "OSK/S121-091S",
     "name": "“鞘姫”黒川あかね",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 120,
     "buyPriceJpy": null,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": null,
-    "stock": null,
+    "stock": 10,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10184.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10184",
-    "scrapedAt": "2026-09-16T18:29:13.514199+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462863+00:00"
   },
   {
     "game": "ws",
@@ -2190,7 +2190,7 @@
     "cardId": "10185",
     "cardNumber": "OSK/S121-092S",
     "name": "役者としての矜持 アクア",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": null,
@@ -2199,9 +2199,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10185.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10185",
-    "scrapedAt": "2026-09-16T18:29:13.514201+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462867+00:00"
   },
   {
     "game": "ws",
@@ -2209,7 +2209,7 @@
     "cardId": "10186",
     "cardNumber": "OSK/S121-093S",
     "name": "氷のように冷たく アクア -刀鬼-",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -2218,9 +2218,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10186.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10186",
-    "scrapedAt": "2026-09-16T18:29:13.514203+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462870+00:00"
   },
   {
     "game": "ws",
@@ -2228,7 +2228,7 @@
     "cardId": "10187",
     "cardNumber": "OSK/S121-094S",
     "name": "思った通りの反応 黒川あかね",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -2237,9 +2237,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10187.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10187",
-    "scrapedAt": "2026-09-16T18:29:13.514206+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462873+00:00"
   },
   {
     "game": "ws",
@@ -2247,7 +2247,7 @@
     "cardId": "10188",
     "cardNumber": "OSK/S121-095S",
     "name": "キャラ考察 黒川あかね",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -2256,9 +2256,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10188.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10188",
-    "scrapedAt": "2026-09-16T18:29:13.514208+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462877+00:00"
   },
   {
     "game": "ws",
@@ -2266,7 +2266,7 @@
     "cardId": "10189",
     "cardNumber": "OSK/S121-096S",
     "name": "アイ無限恒久永遠推し!!!",
-    "rarity": null,
+    "rarity": "SR",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -2275,9 +2275,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10189.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10189",
-    "scrapedAt": "2026-09-16T18:29:13.514211+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462880+00:00"
   },
   {
     "game": "ws",
@@ -2285,7 +2285,7 @@
     "cardId": "10002",
     "cardNumber": "OSK/S121-001",
     "name": "役者としての矜持 有馬かな",
-    "rarity": null,
+    "rarity": "RR",
     "condition": "near_mint",
     "sellPriceJpy": 320,
     "buyPriceJpy": 20,
@@ -2294,9 +2294,9 @@
     "spreadJpy": 300,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10002.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10002",
-    "scrapedAt": "2026-09-16T18:29:13.514221+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462884+00:00"
   },
   {
     "game": "ws",
@@ -2304,7 +2304,7 @@
     "cardId": "10003",
     "cardNumber": "OSK/S121-002",
     "name": "どれにしようかな？MEMちょ",
-    "rarity": null,
+    "rarity": "RR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": null,
@@ -2313,9 +2313,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10003.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10003",
-    "scrapedAt": "2026-09-16T18:29:13.514224+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462888+00:00"
   },
   {
     "game": "ws",
@@ -2323,7 +2323,7 @@
     "cardId": "10004",
     "cardNumber": "OSK/S121-003",
     "name": "自分だけの色 ルビー",
-    "rarity": null,
+    "rarity": "RR",
     "condition": "near_mint",
     "sellPriceJpy": 120,
     "buyPriceJpy": 2,
@@ -2332,9 +2332,9 @@
     "spreadJpy": 118,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10004.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10004",
-    "scrapedAt": "2026-09-16T18:29:13.514226+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462892+00:00"
   },
   {
     "game": "ws",
@@ -2342,18 +2342,18 @@
     "cardId": "10028",
     "cardNumber": "OSK/S121-027",
     "name": "聖夜の待ち合わせ アイ",
-    "rarity": null,
+    "rarity": "RR",
     "condition": "near_mint",
     "sellPriceJpy": 2980,
     "buyPriceJpy": 2000,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 980,
-    "stock": null,
+    "stock": 4,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10028.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10028",
-    "scrapedAt": "2026-09-16T18:29:13.514229+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462895+00:00"
   },
   {
     "game": "ws",
@@ -2361,18 +2361,18 @@
     "cardId": "10029",
     "cardNumber": "OSK/S121-028",
     "name": "水族館デート 有馬かな",
-    "rarity": null,
+    "rarity": "RR",
     "condition": "near_mint",
     "sellPriceJpy": 780,
     "buyPriceJpy": 400,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 380,
-    "stock": null,
+    "stock": 7,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10029.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10029",
-    "scrapedAt": "2026-09-16T18:29:13.514231+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462898+00:00"
   },
   {
     "game": "ws",
@@ -2380,18 +2380,18 @@
     "cardId": "10030",
     "cardNumber": "OSK/S121-029",
     "name": "自然とのふれあい ルビー",
-    "rarity": null,
+    "rarity": "RR",
     "condition": "near_mint",
     "sellPriceJpy": 220,
     "buyPriceJpy": 20,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 200,
-    "stock": null,
+    "stock": 5,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10030.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10030",
-    "scrapedAt": "2026-09-16T18:29:13.514234+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462900+00:00"
   },
   {
     "game": "ws",
@@ -2399,7 +2399,7 @@
     "cardId": "10031",
     "cardNumber": "OSK/S121-030",
     "name": "導かれし双星 アクア&ルビー",
-    "rarity": null,
+    "rarity": "RR",
     "condition": "near_mint",
     "sellPriceJpy": 680,
     "buyPriceJpy": 300,
@@ -2408,9 +2408,9 @@
     "spreadJpy": 380,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10031.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10031",
-    "scrapedAt": "2026-09-16T18:29:13.514237+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462902+00:00"
   },
   {
     "game": "ws",
@@ -2418,18 +2418,18 @@
     "cardId": "10066",
     "cardNumber": "OSK/S121-065",
     "name": "コーヒーを片手に アクア",
-    "rarity": null,
+    "rarity": "RR",
     "condition": "near_mint",
     "sellPriceJpy": 2480,
     "buyPriceJpy": 1800,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 680,
-    "stock": null,
+    "stock": 3,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10066.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10066",
-    "scrapedAt": "2026-09-16T18:29:13.514239+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462906+00:00"
   },
   {
     "game": "ws",
@@ -2437,7 +2437,7 @@
     "cardId": "10067",
     "cardNumber": "OSK/S121-066",
     "name": "役者としての矜持 黒川あかね",
-    "rarity": null,
+    "rarity": "RR",
     "condition": "near_mint",
     "sellPriceJpy": 120,
     "buyPriceJpy": 2,
@@ -2446,9 +2446,9 @@
     "spreadJpy": 118,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10067.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10067",
-    "scrapedAt": "2026-09-16T18:29:13.514241+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462908+00:00"
   },
   {
     "game": "ws",
@@ -2456,7 +2456,7 @@
     "cardId": "10068",
     "cardNumber": "OSK/S121-067",
     "name": "星降る夜に 黒川あかね",
-    "rarity": null,
+    "rarity": "RR",
     "condition": "near_mint",
     "sellPriceJpy": 500,
     "buyPriceJpy": 50,
@@ -2465,9 +2465,9 @@
     "spreadJpy": 450,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10068.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10068",
-    "scrapedAt": "2026-09-16T18:29:13.514244+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462910+00:00"
   },
   {
     "game": "ws",
@@ -2475,7 +2475,7 @@
     "cardId": "10005",
     "cardNumber": "OSK/S121-004",
     "name": "Happy Halloween！ ルビー",
-    "rarity": null,
+    "rarity": "R",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -2484,9 +2484,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10005.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10005",
-    "scrapedAt": "2026-09-16T18:29:13.514246+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462913+00:00"
   },
   {
     "game": "ws",
@@ -2494,7 +2494,7 @@
     "cardId": "10006",
     "cardNumber": "OSK/S121-005",
     "name": "人気配信者への道 MEMちょ",
-    "rarity": null,
+    "rarity": "R",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -2503,9 +2503,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10006.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10006",
-    "scrapedAt": "2026-09-16T18:29:13.514249+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462915+00:00"
   },
   {
     "game": "ws",
@@ -2513,7 +2513,7 @@
     "cardId": "10007",
     "cardNumber": "OSK/S121-006",
     "name": "怒涛の撮影スケジュール MEMちょ",
-    "rarity": null,
+    "rarity": "R",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -2522,9 +2522,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10007.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10007",
-    "scrapedAt": "2026-09-16T18:29:13.514252+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462917+00:00"
   },
   {
     "game": "ws",
@@ -2532,7 +2532,7 @@
     "cardId": "10008",
     "cardNumber": "OSK/S121-007",
     "name": "Happy Halloween！ MEMちょ",
-    "rarity": null,
+    "rarity": "R",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -2541,9 +2541,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10008.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10008",
-    "scrapedAt": "2026-09-16T18:29:13.514255+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462920+00:00"
   },
   {
     "game": "ws",
@@ -2551,18 +2551,18 @@
     "cardId": "10009",
     "cardNumber": "OSK/S121-008",
     "name": "朝霧の邂逅 ルビー",
-    "rarity": null,
+    "rarity": "R",
     "condition": "near_mint",
     "sellPriceJpy": 220,
     "buyPriceJpy": 50,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 170,
-    "stock": null,
+    "stock": 2,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10009.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10009",
-    "scrapedAt": "2026-09-16T18:29:13.514257+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462922+00:00"
   },
   {
     "game": "ws",
@@ -2570,7 +2570,7 @@
     "cardId": "10010",
     "cardNumber": "OSK/S121-009",
     "name": "ルームツアー動画 有馬かな",
-    "rarity": null,
+    "rarity": "R",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -2579,9 +2579,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10010.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10010",
-    "scrapedAt": "2026-09-16T18:29:13.514260+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462924+00:00"
   },
   {
     "game": "ws",
@@ -2589,7 +2589,7 @@
     "cardId": "10032",
     "cardNumber": "OSK/S121-031",
     "name": "謹賀新年 有馬かな",
-    "rarity": null,
+    "rarity": "R",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": 5,
@@ -2598,9 +2598,9 @@
     "spreadJpy": 175,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10032.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10032",
-    "scrapedAt": "2026-09-16T18:29:13.514262+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462927+00:00"
   },
   {
     "game": "ws",
@@ -2608,7 +2608,7 @@
     "cardId": "10033",
     "cardNumber": "OSK/S121-032",
     "name": "復讐の炎 ルビー",
-    "rarity": null,
+    "rarity": "R",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -2617,9 +2617,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10033.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10033",
-    "scrapedAt": "2026-09-16T18:29:13.514264+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462929+00:00"
   },
   {
     "game": "ws",
@@ -2627,7 +2627,7 @@
     "cardId": "10034",
     "cardNumber": "OSK/S121-033",
     "name": "謹賀新年 ルビー",
-    "rarity": null,
+    "rarity": "R",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -2636,9 +2636,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10034.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10034",
-    "scrapedAt": "2026-09-16T18:29:13.514267+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462931+00:00"
   },
   {
     "game": "ws",
@@ -2646,7 +2646,7 @@
     "cardId": "10035",
     "cardNumber": "OSK/S121-034",
     "name": "あと、もう少しだけ… 有馬かな",
-    "rarity": null,
+    "rarity": "R",
     "condition": "near_mint",
     "sellPriceJpy": 220,
     "buyPriceJpy": 20,
@@ -2655,9 +2655,9 @@
     "spreadJpy": 200,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10035.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10035",
-    "scrapedAt": "2026-09-16T18:29:13.514269+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462933+00:00"
   },
   {
     "game": "ws",
@@ -2665,7 +2665,7 @@
     "cardId": "10036",
     "cardNumber": "OSK/S121-035",
     "name": "願い続けた夢 アイ",
-    "rarity": null,
+    "rarity": "R",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -2674,9 +2674,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10036.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10036",
-    "scrapedAt": "2026-09-16T18:29:13.514272+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462936+00:00"
   },
   {
     "game": "ws",
@@ -2684,7 +2684,7 @@
     "cardId": "10037",
     "cardNumber": "OSK/S121-036",
     "name": "双子の絆 アクア＆ルビー",
-    "rarity": null,
+    "rarity": "R",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": 10,
@@ -2693,9 +2693,9 @@
     "spreadJpy": 170,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10037.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10037",
-    "scrapedAt": "2026-09-16T18:29:13.514274+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462938+00:00"
   },
   {
     "game": "ws",
@@ -2703,7 +2703,7 @@
     "cardId": "10038",
     "cardNumber": "OSK/S121-037",
     "name": "素直な感想 アイ",
-    "rarity": null,
+    "rarity": "R",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -2712,9 +2712,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10038.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10038",
-    "scrapedAt": "2026-09-16T18:29:13.514276+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462940+00:00"
   },
   {
     "game": "ws",
@@ -2722,7 +2722,7 @@
     "cardId": "10039",
     "cardNumber": "OSK/S121-038",
     "name": "授業参観 ルビー",
-    "rarity": null,
+    "rarity": "R",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -2731,9 +2731,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10039.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10039",
-    "scrapedAt": "2026-09-16T18:29:13.514279+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462943+00:00"
   },
   {
     "game": "ws",
@@ -2741,7 +2741,7 @@
     "cardId": "10069",
     "cardNumber": "OSK/S121-068",
     "name": "役の作り込み 黒川あかね",
-    "rarity": null,
+    "rarity": "R",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -2750,9 +2750,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10069.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10069",
-    "scrapedAt": "2026-09-16T18:29:13.514282+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462945+00:00"
   },
   {
     "game": "ws",
@@ -2760,18 +2760,18 @@
     "cardId": "10070",
     "cardNumber": "OSK/S121-069",
     "name": "宮崎観光 アクア&黒川あかね",
-    "rarity": null,
+    "rarity": "R",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": 30,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 150,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10070.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10070",
-    "scrapedAt": "2026-09-16T18:29:13.514285+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462949+00:00"
   },
   {
     "game": "ws",
@@ -2779,7 +2779,7 @@
     "cardId": "10071",
     "cardNumber": "OSK/S121-070",
     "name": "舞台に生きる 黒川あかね",
-    "rarity": null,
+    "rarity": "R",
     "condition": "near_mint",
     "sellPriceJpy": 320,
     "buyPriceJpy": 30,
@@ -2788,9 +2788,9 @@
     "spreadJpy": 290,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10071.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10071",
-    "scrapedAt": "2026-09-16T18:29:13.514287+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462951+00:00"
   },
   {
     "game": "ws",
@@ -2798,7 +2798,7 @@
     "cardId": "10072",
     "cardNumber": "OSK/S121-071",
     "name": "観劇デート 黒川あかね",
-    "rarity": null,
+    "rarity": "R",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -2807,9 +2807,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10072.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10072",
-    "scrapedAt": "2026-09-16T18:29:13.514290+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462953+00:00"
   },
   {
     "game": "ws",
@@ -2817,7 +2817,7 @@
     "cardId": "10073",
     "cardNumber": "OSK/S121-072",
     "name": "観劇デート アクア",
-    "rarity": null,
+    "rarity": "R",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -2826,9 +2826,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10073.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10073",
-    "scrapedAt": "2026-09-16T18:29:13.514292+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462956+00:00"
   },
   {
     "game": "ws",
@@ -2836,7 +2836,7 @@
     "cardId": "10074",
     "cardNumber": "OSK/S121-073",
     "name": "クリスマスデート 黒川あかね",
-    "rarity": null,
+    "rarity": "R",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": 2,
@@ -2845,9 +2845,9 @@
     "spreadJpy": 78,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10074.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10074",
-    "scrapedAt": "2026-09-16T18:29:13.514294+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462958+00:00"
   },
   {
     "game": "ws",
@@ -2855,7 +2855,7 @@
     "cardId": "10075",
     "cardNumber": "OSK/S121-074",
     "name": "強烈な感情演技 アクア -刀鬼-",
-    "rarity": null,
+    "rarity": "R",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -2864,9 +2864,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10075.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10075",
-    "scrapedAt": "2026-09-16T18:29:13.514300+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462960+00:00"
   },
   {
     "game": "ws",
@@ -2874,7 +2874,7 @@
     "cardId": "10076",
     "cardNumber": "OSK/S121-075",
     "name": "天才の演技 黒川あかね -鞘姫-",
-    "rarity": null,
+    "rarity": "R",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": null,
@@ -2883,9 +2883,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10076.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10076",
-    "scrapedAt": "2026-09-16T18:29:13.514303+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462963+00:00"
   },
   {
     "game": "ws",
@@ -2893,7 +2893,7 @@
     "cardId": "10011",
     "cardNumber": "OSK/S121-010",
     "name": "恋バナ ルビー",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -2902,9 +2902,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10011.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10011",
-    "scrapedAt": "2026-09-16T18:29:13.514305+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462965+00:00"
   },
   {
     "game": "ws",
@@ -2912,7 +2912,7 @@
     "cardId": "10012",
     "cardNumber": "OSK/S121-011",
     "name": "クリエイター仲間 MEMちょ",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -2921,9 +2921,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10012.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10012",
-    "scrapedAt": "2026-09-16T18:29:13.514307+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462967+00:00"
   },
   {
     "game": "ws",
@@ -2931,7 +2931,7 @@
     "cardId": "10013",
     "cardNumber": "OSK/S121-012",
     "name": "映像クリエイター アネモネ・モネモネ",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -2940,9 +2940,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10013.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10013",
-    "scrapedAt": "2026-09-16T18:29:13.514310+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462970+00:00"
   },
   {
     "game": "ws",
@@ -2950,7 +2950,7 @@
     "cardId": "10014",
     "cardNumber": "OSK/S121-013",
     "name": "レスバ強者 有馬かな",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": null,
@@ -2959,9 +2959,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10014.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10014",
-    "scrapedAt": "2026-09-16T18:29:13.514312+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462972+00:00"
   },
   {
     "game": "ws",
@@ -2969,7 +2969,7 @@
     "cardId": "10015",
     "cardNumber": "OSK/S121-014",
     "name": "デート服選び 有馬かな",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -2978,9 +2978,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10015.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10015",
-    "scrapedAt": "2026-09-16T18:29:13.514315+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462974+00:00"
   },
   {
     "game": "ws",
@@ -2988,7 +2988,7 @@
     "cardId": "10016",
     "cardNumber": "OSK/S121-015",
     "name": "夜のお散歩 ルビー",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -2997,9 +2997,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10016.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10016",
-    "scrapedAt": "2026-09-16T18:29:13.514317+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462976+00:00"
   },
   {
     "game": "ws",
@@ -3007,7 +3007,7 @@
     "cardId": "10017",
     "cardNumber": "OSK/S121-016",
     "name": "謹賀新年 MEMちょ",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -3016,9 +3016,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10017.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10017",
-    "scrapedAt": "2026-09-16T18:29:13.514319+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462979+00:00"
   },
   {
     "game": "ws",
@@ -3026,7 +3026,7 @@
     "cardId": "10040",
     "cardNumber": "OSK/S121-039",
     "name": "ホワイトデー アクア",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -3035,9 +3035,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10040.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10040",
-    "scrapedAt": "2026-09-16T18:29:13.514322+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462981+00:00"
   },
   {
     "game": "ws",
@@ -3045,7 +3045,7 @@
     "cardId": "10041",
     "cardNumber": "OSK/S121-040",
     "name": "朝食の準備 ルビー",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -3054,9 +3054,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10041.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10041",
-    "scrapedAt": "2026-09-16T18:29:13.514324+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462983+00:00"
   },
   {
     "game": "ws",
@@ -3064,7 +3064,7 @@
     "cardId": "10042",
     "cardNumber": "OSK/S121-041",
     "name": "舞台に生きる 有馬かな",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -3073,9 +3073,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10042.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10042",
-    "scrapedAt": "2026-09-16T18:29:13.514326+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462986+00:00"
   },
   {
     "game": "ws",
@@ -3083,7 +3083,7 @@
     "cardId": "10043",
     "cardNumber": "OSK/S121-042",
     "name": "残念な第一印象 ルビー",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -3092,9 +3092,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10043.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10043",
-    "scrapedAt": "2026-09-16T18:29:13.514329+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462988+00:00"
   },
   {
     "game": "ws",
@@ -3102,7 +3102,7 @@
     "cardId": "10044",
     "cardNumber": "OSK/S121-043",
     "name": "ホームパーティー 有馬かな",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -3111,9 +3111,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10044.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10044",
-    "scrapedAt": "2026-09-16T18:29:13.514331+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462992+00:00"
   },
   {
     "game": "ws",
@@ -3121,7 +3121,7 @@
     "cardId": "10045",
     "cardNumber": "OSK/S121-044",
     "name": "調整役 有馬かな -ツルギ-",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -3130,9 +3130,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10045.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10045",
-    "scrapedAt": "2026-09-16T18:29:13.514333+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462995+00:00"
   },
   {
     "game": "ws",
@@ -3140,7 +3140,7 @@
     "cardId": "10046",
     "cardNumber": "OSK/S121-045",
     "name": "近況報告 ルビー",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -3149,9 +3149,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10046.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10046",
-    "scrapedAt": "2026-09-16T18:29:13.514336+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.462997+00:00"
   },
   {
     "game": "ws",
@@ -3159,7 +3159,7 @@
     "cardId": "10047",
     "cardNumber": "OSK/S121-046",
     "name": "ルームツアー動画 ルビー",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -3168,9 +3168,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10047.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10047",
-    "scrapedAt": "2026-09-16T18:29:13.514338+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463000+00:00"
   },
   {
     "game": "ws",
@@ -3178,7 +3178,7 @@
     "cardId": "10048",
     "cardNumber": "OSK/S121-047",
     "name": "“ブレイド”姫川大輝",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": null,
@@ -3187,9 +3187,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10048.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10048",
-    "scrapedAt": "2026-09-16T18:29:13.514341+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463002+00:00"
   },
   {
     "game": "ws",
@@ -3197,7 +3197,7 @@
     "cardId": "10049",
     "cardNumber": "OSK/S121-048",
     "name": "夕涼み アクア",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -3206,9 +3206,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10049.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10049",
-    "scrapedAt": "2026-09-16T18:29:13.514344+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463005+00:00"
   },
   {
     "game": "ws",
@@ -3216,7 +3216,7 @@
     "cardId": "10050",
     "cardNumber": "OSK/S121-049",
     "name": "新衣装 有馬かな",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -3225,9 +3225,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10050.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10050",
-    "scrapedAt": "2026-09-16T18:29:13.514346+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463007+00:00"
   },
   {
     "game": "ws",
@@ -3235,7 +3235,7 @@
     "cardId": "10051",
     "cardNumber": "OSK/S121-050",
     "name": "眩い太陽 有馬かな -ツルギ-",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -3244,9 +3244,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10051.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10051",
-    "scrapedAt": "2026-09-16T18:29:13.514349+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463009+00:00"
   },
   {
     "game": "ws",
@@ -3254,7 +3254,7 @@
     "cardId": "10077",
     "cardNumber": "OSK/S121-076",
     "name": "恩人 吉祥寺頼子",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -3263,9 +3263,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10077.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10077",
-    "scrapedAt": "2026-09-16T18:29:13.514353+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463015+00:00"
   },
   {
     "game": "ws",
@@ -3273,7 +3273,7 @@
     "cardId": "10078",
     "cardNumber": "OSK/S121-077",
     "name": "プクーッ 黒川あかね",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -3282,9 +3282,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10078.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10078",
-    "scrapedAt": "2026-09-16T18:29:13.514356+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463018+00:00"
   },
   {
     "game": "ws",
@@ -3292,7 +3292,7 @@
     "cardId": "10079",
     "cardNumber": "OSK/S121-078",
     "name": "これからのこと　黒川あかね",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -3301,9 +3301,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10079.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10079",
-    "scrapedAt": "2026-09-16T18:29:13.514359+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463020+00:00"
   },
   {
     "game": "ws",
@@ -3311,7 +3311,7 @@
     "cardId": "10080",
     "cardNumber": "OSK/S121-079",
     "name": "不完全な恋愛感情 黒川あかね",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -3320,9 +3320,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10080.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10080",
-    "scrapedAt": "2026-09-16T18:29:13.514361+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463023+00:00"
   },
   {
     "game": "ws",
@@ -3330,18 +3330,18 @@
     "cardId": "10081",
     "cardNumber": "OSK/S121-080",
     "name": "別れ話 アクア",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 320,
     "buyPriceJpy": 100,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 220,
-    "stock": null,
+    "stock": 4,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10081.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10081",
-    "scrapedAt": "2026-09-16T18:29:13.514363+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463025+00:00"
   },
   {
     "game": "ws",
@@ -3349,7 +3349,7 @@
     "cardId": "10082",
     "cardNumber": "OSK/S121-081",
     "name": "“付き合ってる”の意味 アクア",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -3358,9 +3358,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10082.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10082",
-    "scrapedAt": "2026-09-16T18:29:13.514366+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463027+00:00"
   },
   {
     "game": "ws",
@@ -3368,7 +3368,7 @@
     "cardId": "10083",
     "cardNumber": "OSK/S121-082",
     "name": "“カノジョ”として 黒川あかね",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 120,
     "buyPriceJpy": null,
@@ -3377,9 +3377,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10083.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10083",
-    "scrapedAt": "2026-09-16T18:29:13.514368+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463030+00:00"
   },
   {
     "game": "ws",
@@ -3387,7 +3387,7 @@
     "cardId": "10084",
     "cardNumber": "OSK/S121-083",
     "name": "公演成功のため 雷田澄彰",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": 2,
@@ -3396,9 +3396,9 @@
     "spreadJpy": 48,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10084.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10084",
-    "scrapedAt": "2026-09-16T18:29:13.514370+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463032+00:00"
   },
   {
     "game": "ws",
@@ -3406,7 +3406,7 @@
     "cardId": "10085",
     "cardNumber": "OSK/S121-084",
     "name": "原作者 鮫島アビ子",
-    "rarity": null,
+    "rarity": "U",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -3415,9 +3415,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10085.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10085",
-    "scrapedAt": "2026-09-16T18:29:13.514373+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463034+00:00"
   },
   {
     "game": "ws",
@@ -3425,7 +3425,7 @@
     "cardId": "10018",
     "cardNumber": "OSK/S121-017",
     "name": "POP IN 2 MEMちょ",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": 2,
@@ -3434,9 +3434,9 @@
     "spreadJpy": 28,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10018.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10018",
-    "scrapedAt": "2026-09-16T18:29:13.514375+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463037+00:00"
   },
   {
     "game": "ws",
@@ -3444,7 +3444,7 @@
     "cardId": "10019",
     "cardNumber": "OSK/S121-018",
     "name": "POP IN 2 有馬かな",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3453,9 +3453,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10019.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10019",
-    "scrapedAt": "2026-09-16T18:29:13.514377+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463040+00:00"
   },
   {
     "game": "ws",
@@ -3463,7 +3463,7 @@
     "cardId": "10020",
     "cardNumber": "OSK/S121-019",
     "name": "POP IN 2 ルビー",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3472,9 +3472,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10020.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10020",
-    "scrapedAt": "2026-09-16T18:29:13.514380+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463043+00:00"
   },
   {
     "game": "ws",
@@ -3482,7 +3482,7 @@
     "cardId": "10021",
     "cardNumber": "OSK/S121-020",
     "name": "だだっ子 ルビー",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3491,9 +3491,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10021.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10021",
-    "scrapedAt": "2026-09-16T18:29:13.514382+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463045+00:00"
   },
   {
     "game": "ws",
@@ -3501,7 +3501,7 @@
     "cardId": "10022",
     "cardNumber": "OSK/S121-021",
     "name": "よくある話 有馬かな",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3510,9 +3510,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10022.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10022",
-    "scrapedAt": "2026-09-16T18:29:13.514384+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463048+00:00"
   },
   {
     "game": "ws",
@@ -3520,7 +3520,7 @@
     "cardId": "10023",
     "cardNumber": "OSK/S121-022",
     "name": "注目のきっかけ",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3529,9 +3529,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10023.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10023",
-    "scrapedAt": "2026-09-16T18:29:13.514387+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463050+00:00"
   },
   {
     "game": "ws",
@@ -3539,7 +3539,7 @@
     "cardId": "10052",
     "cardNumber": "OSK/S121-051",
     "name": "血縁関係 姫川大輝",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3548,9 +3548,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10052.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10052",
-    "scrapedAt": "2026-09-16T18:29:13.514390+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463053+00:00"
   },
   {
     "game": "ws",
@@ -3558,7 +3558,7 @@
     "cardId": "10053",
     "cardNumber": "OSK/S121-052",
     "name": "“可愛く”魅せる 有馬かな",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -3567,9 +3567,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10053.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10053",
-    "scrapedAt": "2026-09-16T18:29:13.514393+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463055+00:00"
   },
   {
     "game": "ws",
@@ -3577,7 +3577,7 @@
     "cardId": "10054",
     "cardNumber": "OSK/S121-053",
     "name": "スマートなエスコート アクア",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3586,9 +3586,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10054.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10054",
-    "scrapedAt": "2026-09-16T18:29:13.514395+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463057+00:00"
   },
   {
     "game": "ws",
@@ -3596,7 +3596,7 @@
     "cardId": "10055",
     "cardNumber": "OSK/S121-054",
     "name": "胸の内のもや 有馬かな",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -3605,9 +3605,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10055.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10055",
-    "scrapedAt": "2026-09-16T18:29:13.514398+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463060+00:00"
   },
   {
     "game": "ws",
@@ -3615,7 +3615,7 @@
     "cardId": "10056",
     "cardNumber": "OSK/S121-055",
     "name": "力不足 鳴嶋メルト",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3624,9 +3624,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10056.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10056",
-    "scrapedAt": "2026-09-16T18:29:13.514400+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463062+00:00"
   },
   {
     "game": "ws",
@@ -3634,7 +3634,7 @@
     "cardId": "10057",
     "cardNumber": "OSK/S121-056",
     "name": "“キザミ”鳴嶋メルト",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3643,9 +3643,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10057.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10057",
-    "scrapedAt": "2026-09-16T18:29:13.514403+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463064+00:00"
   },
   {
     "game": "ws",
@@ -3653,7 +3653,7 @@
     "cardId": "10058",
     "cardNumber": "OSK/S121-057",
     "name": "喪失感 アクア",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3662,9 +3662,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10058.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10058",
-    "scrapedAt": "2026-09-16T18:29:13.514405+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463067+00:00"
   },
   {
     "game": "ws",
@@ -3672,7 +3672,7 @@
     "cardId": "10059",
     "cardNumber": "OSK/S121-058",
     "name": "Happy Halloween！ 有馬かな",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3681,9 +3681,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10059.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10059",
-    "scrapedAt": "2026-09-16T18:29:13.514408+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463069+00:00"
   },
   {
     "game": "ws",
@@ -3691,7 +3691,7 @@
     "cardId": "10060",
     "cardNumber": "OSK/S121-059",
     "name": "稽古中 有馬かな",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3700,9 +3700,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10060.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10060",
-    "scrapedAt": "2026-09-16T18:29:13.514411+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463071+00:00"
   },
   {
     "game": "ws",
@@ -3710,7 +3710,7 @@
     "cardId": "10061",
     "cardNumber": "OSK/S121-060",
     "name": "謎の少女",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 80,
     "buyPriceJpy": null,
@@ -3719,9 +3719,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10061.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10061",
-    "scrapedAt": "2026-09-16T18:29:13.514413+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463074+00:00"
   },
   {
     "game": "ws",
@@ -3729,7 +3729,7 @@
     "cardId": "10086",
     "cardNumber": "OSK/S121-085",
     "name": "売れっ子脚本家 GOA",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3738,9 +3738,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10086.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10086",
-    "scrapedAt": "2026-09-16T18:29:13.514416+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463076+00:00"
   },
   {
     "game": "ws",
@@ -3748,7 +3748,7 @@
     "cardId": "10087",
     "cardNumber": "OSK/S121-086",
     "name": "それぞれの戦い方 アクア-刀鬼-",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3757,9 +3757,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10087.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10087",
-    "scrapedAt": "2026-09-16T18:29:13.514418+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463078+00:00"
   },
   {
     "game": "ws",
@@ -3767,7 +3767,7 @@
     "cardId": "10088",
     "cardNumber": "OSK/S121-087",
     "name": "心の枷 アクア",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3776,9 +3776,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10088.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10088",
-    "scrapedAt": "2026-09-16T18:29:13.514421+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463080+00:00"
   },
   {
     "game": "ws",
@@ -3786,7 +3786,7 @@
     "cardId": "10089",
     "cardNumber": "OSK/S121-088",
     "name": "揺れ動くファン心 黒川あかね -鞘姫-",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3795,9 +3795,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10089.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10089",
-    "scrapedAt": "2026-09-16T18:29:13.514423+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463084+00:00"
   },
   {
     "game": "ws",
@@ -3805,7 +3805,7 @@
     "cardId": "10090",
     "cardNumber": "OSK/S121-089",
     "name": "“匁”鴨志田朔夜",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3814,9 +3814,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10090.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10090",
-    "scrapedAt": "2026-09-16T18:29:13.514426+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463086+00:00"
   },
   {
     "game": "ws",
@@ -3824,7 +3824,7 @@
     "cardId": "10091",
     "cardNumber": "OSK/S121-090",
     "name": "キスの意味 黒川あかね",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3833,9 +3833,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10091.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10091",
-    "scrapedAt": "2026-09-16T18:29:13.514428+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463088+00:00"
   },
   {
     "game": "ws",
@@ -3843,7 +3843,7 @@
     "cardId": "10092",
     "cardNumber": "OSK/S121-091",
     "name": "“鞘姫”黒川あかね",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3852,9 +3852,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10092.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10092",
-    "scrapedAt": "2026-09-16T18:29:13.514431+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463091+00:00"
   },
   {
     "game": "ws",
@@ -3862,7 +3862,7 @@
     "cardId": "10093",
     "cardNumber": "OSK/S121-092",
     "name": "役者としての矜持 アクア",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3871,9 +3871,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10093.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10093",
-    "scrapedAt": "2026-09-16T18:29:13.514433+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463093+00:00"
   },
   {
     "game": "ws",
@@ -3881,7 +3881,7 @@
     "cardId": "10094",
     "cardNumber": "OSK/S121-093",
     "name": "氷のように冷たく アクア -刀鬼-",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3890,9 +3890,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10094.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10094",
-    "scrapedAt": "2026-09-16T18:29:13.514436+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463096+00:00"
   },
   {
     "game": "ws",
@@ -3900,7 +3900,7 @@
     "cardId": "10095",
     "cardNumber": "OSK/S121-094",
     "name": "思った通りの反応 黒川あかね",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3909,9 +3909,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10095.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10095",
-    "scrapedAt": "2026-09-16T18:29:13.514439+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463098+00:00"
   },
   {
     "game": "ws",
@@ -3919,7 +3919,7 @@
     "cardId": "10096",
     "cardNumber": "OSK/S121-095",
     "name": "キャラ考察 黒川あかね",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3928,9 +3928,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10096.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10096",
-    "scrapedAt": "2026-09-16T18:29:13.514441+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463100+00:00"
   },
   {
     "game": "ws",
@@ -3938,7 +3938,7 @@
     "cardId": "10097",
     "cardNumber": "OSK/S121-096",
     "name": "アイ無限恒久永遠推し!!!",
-    "rarity": null,
+    "rarity": "C",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3947,9 +3947,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10097.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10097",
-    "scrapedAt": "2026-09-16T18:29:13.514444+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463102+00:00"
   },
   {
     "game": "ws",
@@ -3957,7 +3957,7 @@
     "cardId": "10024",
     "cardNumber": "OSK/S121-023",
     "name": "テコ入れプラン",
-    "rarity": null,
+    "rarity": "CR",
     "condition": "near_mint",
     "sellPriceJpy": 50,
     "buyPriceJpy": null,
@@ -3966,9 +3966,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10024.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10024",
-    "scrapedAt": "2026-09-16T18:29:13.514446+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463105+00:00"
   },
   {
     "game": "ws",
@@ -3976,7 +3976,7 @@
     "cardId": "10025",
     "cardNumber": "OSK/S121-024",
     "name": "情熱の再燃",
-    "rarity": null,
+    "rarity": "CR",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -3985,9 +3985,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10025.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10025",
-    "scrapedAt": "2026-09-16T18:29:13.514449+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463107+00:00"
   },
   {
     "game": "ws",
@@ -3995,7 +3995,7 @@
     "cardId": "10026",
     "cardNumber": "OSK/S121-025",
     "name": "撮影の合間に",
-    "rarity": null,
+    "rarity": "CR",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -4004,9 +4004,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10026.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10026",
-    "scrapedAt": "2026-09-16T18:29:13.514451+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463110+00:00"
   },
   {
     "game": "ws",
@@ -4014,7 +4014,7 @@
     "cardId": "10027",
     "cardNumber": "OSK/S121-026",
     "name": "POP IN 2",
-    "rarity": null,
+    "rarity": "CR",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -4023,9 +4023,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10027.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10027",
-    "scrapedAt": "2026-09-16T18:29:13.514453+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463112+00:00"
   },
   {
     "game": "ws",
@@ -4033,7 +4033,7 @@
     "cardId": "10062",
     "cardNumber": "OSK/S121-061",
     "name": "巨星の演技",
-    "rarity": null,
+    "rarity": "CR",
     "condition": "near_mint",
     "sellPriceJpy": 220,
     "buyPriceJpy": 20,
@@ -4042,9 +4042,9 @@
     "spreadJpy": 200,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10062.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10062",
-    "scrapedAt": "2026-09-16T18:29:13.514455+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463114+00:00"
   },
   {
     "game": "ws",
@@ -4052,7 +4052,7 @@
     "cardId": "10063",
     "cardNumber": "OSK/S121-062",
     "name": "夜に堕つ星",
-    "rarity": null,
+    "rarity": "CR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": 5,
@@ -4061,9 +4061,9 @@
     "spreadJpy": 175,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10063.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10063",
-    "scrapedAt": "2026-09-16T18:29:13.514458+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463118+00:00"
   },
   {
     "game": "ws",
@@ -4071,7 +4071,7 @@
     "cardId": "10064",
     "cardNumber": "OSK/S121-063",
     "name": "普通の幸せ",
-    "rarity": null,
+    "rarity": "CR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": 5,
@@ -4080,9 +4080,9 @@
     "spreadJpy": 175,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10064.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10064",
-    "scrapedAt": "2026-09-16T18:29:13.514460+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463120+00:00"
   },
   {
     "game": "ws",
@@ -4090,7 +4090,7 @@
     "cardId": "10065",
     "cardNumber": "OSK/S121-064",
     "name": "全てを懸けた魅せ所",
-    "rarity": null,
+    "rarity": "CR",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -4099,9 +4099,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10065.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10065",
-    "scrapedAt": "2026-09-16T18:29:13.514462+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463123+00:00"
   },
   {
     "game": "ws",
@@ -4109,7 +4109,7 @@
     "cardId": "10098",
     "cardNumber": "OSK/S121-097",
     "name": "傷移しの鞘",
-    "rarity": null,
+    "rarity": "CR",
     "condition": "near_mint",
     "sellPriceJpy": 180,
     "buyPriceJpy": 10,
@@ -4118,9 +4118,9 @@
     "spreadJpy": 170,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10098.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10098",
-    "scrapedAt": "2026-09-16T18:29:13.514465+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463125+00:00"
   },
   {
     "game": "ws",
@@ -4128,7 +4128,7 @@
     "cardId": "10099",
     "cardNumber": "OSK/S121-098",
     "name": "演劇の魅力",
-    "rarity": null,
+    "rarity": "CR",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -4137,9 +4137,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10099.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10099",
-    "scrapedAt": "2026-09-16T18:29:13.514467+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463128+00:00"
   },
   {
     "game": "ws",
@@ -4147,7 +4147,7 @@
     "cardId": "10100",
     "cardNumber": "OSK/S121-099",
     "name": "対比構造",
-    "rarity": null,
+    "rarity": "CR",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -4156,9 +4156,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10100.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10100",
-    "scrapedAt": "2026-09-16T18:29:13.514469+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463130+00:00"
   },
   {
     "game": "ws",
@@ -4166,7 +4166,7 @@
     "cardId": "10101",
     "cardNumber": "OSK/S121-100",
     "name": "復讐の果てに",
-    "rarity": null,
+    "rarity": "CR",
     "condition": "near_mint",
     "sellPriceJpy": 30,
     "buyPriceJpy": null,
@@ -4175,9 +4175,9 @@
     "spreadJpy": null,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10101.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10101",
-    "scrapedAt": "2026-09-16T18:29:13.514472+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463133+00:00"
   },
   {
     "game": "ws",
@@ -4185,18 +4185,18 @@
     "cardId": "10224",
     "cardNumber": "OSK/S121-P02EX",
     "name": "黄昏のプレリュード 黒川あかね(サイン入り)",
-    "rarity": null,
+    "rarity": "PR+",
     "condition": "near_mint",
     "sellPriceJpy": 108000,
     "buyPriceJpy": 64000,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 44000,
-    "stock": null,
+    "stock": 2,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10224.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10224",
-    "scrapedAt": "2026-09-16T18:29:13.514474+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463135+00:00"
   },
   {
     "game": "ws",
@@ -4204,18 +4204,18 @@
     "cardId": "10226",
     "cardNumber": "OSK/S121-P03EX",
     "name": "黄昏のプレリュード 有馬かな(サイン入り)",
-    "rarity": null,
+    "rarity": "PR+",
     "condition": "near_mint",
     "sellPriceJpy": 248000,
     "buyPriceJpy": 180000,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 68000,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10226.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10226",
-    "scrapedAt": "2026-09-16T18:29:13.514477+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463138+00:00"
   },
   {
     "game": "ws",
@@ -4223,18 +4223,18 @@
     "cardId": "10001",
     "cardNumber": "OSK/S121-P01S",
     "name": "母としての幸せ アイ",
-    "rarity": null,
+    "rarity": "PR",
     "condition": "near_mint",
     "sellPriceJpy": 500,
     "buyPriceJpy": 200,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 300,
-    "stock": null,
-    "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "stock": 0,
+    "availability": "Sold Out",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10001.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10001",
-    "scrapedAt": "2026-09-16T18:29:13.514480+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463140+00:00"
   },
   {
     "game": "ws",
@@ -4242,7 +4242,7 @@
     "cardId": "10222",
     "cardNumber": "OSK/S121-P02",
     "name": "黄昏のプレリュード 黒川あかね",
-    "rarity": null,
+    "rarity": "PR",
     "condition": "near_mint",
     "sellPriceJpy": 320,
     "buyPriceJpy": 5,
@@ -4251,9 +4251,9 @@
     "spreadJpy": 315,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10222.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10222",
-    "scrapedAt": "2026-09-16T18:29:13.514483+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463143+00:00"
   },
   {
     "game": "ws",
@@ -4261,7 +4261,7 @@
     "cardId": "10223",
     "cardNumber": "OSK/S121-P02S",
     "name": "黄昏のプレリュード 黒川あかね",
-    "rarity": null,
+    "rarity": "PR",
     "condition": "near_mint",
     "sellPriceJpy": 500,
     "buyPriceJpy": 30,
@@ -4270,9 +4270,9 @@
     "spreadJpy": 470,
     "stock": null,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10223.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10223",
-    "scrapedAt": "2026-09-16T18:29:13.514485+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463145+00:00"
   },
   {
     "game": "ws",
@@ -4280,17 +4280,17 @@
     "cardId": "10225",
     "cardNumber": "OSK/S121-P03S",
     "name": "黄昏のプレリュード 有馬かな",
-    "rarity": null,
+    "rarity": "PR",
     "condition": "near_mint",
     "sellPriceJpy": 3980,
     "buyPriceJpy": 1400,
     "buyPriceBaseJpy": null,
     "buyPriceBoosted": false,
     "spreadJpy": 2580,
-    "stock": null,
+    "stock": 2,
     "availability": "In Stock",
-    "imageUrl": "https://cdn.yuyu-tei.jp/images/common/btn-icon/star.svg",
+    "imageUrl": "https://card.yuyu-tei.jp/ws/100_140/osk2.0/10225.jpg",
     "url": "https://yuyu-tei.jp/sell/ws/card/osk2.0/10225",
-    "scrapedAt": "2026-09-16T18:29:13.514487+00:00"
+    "scrapedAt": "2026-09-16T19:44:56.463147+00:00"
   }
 ]

@@ -204,6 +204,50 @@
     padding:0;
     text-decoration:underline;
   }
+  .sets-panel{
+    min-width:320px;
+    max-height:360px;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+  }
+  .sets-panel .panel-search{
+    padding:8px 10px;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .sets-panel .panel-search input{
+    width:100%;
+    font-size:13px;
+    padding:6px 8px;
+    border:1px solid var(--line);
+    background:var(--paper);
+  }
+  .sets-panel .rarity-actions{
+    border-bottom:1px solid var(--line-soft);
+    margin-bottom:0;
+    padding:6px 12px;
+  }
+  #sets-panel-list{
+    overflow-y:auto;
+    padding:4px 0;
+  }
+  #sets-panel-list label{
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    padding:7px 12px;
+  }
+  #sets-panel-list .set-meta{
+    display:flex;
+    flex-direction:column;
+    gap:1px;
+  }
+  #sets-panel-list .set-meta .code{
+    font-family:var(--mono);
+    font-size:10.5px;
+    color:var(--ink-soft);
+  }
+  #sets-toggle{min-width:170px;}
 
   #summary{
     font-size:13px;
@@ -290,17 +334,26 @@
 <header>
   <div>
     <h1>Yuyu<span>-tei</span> Price Viewer</h1>
-    <p>Weiss Schwarz sell &amp; buylist prices, scraped locally — start typing a set name or code.</p>
+    <p>Weiss Schwarz sell &amp; buylist prices, scraped locally. <span style="font-size:13px;color:var(--ink-soft);">→ <a href="collection.html" style="color:var(--red);text-decoration:none;">My Collection</a></span></p>
   </div>
   <div id="status-pill">loading manifest…</div>
 </header>
 
 <main>
   <div class="controls">
-    <div class="field search" style="position:relative;">
-      <label for="set-search">Set name or code</label>
-      <input type="text" id="set-search" autocomplete="off" placeholder="e.g. 推しの子 or osk3.0">
-      <div id="set-suggestions" class="suggestions" hidden></div>
+    <div class="field">
+      <label>Sets</label>
+      <div class="rarity-multiselect" id="sets-multiselect">
+        <button type="button" id="sets-toggle">Loading…</button>
+        <div class="suggestions sets-panel" id="sets-panel" hidden>
+          <div class="panel-search"><input type="text" id="sets-panel-search" placeholder="Filter sets…" autocomplete="off"></div>
+          <div class="rarity-actions">
+            <button type="button" data-act="all">Select all</button>
+            <button type="button" data-act="none">Clear</button>
+          </div>
+          <div id="sets-panel-list"></div>
+        </div>
+      </div>
     </div>
     <div class="field">
       <label>Show</label>
@@ -318,7 +371,7 @@
       </div>
     </div>
     <div class="field search">
-      <label for="search-input">Filter cards in this set</label>
+      <label for="search-input">Filter cards shown below</label>
       <input type="search" id="search-input" placeholder="e.g. ピカチュウ or OSK/S133-002SSP">
     </div>
   </div>
@@ -353,8 +406,10 @@
 
 <script>
 (function(){
-  const setSearch = document.getElementById('set-search');
-  const suggestionsBox = document.getElementById('set-suggestions');
+  const setsToggle = document.getElementById('sets-toggle');
+  const setsPanel = document.getElementById('sets-panel');
+  const setsPanelSearch = document.getElementById('sets-panel-search');
+  const setsPanelList = document.getElementById('sets-panel-list');
   const searchInput = document.getElementById('search-input');
   const rarityToggle = document.getElementById('rarity-toggle');
   const rarityPanel = document.getElementById('rarity-panel');
@@ -367,13 +422,15 @@
 
   let manifest = [];       // all scraped WS sets: {game,set,name,aliases,file,count,scrapedAt,...}
   let currentRows = [];
-  let currentEntry = null;
   let mode = 'both';
   let sortKey = 'name';
   let sortDir = 1;
-  let hlIndex = -1;
   let allRarities = [];
   let selectedRarities = new Set();
+  let selectedSetKeys = new Set();  // "game|set" strings
+  const setDataCache = {};          // file path -> parsed rows, so re-toggling a set doesn't re-fetch
+
+  function setKey(m){ return m.game + '|' + m.set; }
 
   function fmtYen(v){
     if (v === null || v === undefined || v === '') return '—';
@@ -403,78 +460,109 @@
           ? manifest.length + ' set(s) available'
           : 'no data yet';
         if (manifest.length) {
-          setSearch.value = manifest[0].name || manifest[0].set;
-          loadSetEntry(manifest[0]);
+          selectedSetKeys = new Set([setKey(manifest[0])]); // default: most recently scraped set
+          renderSetsPanel();
+          updateSetsToggleLabel();
+          loadSelectedSets();
         } else {
+          setsToggle.textContent = 'No sets yet';
           showEmpty('No sets scraped yet. Run the scraper locally with --site, then commit & push (see README).');
         }
       })
       .catch(() => {
         statusPill.textContent = 'no data yet — run the scraper with --site';
+        setsToggle.textContent = 'No sets yet';
         showEmpty('No data files found. Run the scraper locally with the --site flag ' +
                   '(see README) to generate data/manifest.json, then commit and push.');
       });
   }
 
-  function matchSets(query){
+  function matchSetsList(query){
     const q = normForMatch(query);
-    if (!q) return manifest; // already sorted most-recent-first
+    if (!q) return manifest;
     return manifest.filter(m => {
       const haystacks = [m.name, m.set, ...(m.aliases||[])].map(normForMatch);
       return haystacks.some(h => h.includes(q));
     });
   }
 
-  function renderSuggestions(){
-    const matches = matchSets(setSearch.value);
-    hlIndex = -1;
+  function renderSetsPanel(){
+    const matches = matchSetsList(setsPanelSearch.value);
     if (!matches.length) {
-      suggestionsBox.innerHTML = '<div class="none">No scraped set matches — check README for how to add one.</div>';
-      suggestionsBox.hidden = false;
+      setsPanelList.innerHTML = '<div class="none">No sets match.</div>';
       return;
     }
-    suggestionsBox.innerHTML = matches.map((m, i) =>
-      `<button type="button" data-idx="${i}">${escapeHtml(m.name||m.set)}` +
-      `<span class="code">${escapeHtml(m.set)} · ${m.count} cards</span>` +
-      `<span class="updated">updated ${fmtDate(m.scrapedAt)}</span></button>`
-    ).join('');
-    suggestionsBox.hidden = false;
-    [...suggestionsBox.children].forEach((btn, i) => {
-      btn.addEventListener('click', () => {
-        setSearch.value = matches[i].name || matches[i].set;
-        suggestionsBox.hidden = true;
-        loadSetEntry(matches[i]);
+    setsPanelList.innerHTML = matches.map(m => `
+      <label>
+        <input type="checkbox" value="${escapeHtml(setKey(m))}" ${selectedSetKeys.has(setKey(m)) ? 'checked' : ''}>
+        <span class="set-meta">
+          <span>${escapeHtml(m.name || m.set)}</span>
+          <span class="code">${escapeHtml(m.set)} · ${m.count} cards · updated ${fmtDate(m.scrapedAt)}</span>
+        </span>
+      </label>`).join('');
+    setsPanelList.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        if (cb.checked) selectedSetKeys.add(cb.value); else selectedSetKeys.delete(cb.value);
+        updateSetsToggleLabel();
+        loadSelectedSets();
       });
     });
-    suggestionsBox._matches = matches;
   }
 
-  setSearch.addEventListener('focus', renderSuggestions);
-  setSearch.addEventListener('input', renderSuggestions);
-  setSearch.addEventListener('keydown', e => {
-    const matches = suggestionsBox._matches || [];
-    if (suggestionsBox.hidden || !matches.length) return;
-    if (e.key === 'ArrowDown') { e.preventDefault(); hlIndex = Math.min(hlIndex+1, matches.length-1); updateHl(); }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); hlIndex = Math.max(hlIndex-1, 0); updateHl(); }
-    else if (e.key === 'Enter' && hlIndex >= 0) { e.preventDefault(); suggestionsBox.children[hlIndex].click(); }
-    else if (e.key === 'Escape') { suggestionsBox.hidden = true; }
+  function updateSetsToggleLabel(){
+    if (!manifest.length) { setsToggle.textContent = 'No sets yet'; return; }
+    if (selectedSetKeys.size === 0) setsToggle.textContent = 'No sets selected';
+    else if (selectedSetKeys.size === manifest.length) setsToggle.textContent = 'All sets';
+    else if (selectedSetKeys.size === 1) {
+      const m = manifest.find(m => setKey(m) === [...selectedSetKeys][0]);
+      setsToggle.textContent = m ? (m.name || m.set) : '1 set';
+    } else setsToggle.textContent = selectedSetKeys.size + ' sets selected';
+  }
+
+  setsToggle.addEventListener('click', () => {
+    setsPanel.hidden = !setsPanel.hidden;
+    if (!setsPanel.hidden) setsPanelSearch.focus();
+  });
+  setsPanelSearch.addEventListener('input', renderSetsPanel);
+  setsPanel.querySelector('[data-act="all"]').addEventListener('click', () => {
+    selectedSetKeys = new Set(manifest.map(setKey));
+    renderSetsPanel(); updateSetsToggleLabel(); loadSelectedSets();
+  });
+  setsPanel.querySelector('[data-act="none"]').addEventListener('click', () => {
+    selectedSetKeys = new Set();
+    renderSetsPanel(); updateSetsToggleLabel(); loadSelectedSets();
   });
   document.addEventListener('click', e => {
-    if (!e.target.closest('.field.search')) suggestionsBox.hidden = true;
+    if (!e.target.closest('#sets-multiselect')) setsPanel.hidden = true;
   });
-  function updateHl(){
-    [...suggestionsBox.children].forEach((b,i) => b.classList.toggle('hl', i===hlIndex));
-  }
 
-  function loadSetEntry(entry){
-    currentEntry = entry;
-    tbody.innerHTML = '<tr><td colspan="8" style="padding:20px;color:var(--ink-soft);">Loading…</td></tr>';
+  function loadSelectedSets(){
+    const entries = manifest.filter(m => selectedSetKeys.has(setKey(m)));
+    if (!entries.length) {
+      currentRows = [];
+      allRarities = [];
+      selectedRarities = new Set();
+      renderRarityPanel();
+      updateRarityToggleLabel();
+      showEmpty('No sets selected — pick one or more from the Sets dropdown.');
+      return;
+    }
     table.style.display = 'table';
     emptyState.style.display = 'none';
-    fetch(entry.file, {cache:'no-store'})
-      .then(r => r.json())
-      .then(rows => { currentRows = rows; populateRarities(); render(); })
-      .catch(() => showEmpty('Could not load ' + entry.file + '.'));
+    tbody.innerHTML = '<tr><td colspan="8" style="padding:20px;color:var(--ink-soft);">Loading…</td></tr>';
+
+    Promise.all(entries.map(entry =>
+      setDataCache[entry.file]
+        ? Promise.resolve(setDataCache[entry.file])
+        : fetch(entry.file, {cache:'no-store'}).then(r => r.json()).then(rows => {
+            setDataCache[entry.file] = rows;
+            return rows;
+          })
+    )).then(rowArrays => {
+      currentRows = rowArrays.flat();
+      populateRarities();
+      render();
+    }).catch(() => showEmpty('Could not load one or more selected sets.'));
   }
 
   function populateRarities(){
@@ -485,7 +573,7 @@
       if (r.rarity && !seen.includes(r.rarity)) seen.push(r.rarity);
     }
     allRarities = seen;
-    selectedRarities = new Set(seen); // default: everything shown
+    selectedRarities = new Set(); // default: nothing ticked = no filter, show everything
     renderRarityPanel();
     updateRarityToggleLabel();
   }
@@ -525,8 +613,7 @@
 
   function updateRarityToggleLabel(){
     if (!allRarities.length) { rarityToggle.textContent = 'No rarities'; return; }
-    if (selectedRarities.size === allRarities.length) rarityToggle.textContent = 'All rarities';
-    else if (selectedRarities.size === 0) rarityToggle.textContent = 'None selected';
+    if (selectedRarities.size === 0 || selectedRarities.size === allRarities.length) rarityToggle.textContent = 'All rarities';
     else rarityToggle.textContent = [...selectedRarities].join(', ');
   }
 
@@ -558,7 +645,9 @@
     if (mode === 'sell') rows = rows.filter(r => r.sellPriceJpy !== null && r.sellPriceJpy !== undefined);
     if (mode === 'buy')  rows = rows.filter(r => r.buyPriceJpy !== null && r.buyPriceJpy !== undefined);
 
-    if (allRarities.length) rows = rows.filter(r => r.rarity && selectedRarities.has(r.rarity));
+    if (allRarities.length && selectedRarities.size > 0) {
+      rows = rows.filter(r => r.rarity && selectedRarities.has(r.rarity));
+    }
 
     rows.sort((a,b) => {
       let av = a[sortKey], bv = b[sortKey];
@@ -577,8 +666,10 @@
     table.style.display = 'table';
     emptyState.style.display = 'none';
 
-    const setLabel = currentEntry ? (currentEntry.name || currentEntry.set) : '';
-    summary.innerHTML = `<strong>${rows.length}</strong> card${rows.length===1?'':'s'} shown — ${escapeHtml(setLabel)}`;
+    const setLabel = selectedSetKeys.size === 1
+      ? (manifest.find(m => setKey(m) === [...selectedSetKeys][0]) || {}).name
+      : selectedSetKeys.size + ' sets';
+    summary.innerHTML = `<strong>${rows.length}</strong> card${rows.length===1?'':'s'} shown — ${escapeHtml(setLabel || '')}`;
 
     tbody.innerHTML = rows.map(r => {
       const avail = (r.availability || '').toLowerCase().includes('sold') ? 'out' : 'in';

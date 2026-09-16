@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Weiss Schwarz Collection</title>
+<style>
+  :root{
+    --paper:#f7f4ee;
+    --ink:#1c1a16;
+    --ink-soft:#5c5648;
+    --line:#ddd6c6;
+    --line-soft:#e9e4d6;
+    --red:#b23a2e;
+    --red-deep:#8c2c22;
+    --green:#3d6b4a;
+    --gold:#a5772f;
+    --card-bg:#ffffff;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: "Zen Kaku Gothic New", "Hiragino Sans", "Segoe UI", sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.45;min-height:100vh;}
+
+  header{
+    border-bottom:2px solid var(--ink);
+    padding:28px clamp(16px,4vw,48px) 20px;
+    display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  }
+  header h1{margin:0;font-size:clamp(22px,3vw,30px);font-weight:700;letter-spacing:-0.01em;}
+  header h1 span{color:var(--red);}
+  header p{margin:4px 0 0;color:var(--ink-soft);font-size:14px;}
+  header .nav-link{font-size:13px;color:var(--ink-soft);}
+  header .nav-link a{color:var(--red);text-decoration:none;}
+  header .nav-link a:hover{text-decoration:underline;}
+  #status-pill{font-size:12px;color:var(--ink-soft);border:1px solid var(--line);background:var(--card-bg);padding:5px 10px;border-radius:999px;white-space:nowrap;}
+
+  main{padding:24px clamp(16px,4vw,48px) 64px;max-width:1500px;margin:0 auto;}
+
+  .controls{
+    display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;margin-bottom:14px;
+    padding:18px;background:var(--card-bg);border:1px solid var(--line);
+  }
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field label{font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);}
+  select, input[type="search"], input[type="text"]{
+    font-family:var(--sans);font-size:14px;padding:8px 10px;border:1px solid var(--line);
+    background:var(--paper);color:var(--ink);min-width:150px;
+  }
+  select:focus, input:focus{outline:2px solid var(--red);outline-offset:1px;}
+
+  .toolbar{
+    display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;
+    margin-bottom:14px;
+  }
+  .view-toggle, .mode-toggle{display:flex;border:1px solid var(--ink);}
+  .view-toggle button, .mode-toggle button{
+    font-family:var(--sans);font-size:13px;padding:8px 14px;background:var(--paper);color:var(--ink);
+    border:none;border-right:1px solid var(--ink);cursor:pointer;
+  }
+  .view-toggle button:last-child, .mode-toggle button:last-child{border-right:none;}
+  .view-toggle button.active, .mode-toggle button.active{background:var(--ink);color:var(--paper);}
+
+  .backup-actions{display:flex;gap:8px;align-items:center;}
+  .backup-actions button, .backup-actions label{
+    font-family:var(--sans);font-size:12.5px;padding:7px 12px;border:1px solid var(--ink);
+    background:var(--paper);color:var(--ink);cursor:pointer;
+  }
+  .backup-actions button:hover, .backup-actions label:hover{background:var(--ink);color:var(--paper);}
+  .backup-actions input[type="file"]{display:none;}
+  .backup-note{font-size:11.5px;color:var(--ink-soft);}
+
+  .field.search{flex:1;min-width:200px;}
+  .field.search input{width:100%;}
+
+  .rarity-multiselect{position:relative;}
+  #rarity-toggle, #sets-toggle{
+    font-family:var(--sans);font-size:14px;padding:8px 12px;border:1px solid var(--line);
+    background:var(--paper);color:var(--ink);cursor:pointer;min-width:150px;text-align:left;
+  }
+  .suggestions{
+    position:absolute;top:100%;left:0;margin-top:2px;background:var(--card-bg);border:1px solid var(--ink);
+    max-height:280px;overflow-y:auto;z-index:20;
+  }
+  .suggestions .none{padding:9px 12px;color:var(--ink-soft);font-size:13px;}
+  #rarity-panel{min-width:180px;padding:6px 0;}
+  #rarity-panel label, #sets-panel-list label{
+    display:flex;align-items:flex-start;gap:8px;padding:7px 12px;font-size:13.5px;cursor:pointer;
+  }
+  #rarity-panel label:hover, #sets-panel-list label:hover{background:#fbf8f0;}
+  .rarity-actions{
+    display:flex;gap:10px;padding:4px 12px 8px;border-bottom:1px solid var(--line-soft);margin-bottom:4px;
+  }
+  .rarity-actions button{font-size:11px;color:var(--red);background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;}
+  .sets-panel{min-width:320px;max-height:360px;padding:0;display:flex;flex-direction:column;}
+  .sets-panel .panel-search{padding:8px 10px;border-bottom:1px solid var(--line-soft);}
+  .sets-panel .panel-search input{width:100%;font-size:13px;padding:6px 8px;border:1px solid var(--line);background:var(--paper);}
+  .sets-panel .rarity-actions{border-bottom:1px solid var(--line-soft);margin-bottom:0;padding:6px 12px;}
+  #sets-panel-list{overflow-y:auto;padding:4px 0;}
+  #sets-panel-list .set-meta{display:flex;flex-direction:column;gap:1px;}
+  #sets-panel-list .set-meta .code{font-family:var(--mono);font-size:10.5px;color:var(--ink-soft);}
+  #sets-toggle{min-width:170px;}
+
+  #summary{font-size:13px;color:var(--ink-soft);margin:0 0 10px;}
+  #summary strong{color:var(--ink);}
+
+  .table-wrap{border:1px solid var(--line);background:var(--card-bg);overflow-x:auto;}
+  table{border-collapse:collapse;width:100%;min-width:1080px;font-size:13.5px;}
+  thead th{
+    position:sticky;top:0;background:var(--ink);color:var(--paper);text-align:left;padding:10px 12px;
+    font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:0.04em;cursor:pointer;
+    white-space:nowrap;user-select:none;
+  }
+  thead th:hover{background:var(--red-deep);}
+  thead th.static{cursor:default;}
+  thead th.static:hover{background:var(--ink);}
+  tbody tr{border-top:1px solid var(--line-soft);}
+  tbody tr:hover{background:#fbf8f0;}
+  td{padding:9px 12px;vertical-align:middle;}
+  td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap;}
+  td.card-cell{display:flex;align-items:center;gap:10px;min-width:220px;}
+  td.card-cell img{width:36px;height:50px;object-fit:cover;border:1px solid var(--line);background:var(--line-soft);flex-shrink:0;}
+  td.card-cell a{color:var(--ink);text-decoration:none;font-weight:600;}
+  td.card-cell a:hover{color:var(--red);text-decoration:underline;}
+  .rarity-badge{font-family:var(--mono);font-size:11px;padding:2px 6px;border:1px solid var(--ink);white-space:nowrap;}
+
+  .owned-stepper{display:flex;align-items:center;gap:6px;justify-content:center;}
+  .owned-stepper button{
+    width:22px;height:22px;line-height:1;border:1px solid var(--ink);background:var(--paper);color:var(--ink);
+    cursor:pointer;font-size:14px;padding:0;
+  }
+  .owned-stepper button:hover{background:var(--ink);color:var(--paper);}
+  .owned-stepper .qty{font-family:var(--mono);min-width:18px;text-align:center;font-weight:600;}
+  .owned-stepper .qty.owned{color:var(--green);}
+
+  .wishlist-btn{
+    background:none;border:none;cursor:pointer;font-size:19px;line-height:1;color:var(--line);
+    padding:0;
+  }
+  .wishlist-btn.active{color:var(--red);}
+
+  .empty-state{padding:48px 20px;text-align:center;color:var(--ink-soft);font-size:14px;}
+  footer{padding:20px clamp(16px,4vw,48px) 40px;color:var(--ink-soft);font-size:12px;border-top:1px solid var(--line);}
+  footer a{color:var(--ink-soft);}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>My <span>Weiss Schwarz</span> Collection</h1>
+    <p>Track what you own and what you want, from the sets you've scraped. <span class="nav-link">→ <a href="index.html">Price viewer</a></span></p>
+  </div>
+  <div id="status-pill">loading…</div>
+</header>
+
+<main>
+  <div class="controls">
+    <div class="field" id="sets-field">
+      <label>Sets</label>
+      <div class="rarity-multiselect" id="sets-multiselect">
+        <button type="button" id="sets-toggle">Loading…</button>
+        <div class="suggestions sets-panel" id="sets-panel" hidden>
+          <div class="panel-search"><input type="text" id="sets-panel-search" placeholder="Filter sets…" autocomplete="off"></div>
+          <div class="rarity-actions">
+            <button type="button" data-act="all">Select all</button>
+            <button type="button" data-act="none">Clear</button>
+          </div>
+          <div id="sets-panel-list"></div>
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Rarity</label>
+      <div class="rarity-multiselect" id="rarity-multiselect">
+        <button type="button" id="rarity-toggle">All rarities</button>
+        <div class="suggestions" id="rarity-panel" hidden></div>
+      </div>
+    </div>
+    <div class="field search">
+      <label for="search-input">Filter by name / number</label>
+      <input type="search" id="search-input" placeholder="e.g. ピカチュウ or OSK/S133-002SSP">
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <div class="view-toggle" id="view-toggle">
+      <button data-view="all" class="active">Browse all</button>
+      <button data-view="collection">My Collection</button>
+      <button data-view="wishlist">My Wishlist</button>
+    </div>
+    <div class="backup-actions">
+      <span class="backup-note">Saved only in this browser —</span>
+      <button type="button" id="export-btn">Export backup</button>
+      <label for="import-file">Import backup</label>
+      <input type="file" id="import-file" accept="application/json">
+    </div>
+  </div>
+
+  <p id="summary"></p>
+
+  <div class="table-wrap">
+    <table id="card-table">
+      <thead>
+        <tr>
+          <th data-key="name">Card</th>
+          <th data-key="cardNumber">Number</th>
+          <th data-key="rarity">Rarity</th>
+          <th data-key="setCode">Set</th>
+          <th data-key="sellPriceJpy" class="num">Sell (JPY)</th>
+          <th data-key="buyPriceJpy" class="num">Buylist (JPY)</th>
+          <th class="static">Owned</th>
+          <th class="static">Wishlist</th>
+        </tr>
+      </thead>
+      <tbody id="card-tbody"></tbody>
+    </table>
+    <div class="empty-state" id="empty-state" style="display:none;"></div>
+  </div>
+</main>
+
+<footer>
+  Data scraped from <a href="https://yuyu-tei.jp" target="_blank" rel="noopener">yuyu-tei.jp</a> using the local Python
+  script — this page reads whatever's in <code>data/</code>. Collection and wishlist marks live only in this
+  browser's local storage; use Export/Import to back them up or move them to another device.
+</footer>
+
+<script>
+(function(){
+  const setsToggle = document.getElementById('sets-toggle');
+  const setsPanel = document.getElementById('sets-panel');
+  const setsPanelSearch = document.getElementById('sets-panel-search');
+  const setsPanelList = document.getElementById('sets-panel-list');
+  const setsField = document.getElementById('sets-field');
+  const searchInput = document.getElementById('search-input');
+  const rarityToggle = document.getElementById('rarity-toggle');
+  const rarityPanel = document.getElementById('rarity-panel');
+  const tbody = document.getElementById('card-tbody');
+  const table = document.getElementById('card-table');
+  const emptyState = document.getElementById('empty-state');
+  const summary = document.getElementById('summary');
+  const statusPill = document.getElementById('status-pill');
+  const viewToggle = document.getElementById('view-toggle');
+  const exportBtn = document.getElementById('export-btn');
+  const importFile = document.getElementById('import-file');
+
+  const STORAGE_KEY = 'yuyutei-ws-collection-v1';
+
+  let manifest = [];
+  let allRows = [];        // every card across every scraped set (loaded once, cached)
+  let currentRows = [];    // whatever the current view+filters resolve to
+  let view = 'all';
+  let sortKey = 'name';
+  let sortDir = 1;
+  let allRarities = [];
+  let selectedRarities = new Set();
+  let selectedSetKeys = new Set();
+  const setDataCache = {};
+  let state = {};          // { "game|setCode|cardNumber": {owned:N, wishlist:bool} }
+
+  // ---------- local storage ----------
+  function loadState(){
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      state = raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      console.error('Could not read saved collection:', e);
+      state = {};
+    }
+  }
+  function saveState(){
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {
+      console.error('Could not save collection:', e);
+      alert('Could not save — your browser may be blocking local storage (private/incognito mode can do this).');
+    }
+  }
+  function cardKey(r){ return `${r.game}|${r.setCode}|${r.cardNumber}`; }
+  function getEntry(key){ return state[key] || {owned:0, wishlist:false}; }
+  function setEntry(key, patch){
+    const cur = getEntry(key);
+    const next = {...cur, ...patch};
+    if (next.owned <= 0 && !next.wishlist) delete state[key];
+    else state[key] = next;
+    saveState();
+  }
+
+  // ---------- helpers ----------
+  function fmtYen(v){
+    if (v === null || v === undefined || v === '') return '—';
+    const n = Number(v);
+    if (Number.isNaN(n)) return '—';
+    return '¥' + n.toLocaleString('en-US');
+  }
+  function fmtDate(iso){
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d)) return '';
+    return d.toLocaleDateString(undefined, {year:'numeric', month:'short', day:'numeric'});
+  }
+  function normForMatch(s){ return (s || '').toLowerCase().replace(/[\s/\-]/g, ''); }
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function setKey(m){ return m.game + '|' + m.set; }
+
+  // ---------- manifest + set data ----------
+  function loadManifest(){
+    fetch('data/manifest.json', {cache:'no-store'})
+      .then(r => { if(!r.ok) throw new Error('no manifest'); return r.json(); })
+      .then(data => {
+        manifest = data.filter(m => m.game === 'ws')
+                        .sort((a,b) => (b.scrapedAt||'').localeCompare(a.scrapedAt||''));
+        statusPill.textContent = manifest.length ? manifest.length + ' set(s) available' : 'no data yet';
+        if (manifest.length) {
+          selectedSetKeys = new Set([setKey(manifest[0])]);
+          renderSetsPanel();
+          updateSetsToggleLabel();
+          refreshView();
+        } else {
+          setsToggle.textContent = 'No sets yet';
+          showEmpty('No sets scraped yet. Run the scraper locally with --site, then commit & push (see README).');
+        }
+      })
+      .catch(() => {
+        statusPill.textContent = 'no data yet';
+        setsToggle.textContent = 'No sets yet';
+        showEmpty('No data files found. Run the scraper with --site (see README), then commit and push.');
+      });
+  }
+
+  function fetchSetRows(entry){
+    if (setDataCache[entry.file]) return Promise.resolve(setDataCache[entry.file]);
+    return fetch(entry.file, {cache:'no-store'}).then(r => r.json()).then(rows => {
+      setDataCache[entry.file] = rows;
+      return rows;
+    });
+  }
+
+  function loadAllSetsOnce(){
+    if (allRows.length || !manifest.length) return Promise.resolve(allRows);
+    return Promise.all(manifest.map(fetchSetRows)).then(arrs => {
+      allRows = arrs.flat();
+      return allRows;
+    });
+  }
+
+  // ---------- sets multiselect (only relevant in "Browse all" view) ----------
+  function matchSetsList(query){
+    const q = normForMatch(query);
+    if (!q) return manifest;
+    return manifest.filter(m => {
+      const haystacks = [m.name, m.set, ...(m.aliases||[])].map(normForMatch);
+      return haystacks.some(h => h.includes(q));
+    });
+  }
+  function renderSetsPanel(){
+    const matches = matchSetsList(setsPanelSearch.value);
+    if (!matches.length) { setsPanelList.innerHTML = '<div class="none">No sets match.</div>'; return; }
+    setsPanelList.innerHTML = matches.map(m => `
+      <label>
+        <input type="checkbox" value="${escapeHtml(setKey(m))}" ${selectedSetKeys.has(setKey(m)) ? 'checked' : ''}>
+        <span class="set-meta">
+          <span>${escapeHtml(m.name || m.set)}</span>
+          <span class="code">${escapeHtml(m.set)} · ${m.count} cards · updated ${fmtDate(m.scrapedAt)}</span>
+        </span>
+      </label>`).join('');
+    setsPanelList.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        if (cb.checked) selectedSetKeys.add(cb.value); else selectedSetKeys.delete(cb.value);
+        updateSetsToggleLabel();
+        refreshView();
+      });
+    });
+  }
+  function updateSetsToggleLabel(){
+    if (!manifest.length) { setsToggle.textContent = 'No sets yet'; return; }
+    if (selectedSetKeys.size === 0) setsToggle.textContent = 'No sets selected';
+    else if (selectedSetKeys.size === manifest.length) setsToggle.textContent = 'All sets';
+    else if (selectedSetKeys.size === 1) {
+      const m = manifest.find(m => setKey(m) === [...selectedSetKeys][0]);
+      setsToggle.textContent = m ? (m.name || m.set) : '1 set';
+    } else setsToggle.textContent = selectedSetKeys.size + ' sets selected';
+  }
+  setsToggle.addEventListener('click', () => {
+    setsPanel.hidden = !setsPanel.hidden;
+    if (!setsPanel.hidden) setsPanelSearch.focus();
+  });
+  setsPanelSearch.addEventListener('input', renderSetsPanel);
+  setsPanel.querySelector('[data-act="all"]').addEventListener('click', () => {
+    selectedSetKeys = new Set(manifest.map(setKey));
+    renderSetsPanel(); updateSetsToggleLabel(); refreshView();
+  });
+  setsPanel.querySelector('[data-act="none"]').addEventListener('click', () => {
+    selectedSetKeys = new Set();
+    renderSetsPanel(); updateSetsToggleLabel(); refreshView();
+  });
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#sets-multiselect')) setsPanel.hidden = true;
+    if (!e.target.closest('#rarity-multiselect')) rarityPanel.hidden = true;
+  });
+
+  // ---------- rarity multiselect ----------
+  function populateRarities(){
+    const seen = [];
+    for (const r of currentRows) if (r.rarity && !seen.includes(r.rarity)) seen.push(r.rarity);
+    allRarities = seen;
+    selectedRarities = new Set();
+    renderRarityPanel();
+    updateRarityToggleLabel();
+  }
+  function renderRarityPanel(){
+    if (!allRarities.length) { rarityPanel.innerHTML = '<div class="none">No rarity data.</div>'; return; }
+    const actions = `<div class="rarity-actions">
+      <button type="button" data-act="all">Select all</button>
+      <button type="button" data-act="none">Clear</button>
+    </div>`;
+    const boxes = allRarities.map(r => `
+      <label><input type="checkbox" value="${escapeHtml(r)}" ${selectedRarities.has(r) ? 'checked' : ''}> ${escapeHtml(r)}</label>`).join('');
+    rarityPanel.innerHTML = actions + boxes;
+    rarityPanel.querySelector('[data-act="all"]').addEventListener('click', () => {
+      selectedRarities = new Set(allRarities); renderRarityPanel(); updateRarityToggleLabel(); render();
+    });
+    rarityPanel.querySelector('[data-act="none"]').addEventListener('click', () => {
+      selectedRarities = new Set(); renderRarityPanel(); updateRarityToggleLabel(); render();
+    });
+    rarityPanel.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        if (cb.checked) selectedRarities.add(cb.value); else selectedRarities.delete(cb.value);
+        updateRarityToggleLabel(); render();
+      });
+    });
+  }
+  function updateRarityToggleLabel(){
+    if (!allRarities.length) { rarityToggle.textContent = 'No rarities'; return; }
+    if (selectedRarities.size === 0 || selectedRarities.size === allRarities.length) rarityToggle.textContent = 'All rarities';
+    else rarityToggle.textContent = [...selectedRarities].join(', ');
+  }
+  rarityToggle.addEventListener('click', () => { rarityPanel.hidden = !rarityPanel.hidden; });
+
+  // ---------- view switching ----------
+  viewToggle.addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    view = btn.dataset.view;
+    [...viewToggle.children].forEach(b => b.classList.toggle('active', b === btn));
+    setsField.style.display = (view === 'all') ? '' : 'none';
+    refreshView();
+  });
+
+  function refreshView(){
+    tbody.innerHTML = '<tr><td colspan="8" style="padding:20px;color:var(--ink-soft);">Loading…</td></tr>';
+    table.style.display = 'table';
+    emptyState.style.display = 'none';
+
+    if (view === 'all') {
+      const entries = manifest.filter(m => selectedSetKeys.has(setKey(m)));
+      if (!entries.length) {
+        currentRows = [];
+        showEmpty('No sets selected — pick one or more from the Sets dropdown.');
+        populateRarities();
+        return;
+      }
+      Promise.all(entries.map(fetchSetRows)).then(arrs => {
+        currentRows = arrs.flat();
+        populateRarities();
+        render();
+      }).catch(() => showEmpty('Could not load one or more selected sets.'));
+    } else {
+      loadAllSetsOnce().then(rows => {
+        currentRows = rows.filter(r => {
+          const e = getEntry(cardKey(r));
+          return view === 'collection' ? e.owned > 0 : e.wishlist;
+        });
+        populateRarities();
+        render();
+      });
+    }
+  }
+
+  // ---------- render ----------
+  function showEmpty(msg){
+    table.style.display = 'none';
+    emptyState.style.display = 'block';
+    emptyState.textContent = msg;
+    summary.textContent = '';
+  }
+
+  function render(){
+    let rows = currentRows.slice();
+
+    const q = searchInput.value.trim().toLowerCase();
+    if (q) rows = rows.filter(r => (r.name||'').toLowerCase().includes(q) || (r.cardNumber||'').toLowerCase().includes(q));
+
+    if (allRarities.length && selectedRarities.size > 0) {
+      rows = rows.filter(r => r.rarity && selectedRarities.has(r.rarity));
+    }
+
+    rows.sort((a,b) => {
+      let av = a[sortKey], bv = b[sortKey];
+      if (av === null || av === undefined) av = sortKey.includes('Jpy') ? -Infinity : '';
+      if (bv === null || bv === undefined) bv = sortKey.includes('Jpy') ? -Infinity : '';
+      if (typeof av === 'number' || typeof bv === 'number') return (av - bv) * sortDir;
+      return String(av).localeCompare(String(bv), 'ja') * sortDir;
+    });
+
+    if (!rows.length) {
+      const msgs = {
+        all: q ? `No cards match "${q}".` : 'No cards for this selection.',
+        collection: 'Nothing in your collection yet — browse cards and tap the owned counter to add some.',
+        wishlist: 'Your wishlist is empty — browse cards and tap the heart to add some.'
+      };
+      showEmpty(msgs[view]);
+      return;
+    }
+    table.style.display = 'table';
+    emptyState.style.display = 'none';
+
+    const totalCopies = rows.reduce((s,r) => s + (getEntry(cardKey(r)).owned || 0), 0);
+    summary.innerHTML = view === 'collection'
+      ? `<strong>${rows.length}</strong> card${rows.length===1?'':'s'} owned — <strong>${totalCopies}</strong> total cop${totalCopies===1?'y':'ies'}`
+      : `<strong>${rows.length}</strong> card${rows.length===1?'':'s'} shown`;
+
+    tbody.innerHTML = rows.map(r => {
+      const key = cardKey(r);
+      const e = getEntry(key);
+      const img = r.imageUrl ? `<img src="${r.imageUrl}" alt="" loading="lazy">` : '';
+      return `<tr data-key="${escapeHtml(key)}">
+        <td class="card-cell">${img}<a href="${r.url||'#'}" target="_blank" rel="noopener">${escapeHtml(r.name||'')}</a></td>
+        <td>${escapeHtml(r.cardNumber||'')}</td>
+        <td>${r.rarity ? `<span class="rarity-badge">${escapeHtml(r.rarity)}</span>` : ''}</td>
+        <td>${escapeHtml(r.setCode||'')}</td>
+        <td class="num">${fmtYen(r.sellPriceJpy)}</td>
+        <td class="num">${fmtYen(r.buyPriceJpy)}</td>
+        <td><div class="owned-stepper">
+          <button type="button" data-act="dec">−</button>
+          <span class="qty ${e.owned>0?'owned':''}">${e.owned}</span>
+          <button type="button" data-act="inc">+</button>
+        </div></td>
+        <td style="text-align:center;"><button type="button" class="wishlist-btn ${e.wishlist?'active':''}" data-act="wish">${e.wishlist ? '♥' : '♡'}</button></td>
+      </tr>`;
+    }).join('');
+
+    tbody.querySelectorAll('button[data-act]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tr = btn.closest('tr');
+        const key = tr.dataset.key;
+        const e = getEntry(key);
+        if (btn.dataset.act === 'inc') setEntry(key, {owned: e.owned + 1});
+        else if (btn.dataset.act === 'dec') setEntry(key, {owned: Math.max(0, e.owned - 1)});
+        else if (btn.dataset.act === 'wish') setEntry(key, {wishlist: !e.wishlist});
+        if (view !== 'all') refreshView(); else render();
+      });
+    });
+  }
+
+  searchInput.addEventListener('input', render);
+  table.querySelector('thead').addEventListener('click', e => {
+    const th = e.target.closest('th');
+    if (!th || th.classList.contains('static')) return;
+    const key = th.dataset.key;
+    if (sortKey === key) sortDir *= -1; else { sortKey = key; sortDir = 1; }
+    render();
+  });
+
+  // ---------- export / import ----------
+  exportBtn.addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify(state, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ws-collection-backup-' + new Date().toISOString().slice(0,10) + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+  importFile.addEventListener('change', () => {
+    const file = importFile.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const imported = JSON.parse(reader.result);
+        if (typeof imported !== 'object' || Array.isArray(imported)) throw new Error('bad shape');
+        const merge = confirm(
+          'Merge this backup into your current collection? Matching cards will be overwritten with the backup\'s values.\n\nClick Cancel to replace your entire collection with the backup instead.'
+        );
+        state = merge ? {...state, ...imported} : imported;
+        saveState();
+        refreshView();
+        alert('Import complete.');
+      } catch (e) {
+        alert('That file doesn\'t look like a valid collection backup.');
+      }
+      importFile.value = '';
+    };
+    reader.readAsText(file);
+  });
+
+  loadState();
+  loadManifest();
+})();
+</script>
+
+</body>
+</html>

@@ -163,6 +163,30 @@ The repo ships with one sample set already in `docs/data/` so the page
 isn't empty the first time you open it — delete `docs/data/ws_sample.json`
 and its entry in `manifest.json` once you've scraped a real set.
 
+## Collection & Wishlist (`collection.html`)
+
+A second page for personal tracking, linked from the top of the price
+viewer. Same underlying data — nothing extra to scrape.
+
+- **Browse all**: pick sets (multi-select, same as the price viewer) and
+  tick a "−/+" counter to mark how many copies you own, or tap the heart
+  to add something to your wishlist.
+- **My Collection** / **My Wishlist** tabs: show only what you've marked,
+  searched across *every* set you've scraped, regardless of which sets are
+  selected in the Sets dropdown.
+
+**Important limitation:** your collection and wishlist are saved with
+`localStorage`, meaning **only in the browser you used to mark them** — not
+synced anywhere, and wiped if that browser's site data is ever cleared.
+Use the **Export backup** button regularly to save a JSON file, and
+**Import backup** to restore it (in the same browser after clearing data,
+or to carry your collection into a different browser/computer). This
+isn't automatic — it's on you to export when you want a backup.
+
+If you outgrow this later, the fix is a small backend (there's a note
+about this in the price-viewer section above) so your collection is
+properly stored and synced instead of living in browser storage.
+
 ## If it comes back with 0 results
 
 Retail sites tweak their markup periodically. The parser is written to be
