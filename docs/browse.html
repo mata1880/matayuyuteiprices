@@ -163,7 +163,6 @@
   }
   setsToggle.addEventListener('click', () => {
     setsPanel.hidden = !setsPanel.hidden;
-    if (!setsPanel.hidden) setsPanelSearch.focus();
   });
   setsPanelSearch.addEventListener('input', renderSetsPanel);
   setsPanel.querySelector('[data-act="all"]').addEventListener('click', () => {
