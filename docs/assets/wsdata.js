@@ -261,12 +261,53 @@ window.WS = (function(){
     });
   }
 
+  // ---------- dropdown panels (Sets, Rarity) ----------
+  // Uses an invisible full-screen backdrop to catch outside clicks, the
+  // same robust pattern as the card detail modal, instead of trying to
+  // detect "was this click outside the box" (which is fragile once the
+  // panel's own content re-renders itself, e.g. on checkbox toggle).
+  function createDropdown(toggleBtn, panelEl){
+    const backdropId = 'ws-dropdown-backdrop';
+    function backdrop(){
+      let el = document.getElementById(backdropId);
+      if (!el) {
+        el = document.createElement('div');
+        el.id = backdropId;
+        el.style.position = 'fixed';
+        el.style.inset = '0';
+        el.style.zIndex = '25';
+        el.style.display = 'none';
+        document.body.appendChild(el);
+      }
+      return el;
+    }
+    function closeAll(){
+      document.querySelectorAll('.panel[data-open="1"]').forEach(p => {
+        p.hidden = true;
+        p.removeAttribute('data-open');
+      });
+      backdrop().style.display = 'none';
+    }
+    function open(){
+      closeAll();
+      panelEl.hidden = false;
+      panelEl.setAttribute('data-open', '1');
+      const bd = backdrop();
+      bd.style.display = 'block';
+      bd.onclick = closeAll;
+    }
+    function toggle(){ panelEl.hidden ? open() : closeAll(); }
+    toggleBtn.addEventListener('click', (ev) => { ev.stopPropagation(); toggle(); });
+    panelEl.addEventListener('click', (ev) => ev.stopPropagation());
+    return {open, close: closeAll, toggle};
+  }
+
   return {
     loadState, saveState, cardKey, getEntry, setEntry, exportBackup, importBackup,
     fmtYen, fmtDate, normForMatch, escapeHtml, setKey, baseCardNumber,
     loadManifest, fetchSetRows, loadAllSets, loadCatalog, catalogFor, bestImage,
     cardTileHtml, attachTileHandlers, openModal, closeModal,
-    paginate, renderPagination,
+    paginate, renderPagination, createDropdown,
     get manifest(){ return manifest; },
   };
 })();

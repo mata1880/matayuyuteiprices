@@ -161,10 +161,7 @@
       setsToggle.textContent = m ? (m.name || m.set) : '1 set';
     } else setsToggle.textContent = selectedSetKeys.size + ' sets selected';
   }
-  setsToggle.addEventListener('click', () => {
-    setsPanel.hidden = !setsPanel.hidden;
-    if (!setsPanel.hidden) setsPanelSearch.focus();
-  });
+  W.createDropdown(setsToggle, setsPanel);
   setsPanelSearch.addEventListener('input', renderSetsPanel);
   setsPanel.querySelector('[data-act="all"]').addEventListener('click', () => {
     selectedSetKeys = new Set(manifest.map(W.setKey));
@@ -173,10 +170,6 @@
   setsPanel.querySelector('[data-act="none"]').addEventListener('click', () => {
     selectedSetKeys = new Set();
     renderSetsPanel(); updateSetsToggleLabel(); loadSelectedSets();
-  });
-  document.addEventListener('click', e => {
-    if (!e.target.closest('#sets-multiselect')) setsPanel.hidden = true;
-    if (!e.target.closest('#rarity-multiselect')) rarityPanel.hidden = true;
   });
 
   function loadSelectedSets(){
@@ -226,7 +219,7 @@
     if (selectedRarities.size === 0 || selectedRarities.size === allRarities.length) rarityToggle.textContent = 'All rarities';
     else rarityToggle.textContent = [...selectedRarities].join(', ');
   }
-  rarityToggle.addEventListener('click', () => { rarityPanel.hidden = !rarityPanel.hidden; });
+  W.createDropdown(rarityToggle, rarityPanel);
 
   modeToggle.addEventListener('click', e => {
     const btn = e.target.closest('button'); if (!btn) return;

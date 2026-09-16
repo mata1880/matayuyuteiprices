@@ -122,8 +122,7 @@
     if (selectedRarities.size === 0 || selectedRarities.size === allRarities.length) rarityToggle.textContent = 'All rarities';
     else rarityToggle.textContent = [...selectedRarities].join(', ');
   }
-  rarityToggle.addEventListener('click', () => { rarityPanel.hidden = !rarityPanel.hidden; });
-  document.addEventListener('click', e => { if (!e.target.closest('#rarity-multiselect')) rarityPanel.hidden = true; });
+  W.createDropdown(rarityToggle, rarityPanel);
 
   perPageSelect.addEventListener('change', () => { perPage = Number(perPageSelect.value); page = 1; render(); });
   searchInput.addEventListener('input', () => { page = 1; render(); });
