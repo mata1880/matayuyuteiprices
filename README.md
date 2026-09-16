@@ -59,13 +59,16 @@ already encodes set + collector number + rarity, so it's a reliable join key.
 
 ## Web viewer (GitHub Pages)
 
-There's also a static site in `docs/` — locked to Weiss Schwarz, with a single
-search box: start typing a set's name or code and it suggests matches from
-sets you've already scraped. Important difference from something like a live
-calculator app: **it's not live** — GitHub Pages can't run Python or call
-yuyu-tei.jp for you (no server, and the browser would be blocked by CORS
-anyway). The page just reads JSON files you generate locally, and it can
-only suggest sets that are already in `docs/data/`.
+There's also a static site in `docs/` — locked to Weiss Schwarz, with a
+single search box: type a set's name, its yuyu-tei code, **or the code
+printed on the card** (e.g. `OSK/S133`) and it suggests matches from sets
+you've already scraped, each showing when it was last updated. Picking one
+loads a Rarity tick-box filter (only showing rarities that set actually
+has) plus a text filter for individual cards. Important difference from
+something like a live calculator app: **it's not live** — GitHub Pages
+can't run Python or call yuyu-tei.jp for you (no server, and the browser
+would be blocked by CORS anyway). The page just reads JSON files you
+generate locally, and can only suggest sets already in `docs/data/`.
 
 ### Workflow: scrape directly using the code printed on the card (simplest)
 

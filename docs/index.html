@@ -156,6 +156,54 @@
     color:var(--ink-soft);
     font-size:13px;
   }
+  .suggestions .updated{
+    display:block;
+    font-family:var(--mono);
+    font-size:10px;
+    color:var(--ink-soft);
+    margin-top:2px;
+  }
+  .rarity-multiselect{position:relative;}
+  #rarity-toggle{
+    font-family:var(--sans);
+    font-size:14px;
+    padding:8px 12px;
+    border:1px solid var(--line);
+    background:var(--paper);
+    color:var(--ink);
+    cursor:pointer;
+    min-width:150px;
+    text-align:left;
+  }
+  #rarity-panel{
+    min-width:180px;
+    padding:6px 0;
+  }
+  #rarity-panel label{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 12px;
+    font-size:13.5px;
+    cursor:pointer;
+  }
+  #rarity-panel label:hover{background:#fbf8f0;}
+  #rarity-panel .rarity-actions{
+    display:flex;
+    gap:10px;
+    padding:4px 12px 8px;
+    border-bottom:1px solid var(--line-soft);
+    margin-bottom:4px;
+  }
+  #rarity-panel .rarity-actions button{
+    font-size:11px;
+    color:var(--red);
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:0;
+    text-decoration:underline;
+  }
 
   #summary{
     font-size:13px;
@@ -263,8 +311,11 @@
       </div>
     </div>
     <div class="field">
-      <label for="rarity-select">Rarity</label>
-      <select id="rarity-select"><option value="">All rarities</option></select>
+      <label>Rarity</label>
+      <div class="rarity-multiselect" id="rarity-multiselect">
+        <button type="button" id="rarity-toggle">All rarities</button>
+        <div class="suggestions" id="rarity-panel" hidden></div>
+      </div>
     </div>
     <div class="field search">
       <label for="search-input">Filter cards in this set</label>
@@ -305,7 +356,8 @@
   const setSearch = document.getElementById('set-search');
   const suggestionsBox = document.getElementById('set-suggestions');
   const searchInput = document.getElementById('search-input');
-  const raritySelect = document.getElementById('rarity-select');
+  const rarityToggle = document.getElementById('rarity-toggle');
+  const rarityPanel = document.getElementById('rarity-panel');
   const tbody = document.getElementById('card-tbody');
   const table = document.getElementById('card-table');
   const emptyState = document.getElementById('empty-state');
@@ -313,13 +365,15 @@
   const statusPill = document.getElementById('status-pill');
   const modeToggle = document.getElementById('mode-toggle');
 
-  let manifest = [];       // all scraped WS sets: {game,set,name,file,count,...}
+  let manifest = [];       // all scraped WS sets: {game,set,name,aliases,file,count,scrapedAt,...}
   let currentRows = [];
   let currentEntry = null;
   let mode = 'both';
   let sortKey = 'name';
   let sortDir = 1;
   let hlIndex = -1;
+  let allRarities = [];
+  let selectedRarities = new Set();
 
   function fmtYen(v){
     if (v === null || v === undefined || v === '') return '—';
@@ -328,19 +382,29 @@
     return '¥' + n.toLocaleString('en-US');
   }
 
+  function fmtDate(iso){
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d)) return '';
+    return d.toLocaleDateString(undefined, {year:'numeric', month:'short', day:'numeric'});
+  }
+
+  function normForMatch(s){
+    return (s || '').toLowerCase().replace(/[\s/\-]/g, '');
+  }
+
   function loadManifest(){
     fetch('data/manifest.json', {cache:'no-store'})
       .then(r => { if(!r.ok) throw new Error('no manifest'); return r.json(); })
       .then(data => {
-        manifest = data.filter(m => m.game === 'ws');
+        manifest = data.filter(m => m.game === 'ws')
+                        .sort((a,b) => (b.scrapedAt||'').localeCompare(a.scrapedAt||''));
         statusPill.textContent = manifest.length
           ? manifest.length + ' set(s) available'
           : 'no data yet';
         if (manifest.length) {
-          // load the most recently scraped set by default
-          const latest = manifest.slice().sort((a,b) => (b.scrapedAt||'').localeCompare(a.scrapedAt||''))[0];
-          setSearch.value = latest.name || latest.set;
-          loadSetEntry(latest);
+          setSearch.value = manifest[0].name || manifest[0].set;
+          loadSetEntry(manifest[0]);
         } else {
           showEmpty('No sets scraped yet. Run the scraper locally with --site, then commit & push (see README).');
         }
@@ -353,12 +417,12 @@
   }
 
   function matchSets(query){
-    const q = query.trim().toLowerCase();
-    if (!q) return manifest.slice(0, 8);
-    return manifest.filter(m =>
-      (m.name || '').toLowerCase().includes(q) ||
-      (m.set || '').toLowerCase().includes(q)
-    ).slice(0, 8);
+    const q = normForMatch(query);
+    if (!q) return manifest; // already sorted most-recent-first
+    return manifest.filter(m => {
+      const haystacks = [m.name, m.set, ...(m.aliases||[])].map(normForMatch);
+      return haystacks.some(h => h.includes(q));
+    });
   }
 
   function renderSuggestions(){
@@ -370,7 +434,9 @@
       return;
     }
     suggestionsBox.innerHTML = matches.map((m, i) =>
-      `<button type="button" data-idx="${i}">${escapeHtml(m.name||m.set)}<span class="code">${escapeHtml(m.set)} · ${m.count} cards</span></button>`
+      `<button type="button" data-idx="${i}">${escapeHtml(m.name||m.set)}` +
+      `<span class="code">${escapeHtml(m.set)} · ${m.count} cards</span>` +
+      `<span class="updated">updated ${fmtDate(m.scrapedAt)}</span></button>`
     ).join('');
     suggestionsBox.hidden = false;
     [...suggestionsBox.children].forEach((btn, i) => {
@@ -413,15 +479,63 @@
 
   function populateRarities(){
     // Unique rarities, in the order they first appear (which already
-    // follows the set's own printed rarity order, since that's the order
-    // the scraper reads them off the page in).
+    // follows the set's own printed rarity order).
     const seen = [];
     for (const r of currentRows) {
       if (r.rarity && !seen.includes(r.rarity)) seen.push(r.rarity);
     }
-    raritySelect.innerHTML = '<option value="">All rarities</option>' +
-      seen.map(r => `<option value="${escapeHtml(r)}">${escapeHtml(r)}</option>`).join('');
+    allRarities = seen;
+    selectedRarities = new Set(seen); // default: everything shown
+    renderRarityPanel();
+    updateRarityToggleLabel();
   }
+
+  function renderRarityPanel(){
+    if (!allRarities.length) {
+      rarityPanel.innerHTML = '<div class="none">No rarity data for this set.</div>';
+      return;
+    }
+    const actions = `<div class="rarity-actions">
+      <button type="button" data-act="all">Select all</button>
+      <button type="button" data-act="none">Clear</button>
+    </div>`;
+    const boxes = allRarities.map(r => `
+      <label>
+        <input type="checkbox" value="${escapeHtml(r)}" ${selectedRarities.has(r) ? 'checked' : ''}>
+        ${escapeHtml(r)}
+      </label>`).join('');
+    rarityPanel.innerHTML = actions + boxes;
+
+    rarityPanel.querySelector('[data-act="all"]').addEventListener('click', () => {
+      selectedRarities = new Set(allRarities);
+      renderRarityPanel(); updateRarityToggleLabel(); render();
+    });
+    rarityPanel.querySelector('[data-act="none"]').addEventListener('click', () => {
+      selectedRarities = new Set();
+      renderRarityPanel(); updateRarityToggleLabel(); render();
+    });
+    rarityPanel.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        if (cb.checked) selectedRarities.add(cb.value); else selectedRarities.delete(cb.value);
+        updateRarityToggleLabel();
+        render();
+      });
+    });
+  }
+
+  function updateRarityToggleLabel(){
+    if (!allRarities.length) { rarityToggle.textContent = 'No rarities'; return; }
+    if (selectedRarities.size === allRarities.length) rarityToggle.textContent = 'All rarities';
+    else if (selectedRarities.size === 0) rarityToggle.textContent = 'None selected';
+    else rarityToggle.textContent = [...selectedRarities].join(', ');
+  }
+
+  rarityToggle.addEventListener('click', () => {
+    rarityPanel.hidden = !rarityPanel.hidden;
+  });
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.rarity-multiselect')) rarityPanel.hidden = true;
+  });
 
   function showEmpty(msg){
     table.style.display = 'none';
@@ -444,7 +558,7 @@
     if (mode === 'sell') rows = rows.filter(r => r.sellPriceJpy !== null && r.sellPriceJpy !== undefined);
     if (mode === 'buy')  rows = rows.filter(r => r.buyPriceJpy !== null && r.buyPriceJpy !== undefined);
 
-    if (raritySelect.value) rows = rows.filter(r => r.rarity === raritySelect.value);
+    if (allRarities.length) rows = rows.filter(r => r.rarity && selectedRarities.has(r.rarity));
 
     rows.sort((a,b) => {
       let av = a[sortKey], bv = b[sortKey];
@@ -490,7 +604,6 @@
   }
 
   searchInput.addEventListener('input', render);
-  raritySelect.addEventListener('change', render);
 
   modeToggle.addEventListener('click', e => {
     const btn = e.target.closest('button');

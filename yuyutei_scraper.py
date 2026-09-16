@@ -202,21 +202,27 @@ def parse_listing_page(html: str, game: str, set_code: str, listing_type: str):
                 card_number = l
                 break
 
-        # Name: prefer the <a> tag's own text if it looks like "code rarity name",
-        # else fall back to the longest non-numeric line in the block.
+        # Name + rarity: the <a> tag's own text is usually "CODE RARITY Name",
+        # e.g. "OSK/S133-001SSP SSP Merry Christmas 有馬かな(サイン入り)".
+        # Pull rarity from here directly — this is the ONLY source of rarity
+        # on pages that don't group cards under "XX Card List" headings
+        # (like search-result pages), and a reliable one even when they do.
         name = None
+        rarity_from_text = None
         a_text = el.get_text(" ", strip=True)
         if card_number and a_text.startswith(card_number):
             rest = a_text[len(card_number):].strip()
-            # strip a leading rarity token if present (e.g. "SSP Happy ...")
             parts = rest.split(" ", 1)
             if len(parts) == 2 and len(parts[0]) <= 8:
+                rarity_from_text = parts[0]
                 name = parts[1]
             elif rest:
                 name = rest
         if not name:
             candidates = [l for l in lines if "円" not in l and l != card_number]
             name = max(candidates, key=len) if candidates else a_text
+
+        rarity = rarity_from_text or current_rarity
 
         # Prices: collect all yen amounts in the block, in order of appearance.
         prices = [int(x.replace(",", "")) for x in YEN_RE.findall(block_text)]
@@ -251,7 +257,7 @@ def parse_listing_page(html: str, game: str, set_code: str, listing_type: str):
                 "cardId": card_id,
                 "cardNumber": card_number or "",
                 "name": name or "",
-                "rarity": current_rarity,
+                "rarity": rarity,
                 "prices": prices,
                 "boosted": boosted,
                 "stock": stock,
@@ -358,7 +364,7 @@ def merge_rows(sell_rows, buy_rows, mode):
 
 
 def update_site_data(records, game: str, set_code: str, mode: str, set_name: Optional[str] = None,
-                      site_dir: str = "docs"):
+                      site_dir: str = "docs", alias: Optional[str] = None):
     """
     Writes per-set JSON into <site_dir>/data/ and keeps data/manifest.json
     up to date, so the index.html viewer can list available game/set
@@ -382,11 +388,18 @@ def update_site_data(records, game: str, set_code: str, mode: str, set_name: Opt
             except json.JSONDecodeError:
                 manifest = []
 
+    existing = next((m for m in manifest if m["game"] == game and m["set"] == set_code), None)
     manifest = [m for m in manifest if not (m["game"] == game and m["set"] == set_code)]
+
+    aliases = list(existing.get("aliases", [])) if existing else []
+    if alias and alias not in aliases:
+        aliases.append(alias)
+
     manifest.append({
         "game": game,
         "set": set_code,
         "name": set_name or set_code,
+        "aliases": aliases,
         "file": f"data/{fname}",
         "mode": mode,
         "count": len(records),
@@ -533,7 +546,7 @@ def main():
             return
         print(f'\n{len(records)} card(s) found' + (f' — "{set_name}" ({set_code})' if set_name else ''))
         if args.site:
-            update_site_data(records, args.game, set_code, args.mode, set_name, args.site_dir)
+            update_site_data(records, args.game, set_code, args.mode, set_name, args.site_dir, alias=args.card_code)
         write_output(records, args.out)
         return
 
