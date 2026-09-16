@@ -1,9 +1,23 @@
 [
   {
     "game": "ws",
+    "set": "osk2.0",
+    "name": "【推しの子】Vol.2",
+    "aliases": [
+      "OSK"
+    ],
+    "file": "data/ws_osk2.0.json",
+    "mode": "both",
+    "count": 659,
+    "scrapedAt": "2026-09-16T22:23:00.889011+00:00"
+  },
+  {
+    "game": "ws",
     "set": "sample",
     "name": "【推しの子】Vol.3 (sample data)",
-    "aliases": ["OSK/S133"],
+    "aliases": [
+      "OSK/S133"
+    ],
     "file": "data/ws_sample.json",
     "mode": "both",
     "count": 3,
