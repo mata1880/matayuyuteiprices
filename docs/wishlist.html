@@ -194,7 +194,7 @@
   function populateRarities(){
     const seen = [];
     for (const c of cards) if (c.rarity && !seen.includes(c.rarity)) seen.push(c.rarity);
-    allRarities = seen.sort();
+    allRarities = W.sortRarities(seen);
     selectedRarities = new Set();
     renderRarityPanel();
     updateRarityToggleLabel();

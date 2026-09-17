@@ -5,6 +5,49 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Collection — Weiss Schwarz</title>
 <link rel="stylesheet" href="assets/wsdata.css">
+<style>
+  .wl-toolbar{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;}
+  .wl-toolbar select{min-width:180px;}
+  .wl-toolbar button{
+    font-family:var(--sans);font-size:12.5px;padding:7px 12px;border:1px solid var(--ink);
+    background:var(--paper);color:var(--ink);cursor:pointer;
+  }
+  .wl-toolbar button:hover{background:var(--ink);color:var(--paper);}
+  .tile-wish.active{color:var(--red);}
+  .tile-gear, .tile-del{
+    position:absolute;bottom:8px;width:26px;height:26px;border-radius:50%;border:none;cursor:pointer;
+    background:rgba(255,255,255,0.92);font-size:13px;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 1px 4px rgba(0,0,0,0.35);
+  }
+  .tile-gear{right:8px;color:var(--ink-soft);}
+  .tile-del{right:40px;color:var(--red);}
+  .copy-badge{
+    position:absolute;top:8px;left:8px;background:rgba(60,107,74,0.92);color:#fff;
+    font-family:var(--mono);font-size:10.5px;padding:2px 6px;border-radius:3px;
+  }
+  .grade-badge{
+    position:absolute;top:8px;right:44px;background:rgba(165,119,47,0.92);color:#fff;
+    font-family:var(--mono);font-size:10.5px;padding:2px 6px;border-radius:3px;max-width:90px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .frame-badge{
+    font-family:var(--mono);font-size:9.5px;color:var(--ink-soft);text-transform:uppercase;
+    letter-spacing:0.03em;
+  }
+  .edit-form{padding:20px;min-width:280px;}
+  .edit-form h2{margin:0 0 14px;font-size:16px;}
+  .edit-form label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);margin:12px 0 4px;}
+  .edit-form input, .edit-form select, .edit-form textarea{
+    width:100%;font-family:var(--sans);font-size:14px;padding:7px 9px;border:1px solid var(--line);background:var(--paper);color:var(--ink);
+  }
+  .edit-form textarea{min-height:60px;resize:vertical;}
+  .edit-form-actions{display:flex;gap:8px;margin-top:16px;justify-content:flex-end;}
+  .edit-form-actions button{
+    font-family:var(--sans);font-size:13px;padding:8px 14px;border:1px solid var(--ink);cursor:pointer;
+  }
+  .edit-form-actions .save-btn{background:var(--ink);color:var(--paper);}
+  .edit-form-actions .cancel-btn{background:var(--paper);color:var(--ink);}
+</style>
 </head>
 <body>
 
@@ -12,9 +55,9 @@
   <div class="header-top">
     <div>
       <h1>My <span>Collection</span></h1>
-      <p>Cards you own — from every set you've scraped.</p>
+      <p>Cards you own — tracked per physical copy, across as many named collections as you like.</p>
     </div>
-    <div id="status-pill">loading…</div>
+    <div id="status-pill">connecting…</div>
   </div>
   <nav class="pagenav">
     <a href="index.html">Prices</a>
@@ -25,6 +68,14 @@
 </header>
 
 <main>
+  <div class="wl-toolbar">
+    <label for="collection-select" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);">Collection:</label>
+    <select id="collection-select"><option>Loading…</option></select>
+    <button type="button" id="new-collection-btn">+ New collection</button>
+    <button type="button" id="rename-collection-btn">Rename</button>
+    <button type="button" id="delete-collection-btn">Delete</button>
+  </div>
+
   <div class="controls">
     <div class="field">
       <label>Rarity</label>
@@ -45,12 +96,6 @@
       <label for="search-input">Filter by name / number</label>
       <input type="search" id="search-input" placeholder="e.g. ピカチュウ or OSK/S133-002SSP">
     </div>
-    <div class="backup-actions">
-      <span class="backup-note">Saved only in this browser —</span>
-      <button type="button" id="export-btn">Export backup</button>
-      <label for="import-file">Import backup</label>
-      <input type="file" id="import-file" accept="application/json">
-    </div>
   </div>
 
   <p id="summary"></p>
@@ -60,15 +105,19 @@
 </main>
 
 <footer>
-  Data scraped from <a href="https://yuyu-tei.jp" target="_blank" rel="noopener">yuyu-tei.jp</a> (prices) and
-  <a href="https://ws-tcg.com" target="_blank" rel="noopener">ws-tcg.com</a> (card details) using local Python scripts.
-  ♥ and + marks are saved only in this browser's local storage — use Export/Import to back them up.
+  Live data from your <a href="https://ws-backend-z28t.onrender.com/docs" target="_blank" rel="noopener">backend API</a>.
+  Each tile is one physical copy — ⚙ edits its grade/frame/note/purchase price, 🗑 removes it entirely (e.g. sold),
+  + adds another copy of that same card to this collection, ♥ adds it to a wishlist too.
 </footer>
 
-<script src="assets/wsdata.js"></script>
+<script src="assets/api.js"></script>
 <script>
 (function(){
-  const W = window.WS;
+  const W = window.WSAPI;
+  const collectionSelect = document.getElementById('collection-select');
+  const newCollectionBtn = document.getElementById('new-collection-btn');
+  const renameCollectionBtn = document.getElementById('rename-collection-btn');
+  const deleteCollectionBtn = document.getElementById('delete-collection-btn');
   const rarityToggle = document.getElementById('rarity-toggle');
   const rarityPanel = document.getElementById('rarity-panel');
   const perPageSelect = document.getElementById('perpage-select');
@@ -78,27 +127,107 @@
   const summary = document.getElementById('summary');
   const statusPill = document.getElementById('status-pill');
   const paginationEl = document.getElementById('pagination');
-  const exportBtn = document.getElementById('export-btn');
-  const importFile = document.getElementById('import-file');
 
-  let allRows = [];
-  let currentRows = [];
+  let collections = [];
+  let currentCollectionId = null;
+  let copies = [];
   let allRarities = [];
   let selectedRarities = new Set();
   let page = 1;
   let perPage = 24;
 
-  function refresh(){
-    currentRows = allRows.filter(r => W.getEntry(W.cardKey(r)).owned > 0);
-    populateRarities();
-    page = 1;
-    render();
+  const FRAME_LABELS = {raw:'Raw', sleeve:'Sleeve', toploader:'Toploader', one_touch:'One-touch', slab:'Slab'};
+
+  function createDropdown(toggleBtn, panelEl){
+    const backdropId = 'ws-dropdown-backdrop';
+    function backdrop(){
+      let el = document.getElementById(backdropId);
+      if (!el) {
+        el = document.createElement('div');
+        el.id = backdropId;
+        el.style.position = 'fixed'; el.style.inset = '0'; el.style.zIndex = '90';
+        el.style.background = 'rgba(20,18,14,0.15)'; el.style.display = 'none';
+        document.body.appendChild(el);
+      }
+      return el;
+    }
+    function closeAll(){
+      document.querySelectorAll('.panel[data-open="1"]').forEach(p => { p.hidden = true; p.removeAttribute('data-open'); });
+      backdrop().style.display = 'none';
+    }
+    function open(){
+      closeAll();
+      panelEl.hidden = false; panelEl.setAttribute('data-open', '1');
+      const bd = backdrop(); bd.style.display = 'block'; bd.onclick = closeAll;
+    }
+    toggleBtn.addEventListener('click', (ev) => { ev.stopPropagation(); panelEl.hidden ? open() : closeAll(); });
+    panelEl.addEventListener('click', (ev) => ev.stopPropagation());
+  }
+  createDropdown(rarityToggle, rarityPanel);
+
+  function loadCollections(selectId){
+    return W.get('/collections').then(list => {
+      collections = list;
+      if (!collections.length) {
+        collectionSelect.innerHTML = '<option value="">No collections yet</option>';
+        currentCollectionId = null;
+        showEmpty('No collections yet — click "+ New collection" to create one.');
+        return;
+      }
+      collectionSelect.innerHTML = collections.map(c => `<option value="${c.id}">${W.escapeHtml(c.name)}</option>`).join('');
+      currentCollectionId = selectId && collections.some(c => c.id === selectId) ? selectId : collections[0].id;
+      collectionSelect.value = String(currentCollectionId);
+      return loadCopies();
+    });
+  }
+  collectionSelect.addEventListener('change', () => {
+    currentCollectionId = Number(collectionSelect.value);
+    loadCopies();
+  });
+  newCollectionBtn.addEventListener('click', async () => {
+    const name = prompt('Name for the new collection:');
+    if (!name) return;
+    try {
+      const created = await W.post('/collections', {name});
+      await loadCollections(created.id);
+    } catch (e) { alert(e.message); }
+  });
+  renameCollectionBtn.addEventListener('click', async () => {
+    if (!currentCollectionId) return;
+    const current = collections.find(c => c.id === currentCollectionId);
+    const name = prompt('New name:', current ? current.name : '');
+    if (!name) return;
+    try {
+      await W.patch(`/collections/${currentCollectionId}`, {name});
+      await loadCollections(currentCollectionId);
+    } catch (e) { alert(e.message); }
+  });
+  deleteCollectionBtn.addEventListener('click', async () => {
+    if (!currentCollectionId) return;
+    const current = collections.find(c => c.id === currentCollectionId);
+    if (!confirm(`Delete the collection "${current ? current.name : ''}"? Copies in it aren't deleted — they just become unfiled.`)) return;
+    try {
+      await W.del(`/collections/${currentCollectionId}`);
+      await loadCollections();
+    } catch (e) { alert(e.message); }
+  });
+
+  function loadCopies(){
+    grid.innerHTML = '';
+    emptyState.style.display = 'none';
+    summary.textContent = 'Loading…';
+    return W.get(`/collections/${currentCollectionId}/copies`).then(list => {
+      copies = list;
+      populateRarities();
+      page = 1;
+      render();
+    });
   }
 
   function populateRarities(){
     const seen = [];
-    for (const r of currentRows) if (r.rarity && !seen.includes(r.rarity)) seen.push(r.rarity);
-    allRarities = seen;
+    for (const c of copies) if (c.card.rarity && !seen.includes(c.card.rarity)) seen.push(c.card.rarity);
+    allRarities = W.sortRarities(seen);
     selectedRarities = new Set();
     renderRarityPanel();
     updateRarityToggleLabel();
@@ -122,7 +251,6 @@
     if (selectedRarities.size === 0 || selectedRarities.size === allRarities.length) rarityToggle.textContent = 'All rarities';
     else rarityToggle.textContent = [...selectedRarities].join(', ');
   }
-  W.createDropdown(rarityToggle, rarityPanel);
 
   perPageSelect.addEventListener('change', () => { perPage = Number(perPageSelect.value); page = 1; render(); });
   searchInput.addEventListener('input', () => { page = 1; render(); });
@@ -135,46 +263,176 @@
     summary.textContent = '';
   }
 
-  function render(){
-    let rows = currentRows.slice();
-    const q = searchInput.value.trim().toLowerCase();
-    if (q) rows = rows.filter(r => (r.name||'').toLowerCase().includes(q) || (r.cardNumber||'').toLowerCase().includes(q));
-    if (allRarities.length && selectedRarities.size > 0) rows = rows.filter(r => r.rarity && selectedRarities.has(r.rarity));
+  function ensureModal(id){
+    let el = document.getElementById(id);
+    if (el) return el;
+    el = document.createElement('div');
+    el.id = id; el.className = 'modal-backdrop'; el.hidden = true;
+    document.body.appendChild(el);
+    el.addEventListener('click', (ev) => { if (ev.target === el) el.hidden = true; });
+    document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') el.hidden = true; });
+    return el;
+  }
+  function openZoom(card){
+    if (!card.image_url) return;
+    const el = ensureModal('zoom-modal');
+    el.innerHTML = `<div style="width:min(92vw, 520px);position:relative;">
+      <button type="button" class="modal-close" style="position:absolute;top:-40px;right:0;color:#fff;">×</button>
+      <img src="${W.escapeHtml(card.image_url)}" style="width:100%;height:auto;display:block;box-shadow:0 8px 30px rgba(0,0,0,0.5);">
+    </div>`;
+    el.querySelector('.modal-close').addEventListener('click', () => el.hidden = true);
+    el.hidden = false;
+  }
+  function openInfo(card){
+    const el = ensureModal('info-modal');
+    const stats = [
+      card.color && `Color: ${W.escapeHtml(card.color)}`, card.level && `Level: ${W.escapeHtml(card.level)}`,
+      card.cost && `Cost: ${W.escapeHtml(card.cost)}`, card.power && `Power: ${W.escapeHtml(card.power)}`,
+      card.soul && `Soul: ${W.escapeHtml(card.soul)}`, card.trigger && `Trigger: ${W.escapeHtml(card.trigger)}`,
+    ].filter(Boolean).join(' · ');
+    const text = card.text ? card.text.replace(/<br\s*\/?>/gi, '<br>') : '';
+    el.innerHTML = `<div class="modal">
+      <button type="button" class="modal-close" aria-label="Close">×</button>
+      <div class="modal-body">
+        ${card.image_url ? `<img src="${W.escapeHtml(card.image_url)}" alt="">` : ''}
+        <div class="modal-info">
+          <h2>${W.escapeHtml(card.name)}</h2>
+          <div class="modal-number">${W.escapeHtml(card.card_number)}${card.rarity ? ' · ' + W.escapeHtml(card.rarity) : ''}</div>
+          ${stats ? `<div class="modal-stats">${stats}</div>` : ''}
+          ${card.traits ? `<div class="modal-traits">${W.escapeHtml(card.traits)}</div>` : ''}
+          ${text ? `<div class="modal-text">${text}</div>` : ''}
+          ${card.flavor ? `<div class="modal-flavor">${W.escapeHtml(card.flavor)}</div>` : ''}
+        </div>
+      </div>
+    </div>`;
+    el.querySelector('.modal-close').addEventListener('click', () => el.hidden = true);
+    el.hidden = false;
+  }
 
-    if (!rows.length) {
-      showEmpty(q ? `No cards match "${q}".` : 'Nothing in your collection yet — browse cards and tap the + to add some.');
+  function openEditModal(copy){
+    const el = ensureModal('edit-modal');
+    el.innerHTML = `<div class="modal"><button type="button" class="modal-close" aria-label="Close">×</button>
+      <div class="edit-form">
+        <h2>Edit copy #${copy.copy_number} — ${W.escapeHtml(copy.card.name)}</h2>
+        <label for="ef-grade">Grade</label>
+        <input type="text" id="ef-grade" value="${W.escapeHtml(copy.grade || '')}" placeholder="e.g. PSA 10">
+        <label for="ef-frame">Frame</label>
+        <select id="ef-frame">
+          ${Object.entries(FRAME_LABELS).map(([v,l]) => `<option value="${v}" ${copy.frame_type===v?'selected':''}>${l}</option>`).join('')}
+        </select>
+        <label for="ef-price">Purchase price (¥)</label>
+        <input type="number" id="ef-price" value="${copy.purchase_price_jpy ?? ''}" min="0">
+        <label for="ef-date">Date acquired</label>
+        <input type="date" id="ef-date" value="${copy.date_acquired || ''}">
+        <label for="ef-note">Note</label>
+        <textarea id="ef-note">${W.escapeHtml(copy.note || '')}</textarea>
+        <div class="edit-form-actions">
+          <button type="button" class="cancel-btn" data-act="cancel">Cancel</button>
+          <button type="button" class="save-btn" data-act="save">Save</button>
+        </div>
+      </div>
+    </div>`;
+    el.querySelector('.modal-close').addEventListener('click', () => el.hidden = true);
+    el.querySelector('[data-act="cancel"]').addEventListener('click', () => el.hidden = true);
+    el.querySelector('[data-act="save"]').addEventListener('click', async () => {
+      const body = {
+        grade: el.querySelector('#ef-grade').value || null,
+        frame_type: el.querySelector('#ef-frame').value,
+        note: el.querySelector('#ef-note').value || null,
+        purchase_price_jpy: el.querySelector('#ef-price').value ? Number(el.querySelector('#ef-price').value) : null,
+        date_acquired: el.querySelector('#ef-date').value || null,
+      };
+      try {
+        await W.patch(`/copies/${copy.id}`, body);
+        el.hidden = true;
+        await loadCopies();
+      } catch (e) { alert(e.message); }
+    });
+    el.hidden = false;
+  }
+
+  async function handleAddWish(anchorEl, card){
+    await W.openPicker(anchorEl, {
+      title: 'Add to wishlist', emptyLabel: 'No wishlists yet',
+      listFn: () => W.get('/wishlists'),
+      createFn: (name) => W.post('/wishlists', {name}),
+      onPick: async (wishlistId) => { await W.post(`/wishlists/${wishlistId}/items`, {card_id: card.id}); },
+    });
+  }
+
+  function tileHtml(copy){
+    const card = copy.card;
+    const img = card.image_url;
+    return `
+      <div class="card-tile" data-copy-id="${copy.id}">
+        <div class="tile-media" data-act="zoom">
+          ${img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(card.name)}" loading="lazy">` : '<div class="tile-noimg">No image</div>'}
+          <span class="copy-badge">#${copy.copy_number}</span>
+          ${copy.grade ? `<span class="grade-badge">${W.escapeHtml(copy.grade)}</span>` : ''}
+          <button type="button" class="tile-add" data-act="add" title="Add another copy to this collection">+</button>
+          <button type="button" class="tile-wish" data-act="wish" data-picker-trigger title="Add to a wishlist">♡</button>
+          <button type="button" class="tile-del" data-act="del" title="Remove this copy (e.g. sold)">🗑</button>
+          <button type="button" class="tile-gear" data-act="edit" title="Edit grade / frame / note">⚙</button>
+        </div>
+        <div class="tile-info">
+          <div class="tile-name" data-act="info" title="Click for card details">${W.escapeHtml(card.name)}</div>
+          <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span><span class="frame-badge">${FRAME_LABELS[copy.frame_type]||copy.frame_type}</span></div>
+          <div class="tile-prices"><span>Sell ${W.fmtYen(card.sell_price_jpy)}</span><span>Buy ${W.fmtYen(card.buy_price_jpy)}</span></div>
+        </div>
+      </div>`;
+  }
+
+  function attachHandlers(pageCopies){
+    const byId = {};
+    pageCopies.forEach(c => byId[c.id] = c);
+    grid.querySelectorAll('.card-tile').forEach(tile => {
+      const copy = byId[Number(tile.dataset.copyId)];
+      const card = copy.card;
+      tile.querySelector('[data-act="zoom"]').addEventListener('click', () => openZoom(card));
+      tile.querySelector('[data-act="info"]').addEventListener('click', () => openInfo(card));
+      tile.querySelector('[data-act="edit"]').addEventListener('click', (ev) => { ev.stopPropagation(); openEditModal(copy); });
+      tile.querySelector('[data-act="wish"]').addEventListener('click', (ev) => { ev.stopPropagation(); handleAddWish(ev.currentTarget, card); });
+      tile.querySelector('[data-act="add"]').addEventListener('click', async (ev) => {
+        ev.stopPropagation();
+        try { await W.post('/copies', {card_id: card.id, collection_id: currentCollectionId}); await loadCopies(); }
+        catch (e) { alert(e.message); }
+      });
+      tile.querySelector('[data-act="del"]').addEventListener('click', async (ev) => {
+        ev.stopPropagation();
+        if (!confirm(`Remove copy #${copy.copy_number} of "${card.name}"? This can't be undone.`)) return;
+        try { await W.del(`/copies/${copy.id}`); await loadCopies(); }
+        catch (e) { alert(e.message); }
+      });
+    });
+  }
+
+  function render(){
+    let list = copies.slice();
+    const q = searchInput.value.trim().toLowerCase();
+    if (q) list = list.filter(c => (c.card.name||'').toLowerCase().includes(q) || (c.card.card_number||'').toLowerCase().includes(q));
+    if (allRarities.length && selectedRarities.size > 0) list = list.filter(c => c.card.rarity && selectedRarities.has(c.card.rarity));
+
+    if (!list.length) {
+      showEmpty(q ? `No copies match "${q}".` : 'Nothing in this collection yet — go to Browse and tap + on some cards.');
       return;
     }
     emptyState.style.display = 'none';
 
-    const totalPages = Math.max(1, Math.ceil(rows.length / perPage));
+    const totalPages = Math.max(1, Math.ceil(list.length / perPage));
     if (page > totalPages) page = totalPages;
-    const pageRows = W.paginate(rows, page, perPage);
-    const totalCopies = rows.reduce((s,r) => s + (W.getEntry(W.cardKey(r)).owned || 0), 0);
+    const pageCopies = W.paginate(list, page, perPage);
 
-    summary.innerHTML = `<strong>${rows.length}</strong> card${rows.length===1?'':'s'} owned — <strong>${totalCopies}</strong> total cop${totalCopies===1?'y':'ies'} · page <strong>${page}</strong> of ${totalPages}`;
-    grid.innerHTML = pageRows.map(W.cardTileHtml).join('');
-
-    const rowsByKey = {};
-    pageRows.forEach(r => rowsByKey[W.cardKey(r)] = r);
-    W.attachTileHandlers(grid, rowsByKey, refresh);
-
+    summary.innerHTML = `<strong>${list.length}</strong> cop${list.length===1?'y':'ies'} in this collection · page <strong>${page}</strong> of ${totalPages}`;
+    grid.innerHTML = pageCopies.map(tileHtml).join('');
+    attachHandlers(pageCopies);
     W.renderPagination(paginationEl, page, totalPages, (p) => { page = p; render(); window.scrollTo({top:0, behavior:'smooth'}); });
   }
 
-  exportBtn.addEventListener('click', W.exportBackup);
-  importFile.addEventListener('change', () => {
-    const file = importFile.files[0];
-    if (!file) return;
-    W.importBackup(file, refresh);
-    importFile.value = '';
-  });
-
-  W.loadState();
-  Promise.all([W.loadCatalog(), W.loadAllSets()]).then(([_, rows]) => {
-    allRows = rows;
-    statusPill.textContent = W.manifest.length ? W.manifest.length + ' set(s) available' : 'no data yet';
-    refresh();
+  loadCollections().then(() => {
+    statusPill.textContent = collections.length ? collections.length + ' collection(s)' : 'no collections yet';
+  }).catch(err => {
+    statusPill.textContent = 'connection failed';
+    showEmpty('Could not reach the backend API: ' + err.message);
   });
 })();
 </script>

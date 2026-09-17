@@ -38,6 +38,24 @@ window.WSAPI = (function(){
   }
   function normForMatch(s){ return (s || "").toLowerCase().replace(/[\s/\-]/g, ""); }
 
+  // ---------- rarity ordering (highest to lowest, not alphabetical) ----------
+  // Based on typical Weiss Schwarz chase-rarity conventions. Anything not
+  // listed here (e.g. a rarity code from a set that uses different
+  // conventions) sorts alphabetically after all of these, so it still
+  // shows up rather than being dropped.
+  const RARITY_ORDER = [
+    "AGR", "SEC+", "SEC", "SSP", "SP", "RRR+", "OFR", "RRR", "CR",
+    "PR+", "PR", "SR", "RR", "R", "U", "TD", "C", "CC", "CX", "N",
+  ];
+  function sortRarities(list){
+    const rank = (r) => { const i = RARITY_ORDER.indexOf((r||"").toUpperCase()); return i === -1 ? 999 : i; };
+    return list.slice().sort((a, b) => {
+      const ra = rank(a), rb = rank(b);
+      if (ra !== rb) return ra - rb;
+      return a.localeCompare(b); // tie-break alphabetically for anything unranked
+    });
+  }
+
   // ---------- pagination ----------
   function paginate(items, page, perPage){
     const start = (page - 1) * perPage;
@@ -131,7 +149,7 @@ window.WSAPI = (function(){
 
   return {
     API_BASE, get, post, patch, del,
-    fmtYen, escapeHtml, normForMatch,
+    fmtYen, escapeHtml, normForMatch, sortRarities,
     paginate, renderPagination,
     openPicker, closePicker,
   };
