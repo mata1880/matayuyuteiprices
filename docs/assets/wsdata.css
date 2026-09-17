@@ -113,7 +113,8 @@ select:focus, input:focus{outline:2px solid var(--red);outline-offset:1px;}
 .tile-wish{right:8px;background:rgba(255,255,255,0.92);color:var(--line);font-size:17px;}
 .tile-wish.active{color:var(--red);}
 .tile-info{padding:10px 10px 12px;display:flex;flex-direction:column;gap:4px;flex:1;}
-.tile-name{font-weight:600;font-size:13px;line-height:1.3;min-height:2.6em;}
+.tile-name{font-weight:600;font-size:13px;line-height:1.3;min-height:2.6em;cursor:pointer;}
+.tile-name:hover{color:var(--red);text-decoration:underline;}
 .tile-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 .rarity-badge{font-family:var(--mono);font-size:10.5px;padding:1px 5px;border:1px solid var(--ink);white-space:nowrap;}
 .tile-number{font-family:var(--mono);font-size:10.5px;color:var(--ink-soft);}
@@ -163,6 +164,31 @@ select:focus, input:focus{outline:2px solid var(--red);outline-offset:1px;}
 }
 .backup-actions button:hover, .backup-actions label:hover{background:var(--ink);color:var(--paper);}
 .backup-actions input[type="file"]{display:none;}
+
+/* ---- collection/wishlist picker popover ---- */
+.ws-picker{
+  position:absolute;z-index:120;background:var(--card-bg);border:1px solid var(--ink);
+  min-width:180px;max-width:240px;box-shadow:0 6px 20px rgba(0,0,0,0.2);
+}
+.ws-picker-title{
+  font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);
+  padding:8px 12px 6px;border-bottom:1px solid var(--line-soft);
+}
+.ws-picker-list{max-height:260px;overflow-y:auto;padding:4px 0;}
+.ws-picker-item{
+  display:block;width:100%;text-align:left;padding:8px 12px;background:none;border:none;
+  font-family:var(--sans);font-size:13.5px;color:var(--ink);cursor:pointer;
+}
+.ws-picker-item:hover{background:#fbf8f0;}
+.ws-picker-new{color:var(--red);border-top:1px solid var(--line-soft);margin-top:2px;}
+.ws-picker-empty, .ws-picker-error{padding:8px 12px;font-size:12.5px;color:var(--ink-soft);}
+.ws-picker-error{color:var(--red);}
+
+/* ---- owned badge on tiles ---- */
+.tile-owned-badge{
+  position:absolute;bottom:8px;left:8px;background:rgba(60,107,74,0.92);color:#fff;
+  font-family:var(--mono);font-size:10.5px;padding:2px 6px;border-radius:3px;
+}
 .backup-note{font-size:11.5px;color:var(--ink-soft);}
 
 footer{padding:20px clamp(16px,4vw,48px) 40px;color:var(--ink-soft);font-size:12px;border-top:1px solid var(--line);}
