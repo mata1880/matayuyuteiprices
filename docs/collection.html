@@ -64,6 +64,7 @@
     <a href="browse.html">Browse</a>
     <a href="wishlist.html">Wishlist</a>
     <a href="collection.html" class="active">Collection</a>
+    <a href="binder.html">Binders</a>
   </nav>
 </header>
 
@@ -83,6 +84,21 @@
         <button type="button" id="rarity-toggle">All rarities</button>
         <div class="panel" id="rarity-panel" hidden></div>
       </div>
+    </div>
+    <div class="field">
+      <label>Stack rarities</label>
+      <div class="multiselect" id="stack-multiselect">
+        <button type="button" id="stack-toggle">None stacked</button>
+        <div class="panel" id="stack-panel" hidden></div>
+      </div>
+    </div>
+    <div class="field">
+      <label for="currency-select">Currency</label>
+      <select id="currency-select">
+        <option value="USD">USD ($)</option>
+        <option value="GBP">GBP (£)</option>
+        <option value="NOK">NOK (kr)</option>
+      </select>
     </div>
     <div class="field">
       <label for="perpage-select">Per page</label>
@@ -120,6 +136,9 @@
   const deleteCollectionBtn = document.getElementById('delete-collection-btn');
   const rarityToggle = document.getElementById('rarity-toggle');
   const rarityPanel = document.getElementById('rarity-panel');
+  const stackToggle = document.getElementById('stack-toggle');
+  const stackPanel = document.getElementById('stack-panel');
+  const currencySelect = document.getElementById('currency-select');
   const perPageSelect = document.getElementById('perpage-select');
   const searchInput = document.getElementById('search-input');
   const grid = document.getElementById('card-grid');
@@ -133,6 +152,7 @@
   let copies = [];
   let allRarities = [];
   let selectedRarities = new Set();
+  let stackedRarities = new Set();
   let page = 1;
   let perPage = 24;
 
@@ -164,6 +184,7 @@
     panelEl.addEventListener('click', (ev) => ev.stopPropagation());
   }
   createDropdown(rarityToggle, rarityPanel);
+  createDropdown(stackToggle, stackPanel);
 
   function loadCollections(selectId){
     return W.get('/collections').then(list => {
@@ -231,6 +252,11 @@
     selectedRarities = new Set();
     renderRarityPanel();
     updateRarityToggleLabel();
+    // Stacking choices persist across a reload of the same collection
+    // (e.g. after editing a copy) — only reset what's no longer valid.
+    stackedRarities = new Set([...stackedRarities].filter(r => allRarities.includes(r)));
+    renderStackPanel();
+    updateStackToggleLabel();
   }
   function renderRarityPanel(){
     if (!allRarities.length) { rarityPanel.innerHTML = '<div class="none">No rarity data.</div>'; return; }
@@ -252,7 +278,30 @@
     else rarityToggle.textContent = [...selectedRarities].join(', ');
   }
 
+  function renderStackPanel(){
+    if (!allRarities.length) { stackPanel.innerHTML = '<div class="none">No rarity data.</div>'; return; }
+    const actions = `<div class="panel-actions"><button type="button" data-act="all">Stack all</button><button type="button" data-act="none">Stack none</button></div>`;
+    const boxes = allRarities.map(r => `<label><input type="checkbox" value="${W.escapeHtml(r)}" ${stackedRarities.has(r)?'checked':''}> ${W.escapeHtml(r)}</label>`).join('');
+    stackPanel.innerHTML = actions + boxes;
+    stackPanel.querySelector('[data-act="all"]').addEventListener('click', () => { stackedRarities = new Set(allRarities); renderStackPanel(); updateStackToggleLabel(); render(); });
+    stackPanel.querySelector('[data-act="none"]').addEventListener('click', () => { stackedRarities = new Set(); renderStackPanel(); updateStackToggleLabel(); render(); });
+    stackPanel.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        if (cb.checked) stackedRarities.add(cb.value); else stackedRarities.delete(cb.value);
+        updateStackToggleLabel(); render();
+      });
+    });
+  }
+  function updateStackToggleLabel(){
+    if (!allRarities.length) { stackToggle.textContent = 'No rarities'; return; }
+    if (stackedRarities.size === 0) stackToggle.textContent = 'None stacked';
+    else if (stackedRarities.size === allRarities.length) stackToggle.textContent = 'All stacked';
+    else stackToggle.textContent = [...stackedRarities].join(', ') + ' stacked';
+  }
+
   perPageSelect.addEventListener('change', () => { perPage = Number(perPageSelect.value); page = 1; render(); });
+  currencySelect.value = W.getCurrency();
+  currencySelect.addEventListener('change', () => { W.setCurrency(currencySelect.value); render(); });
   searchInput.addEventListener('input', () => { page = 1; render(); });
 
   function showEmpty(msg){
@@ -360,11 +409,32 @@
     });
   }
 
+  async function handleSendToBinder(anchorEl, copy){
+    let binders;
+    try { binders = await W.get('/binders'); } catch (e) { alert(e.message); return; }
+    if (!binders.length) { alert('No binders yet — create one on the Binder tab first.'); return; }
+    await W.openPicker(anchorEl, {
+      title: 'Send to binder', emptyLabel: 'No binders yet',
+      listFn: () => Promise.resolve(binders),
+      createFn: () => { throw new Error('Create binders from the Binder tab.'); },
+      onPick: async (binderId) => {
+        try {
+          const slots = await W.get(`/binders/${binderId}/slots`);
+          const occupied = new Set(slots.map(s => s.slot_index));
+          let free = 0;
+          while (occupied.has(free)) free++;
+          await W.post(`/binders/${binderId}/slots/${free}`, {copy_id: copy.id});
+          alert(`Placed in slot ${free + 1}.`);
+        } catch (e) { alert(e.message); }
+      },
+    });
+  }
+
   function tileHtml(copy){
     const card = copy.card;
     const img = card.image_url;
     return `
-      <div class="card-tile" data-copy-id="${copy.id}">
+      <div class="card-tile" data-item-type="single" data-copy-id="${copy.id}">
         <div class="tile-media" data-act="zoom">
           ${img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(card.name)}" loading="lazy">` : '<div class="tile-noimg">No image</div>'}
           <span class="copy-badge">#${copy.copy_number}</span>
@@ -377,32 +447,130 @@
         <div class="tile-info">
           <div class="tile-name" data-act="info" title="Click for card details">${W.escapeHtml(card.name)}</div>
           <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span><span class="frame-badge">${FRAME_LABELS[copy.frame_type]||copy.frame_type}</span></div>
-          <div class="tile-prices"><span>Sell ${W.fmtYen(card.sell_price_jpy)}</span><span>Buy ${W.fmtYen(card.buy_price_jpy)}</span></div>
+          <div class="tile-prices"><span>Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span> <button type="button" class="frame-badge" data-act="binder" data-picker-trigger style="border:1px solid var(--ink-soft);background:none;cursor:pointer;padding:1px 6px;">📦 binder</button></div>
         </div>
       </div>`;
   }
 
-  function attachHandlers(pageCopies){
-    const byId = {};
-    pageCopies.forEach(c => byId[c.id] = c);
+  function stackTileHtml(group){
+    const card = group.card;
+    const img = card.image_url;
+    const n = group.copies.length;
+    return `
+      <div class="card-tile" data-item-type="stack" data-card-id="${card.id}">
+        <div class="tile-media" data-act="zoom">
+          ${img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(card.name)}" loading="lazy">` : '<div class="tile-noimg">No image</div>'}
+          <span class="copy-badge">×${n}</span>
+          <button type="button" class="tile-add" data-act="add" title="Add another copy to this collection">+</button>
+          <button type="button" class="tile-wish" data-act="wish" data-picker-trigger title="Add to a wishlist">♡</button>
+          <button type="button" class="tile-del" data-act="del" data-picker-trigger title="Remove a copy from this stack">🗑</button>
+          <button type="button" class="tile-gear" data-act="edit" data-picker-trigger title="Edit a copy in this stack">⚙</button>
+        </div>
+        <div class="tile-info">
+          <div class="tile-name" data-act="info" title="Click for card details">${W.escapeHtml(card.name)}</div>
+          <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span><span class="frame-badge">${n} copies</span></div>
+          <div class="tile-prices"><span>Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span> <button type="button" class="frame-badge" data-act="binder" data-picker-trigger style="border:1px solid var(--ink-soft);background:none;cursor:pointer;padding:1px 6px;">📦 binder</button></div>
+        </div>
+      </div>`;
+  }
+
+  // For a stacked tile's ⚙/🗑: pick which underlying copy the action
+  // applies to, or "All copies" to apply it to the whole stack at once.
+  async function openCopyActionPicker(anchorEl, group, title){
+    return new Promise((resolve) => {
+      const el = W.ensurePickerEl ? W.ensurePickerEl() : (function(){
+        let e = document.getElementById('ws-picker');
+        if (!e) { e = document.createElement('div'); e.id = 'ws-picker'; e.className = 'ws-picker'; e.hidden = true; document.body.appendChild(e); }
+        return e;
+      })();
+      el.innerHTML = `<div class="ws-picker-title">${W.escapeHtml(title)}</div><div class="ws-picker-list"></div>`;
+      const rect = anchorEl.getBoundingClientRect();
+      el.style.top = (window.scrollY + rect.bottom + 6) + 'px';
+      el.style.left = (window.scrollX + Math.max(8, rect.left - 100)) + 'px';
+      el.hidden = false;
+
+      const listEl = el.querySelector('.ws-picker-list');
+      listEl.innerHTML = group.copies.map(c =>
+        `<button type="button" class="ws-picker-item" data-copy-id="${c.id}">Copy #${c.copy_number}${c.grade ? ' — ' + W.escapeHtml(c.grade) : ''}</button>`
+      ).join('') + `<button type="button" class="ws-picker-item ws-picker-new" data-act="all">All copies (${group.copies.length})</button>`;
+
+      function cleanup(){ el.hidden = true; }
+      listEl.querySelectorAll('[data-copy-id]').forEach(btn => {
+        btn.addEventListener('click', () => { cleanup(); resolve({all: false, copyId: Number(btn.dataset.copyId)}); });
+      });
+      listEl.querySelector('[data-act="all"]').addEventListener('click', () => { cleanup(); resolve({all: true}); });
+
+      const closeOnOutside = (ev) => {
+        if (!el.contains(ev.target) && !ev.target.closest('[data-picker-trigger]')) {
+          cleanup(); document.removeEventListener('click', closeOnOutside); resolve(null);
+        }
+      };
+      setTimeout(() => document.addEventListener('click', closeOnOutside), 0);
+    });
+  }
+
+  function attachHandlers(pageItems){
     grid.querySelectorAll('.card-tile').forEach(tile => {
-      const copy = byId[Number(tile.dataset.copyId)];
-      const card = copy.card;
-      tile.querySelector('[data-act="zoom"]').addEventListener('click', () => openZoom(card));
-      tile.querySelector('[data-act="info"]').addEventListener('click', () => openInfo(card));
-      tile.querySelector('[data-act="edit"]').addEventListener('click', (ev) => { ev.stopPropagation(); openEditModal(copy); });
-      tile.querySelector('[data-act="wish"]').addEventListener('click', (ev) => { ev.stopPropagation(); handleAddWish(ev.currentTarget, card); });
-      tile.querySelector('[data-act="add"]').addEventListener('click', async (ev) => {
-        ev.stopPropagation();
-        try { await W.post('/copies', {card_id: card.id, collection_id: currentCollectionId}); await loadCopies(); }
-        catch (e) { alert(e.message); }
-      });
-      tile.querySelector('[data-act="del"]').addEventListener('click', async (ev) => {
-        ev.stopPropagation();
-        if (!confirm(`Remove copy #${copy.copy_number} of "${card.name}"? This can't be undone.`)) return;
-        try { await W.del(`/copies/${copy.id}`); await loadCopies(); }
-        catch (e) { alert(e.message); }
-      });
+      if (tile.dataset.itemType === 'single') {
+        const copy = pageItems.singlesById[Number(tile.dataset.copyId)];
+        const card = copy.card;
+        tile.querySelector('[data-act="zoom"]').addEventListener('click', () => openZoom(card));
+        tile.querySelector('[data-act="info"]').addEventListener('click', () => openInfo(card));
+        tile.querySelector('[data-act="edit"]').addEventListener('click', (ev) => { ev.stopPropagation(); openEditModal(copy); });
+        tile.querySelector('[data-act="wish"]').addEventListener('click', (ev) => { ev.stopPropagation(); handleAddWish(ev.currentTarget, card); });
+        tile.querySelector('[data-act="binder"]').addEventListener('click', (ev) => { ev.stopPropagation(); handleSendToBinder(ev.currentTarget, copy); });
+        tile.querySelector('[data-act="add"]').addEventListener('click', async (ev) => {
+          ev.stopPropagation();
+          try { await W.post('/copies', {card_id: card.id, collection_id: currentCollectionId}); await loadCopies(); }
+          catch (e) { alert(e.message); }
+        });
+        tile.querySelector('[data-act="del"]').addEventListener('click', async (ev) => {
+          ev.stopPropagation();
+          try { await W.del(`/copies/${copy.id}`); await loadCopies(); }
+          catch (e) { alert(e.message); }
+        });
+      } else {
+        const group = pageItems.groupsById[Number(tile.dataset.cardId)];
+        const card = group.card;
+        tile.querySelector('[data-act="zoom"]').addEventListener('click', () => openZoom(card));
+        tile.querySelector('[data-act="info"]').addEventListener('click', () => openInfo(card));
+        tile.querySelector('[data-act="wish"]').addEventListener('click', (ev) => { ev.stopPropagation(); handleAddWish(ev.currentTarget, card); });
+        tile.querySelector('[data-act="binder"]').addEventListener('click', async (ev) => {
+          ev.stopPropagation();
+          const choice = await openCopyActionPicker(ev.currentTarget, group, 'Send which copy to a binder?');
+          if (!choice) return;
+          if (choice.all) { alert('Sending a whole stack at once is coming soon — pick a single copy for now.'); return; }
+          const copy = group.copies.find(c => c.id === choice.copyId);
+          if (copy) handleSendToBinder(ev.currentTarget, copy);
+        });
+        tile.querySelector('[data-act="add"]').addEventListener('click', async (ev) => {
+          ev.stopPropagation();
+          try { await W.post('/copies', {card_id: card.id, collection_id: currentCollectionId}); await loadCopies(); }
+          catch (e) { alert(e.message); }
+        });
+        tile.querySelector('[data-act="edit"]').addEventListener('click', async (ev) => {
+          ev.stopPropagation();
+          const choice = await openCopyActionPicker(ev.currentTarget, group, 'Edit which copy?');
+          if (!choice) return;
+          if (choice.all) { alert('Bulk-editing all copies at once is coming soon — pick a single copy for now.'); return; }
+          const copy = group.copies.find(c => c.id === choice.copyId);
+          if (copy) openEditModal(copy);
+        });
+        tile.querySelector('[data-act="del"]').addEventListener('click', async (ev) => {
+          ev.stopPropagation();
+          const choice = await openCopyActionPicker(ev.currentTarget, group, 'Remove which copy?');
+          if (!choice) return;
+          try {
+            if (choice.all) {
+              if (!confirm(`Remove all ${group.copies.length} copies of "${card.name}" from this collection?`)) return;
+              await Promise.all(group.copies.map(c => W.del(`/copies/${c.id}`)));
+            } else {
+              await W.del(`/copies/${choice.copyId}`);
+            }
+            await loadCopies();
+          } catch (e) { alert(e.message); }
+        });
+      }
     });
   }
 
@@ -418,16 +586,41 @@
     }
     emptyState.style.display = 'none';
 
-    const totalPages = Math.max(1, Math.ceil(list.length / perPage));
-    if (page > totalPages) page = totalPages;
-    const pageCopies = W.paginate(list, page, perPage);
+    // Group copies whose rarity is in stackedRarities by card; leave the rest as individual tiles.
+    const singles = [];
+    const groupsByCard = {};
+    for (const c of list) {
+      if (c.card.rarity && stackedRarities.has(c.card.rarity)) {
+        (groupsByCard[c.card_id] = groupsByCard[c.card_id] || {card: c.card, copies: []}).copies.push(c);
+      } else {
+        singles.push(c);
+      }
+    }
+    const groups = Object.values(groupsByCard);
+    const displayItems = [
+      ...singles.map(c => ({type: 'single', copy: c, sortKey: c.card.name})),
+      ...groups.map(g => ({type: 'stack', group: g, sortKey: g.card.name})),
+    ].sort((a, b) => a.sortKey.localeCompare(b.sortKey));
 
-    summary.innerHTML = `<strong>${list.length}</strong> cop${list.length===1?'y':'ies'} in this collection · page <strong>${page}</strong> of ${totalPages}`;
-    grid.innerHTML = pageCopies.map(tileHtml).join('');
-    attachHandlers(pageCopies);
+    const totalPages = Math.max(1, Math.ceil(displayItems.length / perPage));
+    if (page > totalPages) page = totalPages;
+    const pageItemsRaw = W.paginate(displayItems, page, perPage);
+
+    const totalCopies = list.length;
+    summary.innerHTML = `<strong>${displayItems.length}</strong> tile${displayItems.length===1?'':'s'} (<strong>${totalCopies}</strong> total cop${totalCopies===1?'y':'ies'}) · page <strong>${page}</strong> of ${totalPages}`;
+    grid.innerHTML = pageItemsRaw.map(it => it.type === 'single' ? tileHtml(it.copy) : stackTileHtml(it.group)).join('');
+
+    const singlesById = {}, groupsById = {};
+    pageItemsRaw.forEach(it => {
+      if (it.type === 'single') singlesById[it.copy.id] = it.copy;
+      else groupsById[it.group.card.id] = it.group;
+    });
+    attachHandlers({singlesById, groupsById});
+
     W.renderPagination(paginationEl, page, totalPages, (p) => { page = p; render(); window.scrollTo({top:0, behavior:'smooth'}); });
   }
 
+  W.loadRates().then(() => render());
   loadCollections().then(() => {
     statusPill.textContent = collections.length ? collections.length + ' collection(s)' : 'no collections yet';
   }).catch(err => {

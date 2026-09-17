@@ -38,6 +38,46 @@ window.WSAPI = (function(){
   }
   function normForMatch(s){ return (s || "").toLowerCase().replace(/[\s/\-]/g, ""); }
 
+  // ---------- currency conversion (setting shared across all pages) ----------
+  const CURRENCY_KEY = "ws-currency-pref";
+  const RATES_KEY = "ws-fx-rates";
+  const RATES_TTL_MS = 24 * 60 * 60 * 1000; // refetch at most once a day
+  const CURRENCY_SYMBOLS = {USD: "$", GBP: "£", NOK: "kr"};
+  let ratesCache = null;
+
+  function getCurrency(){ try { return localStorage.getItem(CURRENCY_KEY) || "USD"; } catch(e) { return "USD"; } }
+  function setCurrency(code){ try { localStorage.setItem(CURRENCY_KEY, code); } catch(e) {} }
+
+  function loadRates(){
+    try {
+      const raw = localStorage.getItem(RATES_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Date.now() - parsed.fetchedAt < RATES_TTL_MS) { ratesCache = parsed.rates; return Promise.resolve(ratesCache); }
+      }
+    } catch(e) {}
+    // Free, no-key exchange rate API (European Central Bank data).
+    return fetch("https://api.frankfurter.app/latest?from=JPY&to=USD,GBP,NOK")
+      .then(r => r.json())
+      .then(data => {
+        ratesCache = data.rates || null;
+        try { localStorage.setItem(RATES_KEY, JSON.stringify({rates: ratesCache, fetchedAt: Date.now()})); } catch(e) {}
+        return ratesCache;
+      })
+      .catch(() => { ratesCache = null; return null; });
+  }
+
+  function fmtYenConverted(v){
+    const base = fmtYen(v);
+    if (v === null || v === undefined || v === "" || Number.isNaN(Number(v))) return base;
+    const code = getCurrency();
+    if (!ratesCache || !ratesCache[code]) return base; // rates not loaded yet — plain yen is still correct, just not converted
+    const converted = Number(v) * ratesCache[code];
+    const sym = CURRENCY_SYMBOLS[code] || code;
+    const shown = converted >= 10 ? Math.round(converted).toLocaleString("en-US") : converted.toFixed(2);
+    return code === "NOK" ? `${base} (${shown} kr)` : `${base} (${sym}${shown})`;
+  }
+
   // ---------- rarity ordering (highest to lowest, not alphabetical) ----------
   // Based on typical Weiss Schwarz chase-rarity conventions. Anything not
   // listed here (e.g. a rarity code from a set that uses different
@@ -150,6 +190,7 @@ window.WSAPI = (function(){
   return {
     API_BASE, get, post, patch, del,
     fmtYen, escapeHtml, normForMatch, sortRarities,
+    getCurrency, setCurrency, loadRates, fmtYenConverted,
     paginate, renderPagination,
     openPicker, closePicker,
   };

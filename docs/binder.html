@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Binders — Weiss Schwarz</title>
+<link rel="stylesheet" href="assets/wsdata.css">
+<style>
+  .wl-toolbar{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;}
+  .wl-toolbar select{min-width:180px;}
+  .wl-toolbar button{
+    font-family:var(--sans);font-size:12.5px;padding:7px 12px;border:1px solid var(--ink);
+    background:var(--paper);color:var(--ink);cursor:pointer;
+  }
+  .wl-toolbar button:hover{background:var(--ink);color:var(--paper);}
+
+  .binder-meta{font-size:12.5px;color:var(--ink-soft);margin-bottom:16px;}
+
+  .spread-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:20px;}
+  .spread-nav button{
+    font-family:var(--sans);font-size:13px;padding:8px 16px;border:1px solid var(--ink);
+    background:var(--card-bg);color:var(--ink);cursor:pointer;
+  }
+  .spread-nav button:disabled{opacity:0.35;cursor:default;}
+  .spread-nav .spread-label{font-family:var(--mono);font-size:13px;color:var(--ink-soft);min-width:100px;text-align:center;}
+
+  .binder-spread{
+    display:flex;gap:36px;justify-content:center;align-items:flex-start;
+    background:#e9e4d6;padding:28px;border:1px solid var(--line);
+  }
+  .binder-page{
+    background:#fff;padding:14px;border:1px solid var(--line);box-shadow:0 2px 10px rgba(0,0,0,0.08);
+    display:grid;gap:8px;
+  }
+  .binder-page.layout-3x3{grid-template-columns:repeat(3, 90px);}
+  .binder-page.layout-4x5{grid-template-columns:repeat(4, 74px);}
+  .binder-page.layout-5x5{grid-template-columns:repeat(5, 62px);}
+
+  .binder-slot{
+    aspect-ratio:5/7;position:relative;background:var(--line-soft);border:1px solid var(--line);
+    overflow:hidden;
+  }
+  .binder-slot img{width:100%;height:100%;object-fit:cover;display:block;}
+  .binder-slot.greyed img{filter:grayscale(1) opacity(0.45);}
+  .binder-slot .slot-empty-btn{
+    width:100%;height:100%;border:none;background:none;color:var(--ink-soft);font-size:18px;cursor:pointer;
+  }
+  .binder-slot .slot-empty-btn:hover{background:#f2eee2;}
+  .binder-slot .slot-remove{
+    position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;border:none;
+    background:rgba(255,255,255,0.9);color:var(--red);font-size:11px;cursor:pointer;line-height:1;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .binder-slot .slot-copy-badge{
+    position:absolute;bottom:2px;left:2px;background:rgba(60,107,74,0.9);color:#fff;
+    font-family:var(--mono);font-size:8.5px;padding:1px 4px;border-radius:2px;
+  }
+
+  .edit-form{padding:20px;min-width:280px;}
+  .edit-form h2{margin:0 0 14px;font-size:16px;}
+  .edit-form label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);margin:12px 0 4px;}
+  .edit-form input, .edit-form select{
+    width:100%;font-family:var(--sans);font-size:14px;padding:7px 9px;border:1px solid var(--line);background:var(--paper);color:var(--ink);
+  }
+  .edit-form-actions{display:flex;gap:8px;margin-top:16px;justify-content:flex-end;}
+  .edit-form-actions button{font-family:var(--sans);font-size:13px;padding:8px 14px;border:1px solid var(--ink);cursor:pointer;}
+  .edit-form-actions .save-btn{background:var(--ink);color:var(--paper);}
+  .edit-form-actions .cancel-btn{background:var(--paper);color:var(--ink);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div>
+      <h1>My <span>Binders</span></h1>
+      <p>Where your cards physically live — page 1 is the cover, everything after is a two-page spread.</p>
+    </div>
+    <div id="status-pill">connecting…</div>
+  </div>
+  <nav class="pagenav">
+    <a href="index.html">Prices</a>
+    <a href="browse.html">Browse</a>
+    <a href="wishlist.html">Wishlist</a>
+    <a href="collection.html">Collection</a>
+    <a href="binder.html" class="active">Binders</a>
+  </nav>
+</header>
+
+<main>
+  <div class="wl-toolbar">
+    <label for="binder-select" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);">Binder:</label>
+    <select id="binder-select"><option>Loading…</option></select>
+    <button type="button" id="new-binder-btn">+ New binder</button>
+    <button type="button" id="edit-binder-btn">Edit</button>
+    <button type="button" id="delete-binder-btn">Delete</button>
+  </div>
+
+  <p class="binder-meta" id="binder-meta"></p>
+
+  <div class="spread-nav" id="spread-nav" hidden>
+    <button type="button" id="prev-spread">‹ Prev</button>
+    <span class="spread-label" id="spread-label">Cover</span>
+    <button type="button" id="next-spread">Next ›</button>
+  </div>
+
+  <div id="binder-view"></div>
+  <div class="empty-state" id="empty-state" style="display:none;"></div>
+</main>
+
+<footer>
+  Live data from your <a href="https://ws-backend-z28t.onrender.com/docs" target="_blank" rel="noopener">backend API</a>.
+  A slot shows greyed-out art when its copy isn't currently filed into any collection. 3×3 binders fit
+  raw/sleeved/toploader copies; 4×5 and 5×5 fit raw/sleeved only — slabs and toploaders in a thin-page
+  binder don't physically fit, so those copies can't be assigned to one.
+  Use the 📦 button on Collection to send a copy here.
+</footer>
+
+<script src="assets/api.js"></script>
+<script>
+(function(){
+  const W = window.WSAPI;
+  const binderSelect = document.getElementById('binder-select');
+  const newBinderBtn = document.getElementById('new-binder-btn');
+  const editBinderBtn = document.getElementById('edit-binder-btn');
+  const deleteBinderBtn = document.getElementById('delete-binder-btn');
+  const binderMeta = document.getElementById('binder-meta');
+  const spreadNav = document.getElementById('spread-nav');
+  const spreadLabel = document.getElementById('spread-label');
+  const prevSpreadBtn = document.getElementById('prev-spread');
+  const nextSpreadBtn = document.getElementById('next-spread');
+  const binderView = document.getElementById('binder-view');
+  const emptyState = document.getElementById('empty-state');
+  const statusPill = document.getElementById('status-pill');
+
+  const PAGE_SIZE = {"3x3": 9, "4x5": 20, "5x5": 25};
+  const PAGE_COLS = {"3x3": 3, "4x5": 4, "5x5": 5};
+
+  let binders = [];
+  let currentBinder = null;
+  let slotsByIndex = {};   // slot_index -> BinderSlotOut
+  let spreadIndex = 0;     // 0 = cover (page 0 alone); 1+ = pages (2n-1, 2n) side by side
+
+  function ensureModal(id){
+    let el = document.getElementById(id);
+    if (el) return el;
+    el = document.createElement('div');
+    el.id = id; el.className = 'modal-backdrop'; el.hidden = true;
+    document.body.appendChild(el);
+    el.addEventListener('click', (ev) => { if (ev.target === el) el.hidden = true; });
+    document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') el.hidden = true; });
+    return el;
+  }
+
+  // ---------- binder picker (top toolbar) ----------
+  function loadBinders(selectId){
+    return W.get('/binders').then(list => {
+      binders = list;
+      if (!binders.length) {
+        binderSelect.innerHTML = '<option value="">No binders yet</option>';
+        currentBinder = null;
+        showEmpty('No binders yet — click "+ New binder" to create one.');
+        return;
+      }
+      binderSelect.innerHTML = binders.map(b => `<option value="${b.id}">${W.escapeHtml(b.name)} (${b.layout})</option>`).join('');
+      const id = selectId && binders.some(b => b.id === selectId) ? selectId : binders[0].id;
+      binderSelect.value = String(id);
+      currentBinder = binders.find(b => b.id === id);
+      spreadIndex = 0;
+      return loadSlots();
+    });
+  }
+  binderSelect.addEventListener('change', () => {
+    currentBinder = binders.find(b => b.id === Number(binderSelect.value));
+    spreadIndex = 0;
+    loadSlots();
+  });
+
+  function openBinderForm(existing){
+    const el = ensureModal('binder-form-modal');
+    el.innerHTML = `<div class="modal"><button type="button" class="modal-close" aria-label="Close">×</button>
+      <div class="edit-form">
+        <h2>${existing ? 'Edit binder' : 'New binder'}</h2>
+        <label for="bf-name">Name</label>
+        <input type="text" id="bf-name" value="${existing ? W.escapeHtml(existing.name) : ''}" placeholder="e.g. Main SR binder">
+        <label for="bf-layout">Layout</label>
+        <select id="bf-layout">
+          <option value="3x3" ${existing && existing.layout==='3x3' ? 'selected':''}>3×3 (fits toploaders too)</option>
+          <option value="4x5" ${existing && existing.layout==='4x5' ? 'selected':''}>4×5 (sleeved/raw only)</option>
+          <option value="5x5" ${existing && existing.layout==='5x5' ? 'selected':''}>5×5 (sleeved/raw only)</option>
+        </select>
+        <label for="bf-priority">Priority (lower = filled first when sending cards here)</label>
+        <input type="number" id="bf-priority" value="${existing ? existing.priority : 0}">
+        <div class="edit-form-actions">
+          <button type="button" class="cancel-btn" data-act="cancel">Cancel</button>
+          <button type="button" class="save-btn" data-act="save">Save</button>
+        </div>
+      </div>
+    </div>`;
+    el.querySelector('.modal-close').addEventListener('click', () => el.hidden = true);
+    el.querySelector('[data-act="cancel"]').addEventListener('click', () => el.hidden = true);
+    el.querySelector('[data-act="save"]').addEventListener('click', async () => {
+      const name = el.querySelector('#bf-name').value.trim();
+      if (!name) { alert('Name is required.'); return; }
+      const body = {name, layout: el.querySelector('#bf-layout').value, priority: Number(el.querySelector('#bf-priority').value) || 0};
+      try {
+        if (existing) await W.patch(`/binders/${existing.id}`, body);
+        else { const created = await W.post('/binders', body); await loadBinders(created.id); el.hidden = true; return; }
+        el.hidden = true;
+        await loadBinders(existing.id);
+      } catch (e) { alert(e.message); }
+    });
+    el.hidden = false;
+  }
+  newBinderBtn.addEventListener('click', () => openBinderForm(null));
+  editBinderBtn.addEventListener('click', () => { if (currentBinder) openBinderForm(currentBinder); });
+  deleteBinderBtn.addEventListener('click', async () => {
+    if (!currentBinder) return;
+    if (!confirm(`Delete the binder "${currentBinder.name}"? Copies in it aren't deleted — they're just unassigned.`)) return;
+    try { await W.del(`/binders/${currentBinder.id}`); await loadBinders(); }
+    catch (e) { alert(e.message); }
+  });
+
+  function showEmpty(msg){
+    binderView.innerHTML = '';
+    spreadNav.hidden = true;
+    binderMeta.textContent = '';
+    emptyState.style.display = 'block';
+    emptyState.textContent = msg;
+  }
+
+  // ---------- slots ----------
+  function loadSlots(){
+    binderView.innerHTML = '';
+    emptyState.style.display = 'none';
+    binderMeta.textContent = 'Loading…';
+    return W.get(`/binders/${currentBinder.id}/slots`).then(slots => {
+      slotsByIndex = {};
+      slots.forEach(s => slotsByIndex[s.slot_index] = s);
+      binderMeta.textContent = `${currentBinder.layout} layout · ${slots.length} card${slots.length===1?'':'s'} placed · priority ${currentBinder.priority}`;
+      render();
+    });
+  }
+
+  function pageRangeFor(pageNum){
+    const size = PAGE_SIZE[currentBinder.layout];
+    const start = pageNum * size;
+    return [start, start + size];
+  }
+
+  function slotCellHtml(index){
+    const s = slotsByIndex[index];
+    if (!s) {
+      return `<div class="binder-slot" data-slot="${index}"><button type="button" class="slot-empty-btn" data-act="empty" title="This slot is empty">·</button></div>`;
+    }
+    const img = s.card && s.card.image_url;
+    return `<div class="binder-slot ${s.greyed_out ? 'greyed' : ''}" data-slot="${index}">
+      ${img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(s.card.name)}" title="${W.escapeHtml(s.card.name)}${s.greyed_out ? ' (not in a collection)' : ''}">` : ''}
+      <span class="slot-copy-badge">#${s.copy_number}${s.grade ? ' '+W.escapeHtml(s.grade) : ''}</span>
+      <button type="button" class="slot-remove" data-act="remove" title="Remove from this slot">✕</button>
+    </div>`;
+  }
+
+  function pageHtml(pageNum){
+    const [start, end] = pageRangeFor(pageNum);
+    let cells = '';
+    for (let i = start; i < end; i++) cells += slotCellHtml(i);
+    return `<div class="binder-page layout-${currentBinder.layout}">${cells}</div>`;
+  }
+
+  function render(){
+    if (!currentBinder) return;
+    spreadNav.hidden = false;
+
+    if (spreadIndex === 0) {
+      spreadLabel.textContent = 'Cover';
+      binderView.innerHTML = `<div class="binder-spread">${pageHtml(0)}</div>`;
+      prevSpreadBtn.disabled = true;
+    } else {
+      const left = spreadIndex * 2 - 1;
+      const right = spreadIndex * 2;
+      spreadLabel.textContent = `Pages ${left + 1}–${right + 1}`;
+      binderView.innerHTML = `<div class="binder-spread">${pageHtml(left)}${pageHtml(right)}</div>`;
+      prevSpreadBtn.disabled = false;
+    }
+    // Next is always enabled — pages grow as needed, there's no fixed ceiling.
+    nextSpreadBtn.disabled = false;
+
+    attachSlotHandlers();
+  }
+
+  function attachSlotHandlers(){
+    binderView.querySelectorAll('.binder-slot').forEach(cell => {
+      const index = Number(cell.dataset.slot);
+      const removeBtn = cell.querySelector('[data-act="remove"]');
+      if (removeBtn) {
+        removeBtn.addEventListener('click', async (ev) => {
+          ev.stopPropagation();
+          try { await W.del(`/binders/${currentBinder.id}/slots/${index}`); await loadSlots(); }
+          catch (e) { alert(e.message); }
+        });
+      }
+      const emptyBtn = cell.querySelector('[data-act="empty"]');
+      if (emptyBtn) {
+        emptyBtn.addEventListener('click', () => {
+          alert('To place a card here, go to Collection and use the 📦 button on the card you want — it fills the next open slot automatically. Picking a specific empty slot to fill is coming soon.');
+        });
+      }
+    });
+  }
+
+  prevSpreadBtn.addEventListener('click', () => { if (spreadIndex > 0) { spreadIndex--; render(); } });
+  nextSpreadBtn.addEventListener('click', () => { spreadIndex++; render(); });
+
+  loadBinders().then(() => {
+    statusPill.textContent = binders.length ? binders.length + ' binder(s)' : 'no binders yet';
+  }).catch(err => {
+    statusPill.textContent = 'connection failed';
+    showEmpty('Could not reach the backend API: ' + err.message);
+  });
+})();
+</script>
+
+</body>
+</html>
