@@ -21,8 +21,13 @@
   }
   .tile-gear{right:8px;color:var(--ink-soft);}
   .tile-del{right:40px;color:var(--red);}
+  .tile-binder{
+    position:absolute;top:8px;left:40px;width:30px;height:30px;border-radius:50%;border:none;cursor:pointer;
+    font-size:14px;background:rgba(255,255,255,0.92);color:var(--gold);
+    display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,0.35);
+  }
   .copy-badge{
-    position:absolute;top:8px;left:8px;background:rgba(60,107,74,0.92);color:#fff;
+    position:absolute;bottom:8px;left:8px;background:rgba(60,107,74,0.92);color:#fff;
     font-family:var(--mono);font-size:10.5px;padding:2px 6px;border-radius:3px;
   }
   .grade-badge{
@@ -68,6 +73,8 @@
   </nav>
 </header>
 
+<div class="page-layout">
+<aside class="sidebar" id="sidebar"></aside>
 <main>
   <div class="wl-toolbar">
     <label for="collection-select" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);">Collection:</label>
@@ -119,6 +126,7 @@
   <div class="empty-state" id="empty-state" style="display:none;"></div>
   <div class="pagination" id="pagination"></div>
 </main>
+</div>
 
 <footer>
   Live data from your <a href="https://ws-backend-z28t.onrender.com/docs" target="_blank" rel="noopener">backend API</a>.
@@ -193,16 +201,24 @@
         collectionSelect.innerHTML = '<option value="">No collections yet</option>';
         currentCollectionId = null;
         showEmpty('No collections yet — click "+ New collection" to create one.');
+        refreshSidebar();
         return;
       }
       collectionSelect.innerHTML = collections.map(c => `<option value="${c.id}">${W.escapeHtml(c.name)}</option>`).join('');
       currentCollectionId = selectId && collections.some(c => c.id === selectId) ? selectId : collections[0].id;
       collectionSelect.value = String(currentCollectionId);
+      refreshSidebar();
       return loadCopies();
+    });
+  }
+  function refreshSidebar(){
+    W.loadSidebarData().then(data => {
+      document.getElementById('sidebar').innerHTML = W.sidebarHtml(data, 'collection', currentCollectionId);
     });
   }
   collectionSelect.addEventListener('change', () => {
     currentCollectionId = Number(collectionSelect.value);
+    refreshSidebar();
     loadCopies();
   });
   newCollectionBtn.addEventListener('click', async () => {
@@ -440,6 +456,7 @@
           <span class="copy-badge">#${copy.copy_number}</span>
           ${copy.grade ? `<span class="grade-badge">${W.escapeHtml(copy.grade)}</span>` : ''}
           <button type="button" class="tile-add" data-act="add" title="Add another copy to this collection">+</button>
+          <button type="button" class="tile-binder" data-act="binder" data-picker-trigger title="Send to a binder">📦</button>
           <button type="button" class="tile-wish" data-act="wish" data-picker-trigger title="Add to a wishlist">♡</button>
           <button type="button" class="tile-del" data-act="del" title="Remove this copy (e.g. sold)">🗑</button>
           <button type="button" class="tile-gear" data-act="edit" title="Edit grade / frame / note">⚙</button>
@@ -447,7 +464,7 @@
         <div class="tile-info">
           <div class="tile-name" data-act="info" title="Click for card details">${W.escapeHtml(card.name)}</div>
           <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span><span class="frame-badge">${FRAME_LABELS[copy.frame_type]||copy.frame_type}</span></div>
-          <div class="tile-prices"><span>Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span> <button type="button" class="frame-badge" data-act="binder" data-picker-trigger style="border:1px solid var(--ink-soft);background:none;cursor:pointer;padding:1px 6px;">📦 binder</button></div>
+          <div class="tile-prices"><span>Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span></div>
         </div>
       </div>`;
   }
@@ -462,6 +479,7 @@
           ${img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(card.name)}" loading="lazy">` : '<div class="tile-noimg">No image</div>'}
           <span class="copy-badge">×${n}</span>
           <button type="button" class="tile-add" data-act="add" title="Add another copy to this collection">+</button>
+          <button type="button" class="tile-binder" data-act="binder" data-picker-trigger title="Send a copy to a binder">📦</button>
           <button type="button" class="tile-wish" data-act="wish" data-picker-trigger title="Add to a wishlist">♡</button>
           <button type="button" class="tile-del" data-act="del" data-picker-trigger title="Remove a copy from this stack">🗑</button>
           <button type="button" class="tile-gear" data-act="edit" data-picker-trigger title="Edit a copy in this stack">⚙</button>
@@ -469,7 +487,7 @@
         <div class="tile-info">
           <div class="tile-name" data-act="info" title="Click for card details">${W.escapeHtml(card.name)}</div>
           <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span><span class="frame-badge">${n} copies</span></div>
-          <div class="tile-prices"><span>Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span> <button type="button" class="frame-badge" data-act="binder" data-picker-trigger style="border:1px solid var(--ink-soft);background:none;cursor:pointer;padding:1px 6px;">📦 binder</button></div>
+          <div class="tile-prices"><span>Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span></div>
         </div>
       </div>`;
   }
@@ -621,7 +639,7 @@
   }
 
   W.loadRates().then(() => render());
-  loadCollections().then(() => {
+  loadCollections(W.getUrlId()).then(() => {
     statusPill.textContent = collections.length ? collections.length + ' collection(s)' : 'no collections yet';
   }).catch(err => {
     statusPill.textContent = 'connection failed';

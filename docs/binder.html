@@ -87,6 +87,8 @@
   </nav>
 </header>
 
+<div class="page-layout">
+<aside class="sidebar" id="sidebar"></aside>
 <main>
   <div class="wl-toolbar">
     <label for="binder-select" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);">Binder:</label>
@@ -107,6 +109,7 @@
   <div id="binder-view"></div>
   <div class="empty-state" id="empty-state" style="display:none;"></div>
 </main>
+</div>
 
 <footer>
   Live data from your <a href="https://ws-backend-z28t.onrender.com/docs" target="_blank" rel="noopener">backend API</a>.
@@ -160,6 +163,7 @@
         binderSelect.innerHTML = '<option value="">No binders yet</option>';
         currentBinder = null;
         showEmpty('No binders yet — click "+ New binder" to create one.');
+        refreshSidebar();
         return;
       }
       binderSelect.innerHTML = binders.map(b => `<option value="${b.id}">${W.escapeHtml(b.name)} (${b.layout})</option>`).join('');
@@ -167,12 +171,19 @@
       binderSelect.value = String(id);
       currentBinder = binders.find(b => b.id === id);
       spreadIndex = 0;
+      refreshSidebar();
       return loadSlots();
+    });
+  }
+  function refreshSidebar(){
+    W.loadSidebarData().then(data => {
+      document.getElementById('sidebar').innerHTML = W.sidebarHtml(data, 'binder', currentBinder ? currentBinder.id : null);
     });
   }
   binderSelect.addEventListener('change', () => {
     currentBinder = binders.find(b => b.id === Number(binderSelect.value));
     spreadIndex = 0;
+    refreshSidebar();
     loadSlots();
   });
 
@@ -312,7 +323,7 @@
   prevSpreadBtn.addEventListener('click', () => { if (spreadIndex > 0) { spreadIndex--; render(); } });
   nextSpreadBtn.addEventListener('click', () => { spreadIndex++; render(); });
 
-  loadBinders().then(() => {
+  loadBinders(W.getUrlId()).then(() => {
     statusPill.textContent = binders.length ? binders.length + ' binder(s)' : 'no binders yet';
   }).catch(err => {
     statusPill.textContent = 'connection failed';

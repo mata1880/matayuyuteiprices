@@ -38,6 +38,28 @@ window.WSAPI = (function(){
   }
   function normForMatch(s){ return (s || "").toLowerCase().replace(/[\s/\-]/g, ""); }
 
+  // ---------- left sidebar (Collections / Wishlists / Binders quick-nav) ----------
+  function loadSidebarData(){
+    return Promise.all([get("/collections"), get("/wishlists"), get("/binders")])
+      .then(([collections, wishlists, binders]) => ({collections, wishlists, binders}));
+  }
+  function sidebarHtml(data, activeType, activeId){
+    function section(title, items, page, type){
+      const rows = items.length ? items.map(it => {
+        const isActive = activeType === type && Number(activeId) === it.id;
+        return `<a class="sidebar-link ${isActive ? 'active' : ''}" href="${page}.html?id=${it.id}">${escapeHtml(it.name)}</a>`;
+      }).join("") : '<div class="sidebar-empty">None yet</div>';
+      return `<div class="sidebar-section"><h3>${title}</h3>${rows}</div>`;
+    }
+    return section("Collections", data.collections, "collection", "collection")
+         + section("Wishlists", data.wishlists, "wishlist", "wishlist")
+         + section("Binders", data.binders, "binder", "binder");
+  }
+  function getUrlId(){
+    try { const v = new URLSearchParams(location.search).get("id"); return v ? Number(v) : null; }
+    catch(e) { return null; }
+  }
+
   // ---------- currency conversion (setting shared across all pages) ----------
   const CURRENCY_KEY = "ws-currency-pref";
   const RATES_KEY = "ws-fx-rates";
@@ -191,6 +213,7 @@ window.WSAPI = (function(){
     API_BASE, get, post, patch, del,
     fmtYen, escapeHtml, normForMatch, sortRarities,
     getCurrency, setCurrency, loadRates, fmtYenConverted,
+    loadSidebarData, sidebarHtml, getUrlId,
     paginate, renderPagination,
     openPicker, closePicker,
   };
