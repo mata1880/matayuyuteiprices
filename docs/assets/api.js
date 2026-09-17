@@ -60,12 +60,59 @@ window.WSAPI = (function(){
     catch(e) { return null; }
   }
 
+  // For Browse/Wishlist, where we only know the CARD, not a specific
+  // copy (unlike Collection, which already has individual copies to work
+  // with). Resolves which of the card's owned, unplaced copies can go
+  // into the chosen binder, then places the first free compatible one.
+  async function sendCardToBinder(anchorEl, card){
+    if (!card.owned_copies || card.owned_copies < 1) {
+      alert("You don't own this card yet — add a copy first, then send it to a binder from the Collection page.");
+      return;
+    }
+    let binders;
+    try { binders = await get('/binders'); } catch (e) { alert(e.message); return; }
+    if (!binders.length) { alert('No binders yet — create one on the Binder tab first.'); return; }
+    await openPicker(anchorEl, {
+      title: 'Send to binder', emptyLabel: 'No binders yet',
+      listFn: () => Promise.resolve(binders),
+      createFn: () => { throw new Error('Create binders from the Binder tab.'); },
+      onPick: async (binderId) => {
+        try {
+          const avail = await get(`/binders/${binderId}/available-copies?card_id=${card.id}`);
+          if (!avail.length) {
+            alert("No available copy of this card fits that binder — either every copy you own is already placed somewhere, or none of them physically fit this binder's layout (e.g. a slabbed/toploader copy in a sleeve-page binder).");
+            return;
+          }
+          let copyId = avail[0].id;
+          if (avail.length > 1) {
+            const label = avail.map(c => `#${c.copy_number}${c.grade ? ' ('+c.grade+')' : ''}`).join(', ');
+            const choice = prompt(`Multiple copies available: ${label}\nType which copy number to place:`, String(avail[0].copy_number));
+            const picked = avail.find(c => String(c.copy_number) === (choice || '').trim());
+            if (!picked) return;
+            copyId = picked.id;
+          }
+          const slots = await get(`/binders/${binderId}/slots`);
+          const occupied = new Set(slots.map(s => s.slot_index));
+          let free = 0;
+          while (occupied.has(free)) free++;
+          await post(`/binders/${binderId}/slots/${free}`, {copy_id: copyId});
+          alert(`Placed in slot ${free + 1}.`);
+        } catch (e) { alert(e.message); }
+      },
+    });
+  }
+
   // ---------- currency conversion (setting shared across all pages) ----------
   const CURRENCY_KEY = "ws-currency-pref";
   const RATES_KEY = "ws-fx-rates";
   const RATES_TTL_MS = 24 * 60 * 60 * 1000; // refetch at most once a day
   const CURRENCY_SYMBOLS = {USD: "$", GBP: "£", NOK: "kr"};
+  // Rough manual fallback (checked Sep 2026) used only if the live rate
+  // fetch fails — better to show an approximate, clearly-marked figure
+  // than nothing at all.
+  const FALLBACK_RATES = {USD: 0.0067, GBP: 0.0050, NOK: 0.0644};
   let ratesCache = null;
+  let ratesAreFallback = false;
 
   function getCurrency(){ try { return localStorage.getItem(CURRENCY_KEY) || "USD"; } catch(e) { return "USD"; } }
   function setCurrency(code){ try { localStorage.setItem(CURRENCY_KEY, code); } catch(e) {} }
@@ -75,18 +122,31 @@ window.WSAPI = (function(){
       const raw = localStorage.getItem(RATES_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Date.now() - parsed.fetchedAt < RATES_TTL_MS) { ratesCache = parsed.rates; return Promise.resolve(ratesCache); }
+        if (parsed.rates && Date.now() - parsed.fetchedAt < RATES_TTL_MS) {
+          ratesCache = parsed.rates; ratesAreFallback = !!parsed.fallback;
+          return Promise.resolve(ratesCache);
+        }
       }
     } catch(e) {}
     // Free, no-key exchange rate API (European Central Bank data).
     return fetch("https://api.frankfurter.app/latest?from=JPY&to=USD,GBP,NOK")
-      .then(r => r.json())
+      .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
       .then(data => {
-        ratesCache = data.rates || null;
-        try { localStorage.setItem(RATES_KEY, JSON.stringify({rates: ratesCache, fetchedAt: Date.now()})); } catch(e) {}
+        if (!data.rates || !data.rates.USD || !data.rates.GBP || !data.rates.NOK) {
+          throw new Error("Unexpected response shape: " + JSON.stringify(data));
+        }
+        ratesCache = data.rates;
+        ratesAreFallback = false;
+        try { localStorage.setItem(RATES_KEY, JSON.stringify({rates: ratesCache, fetchedAt: Date.now(), fallback: false})); } catch(e) {}
         return ratesCache;
       })
-      .catch(() => { ratesCache = null; return null; });
+      .catch((err) => {
+        console.error("Currency rate fetch failed, using fallback rates:", err);
+        ratesCache = FALLBACK_RATES;
+        ratesAreFallback = true;
+        try { localStorage.setItem(RATES_KEY, JSON.stringify({rates: ratesCache, fetchedAt: Date.now(), fallback: true})); } catch(e) {}
+        return ratesCache;
+      });
   }
 
   function fmtYenConverted(v){
@@ -97,7 +157,8 @@ window.WSAPI = (function(){
     const converted = Number(v) * ratesCache[code];
     const sym = CURRENCY_SYMBOLS[code] || code;
     const shown = converted >= 10 ? Math.round(converted).toLocaleString("en-US") : converted.toFixed(2);
-    return code === "NOK" ? `${base} (${shown} kr)` : `${base} (${sym}${shown})`;
+    const approx = ratesAreFallback ? "~" : "";
+    return code === "NOK" ? `${base} (${approx}${shown} kr)` : `${base} (${approx}${sym}${shown})`;
   }
 
   // ---------- rarity ordering (highest to lowest, not alphabetical) ----------
@@ -213,7 +274,7 @@ window.WSAPI = (function(){
     API_BASE, get, post, patch, del,
     fmtYen, escapeHtml, normForMatch, sortRarities,
     getCurrency, setCurrency, loadRates, fmtYenConverted,
-    loadSidebarData, sidebarHtml, getUrlId,
+    loadSidebarData, sidebarHtml, getUrlId, sendCardToBinder,
     paginate, renderPagination,
     openPicker, closePicker,
   };

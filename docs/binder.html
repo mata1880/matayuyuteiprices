@@ -25,21 +25,23 @@
   .spread-nav .spread-label{font-family:var(--mono);font-size:13px;color:var(--ink-soft);min-width:100px;text-align:center;}
 
   .binder-spread{
-    display:flex;gap:36px;justify-content:center;align-items:flex-start;
+    display:flex;gap:36px;justify-content:flex-start;align-items:flex-start;
     background:#e9e4d6;padding:28px;border:1px solid var(--line);
+    overflow-x:auto;
   }
   .binder-page{
     background:#fff;padding:14px;border:1px solid var(--line);box-shadow:0 2px 10px rgba(0,0,0,0.08);
-    display:grid;gap:8px;
+    display:grid;gap:8px;flex-shrink:0;
   }
-  .binder-page.layout-3x3{grid-template-columns:repeat(3, 90px);}
-  .binder-page.layout-4x5{grid-template-columns:repeat(4, 74px);}
-  .binder-page.layout-5x5{grid-template-columns:repeat(5, 62px);}
+  .binder-page.layout-3x3{grid-template-columns:repeat(3, 150px);}
+  .binder-page.layout-4x5{grid-template-columns:repeat(4, 118px);}
+  .binder-page.layout-5x5{grid-template-columns:repeat(5, 96px);}
 
   .binder-slot{
     aspect-ratio:5/7;position:relative;background:var(--line-soft);border:1px solid var(--line);
-    overflow:hidden;
+    overflow:hidden;cursor:pointer;
   }
+  .binder-slot.picked{outline:3px solid var(--red);outline-offset:-3px;z-index:2;}
   .binder-slot img{width:100%;height:100%;object-fit:cover;display:block;}
   .binder-slot.greyed img{filter:grayscale(1) opacity(0.45);}
   .binder-slot .slot-empty-btn{
@@ -116,7 +118,9 @@
   A slot shows greyed-out art when its copy isn't currently filed into any collection. 3×3 binders fit
   raw/sleeved/toploader copies; 4×5 and 5×5 fit raw/sleeved only — slabs and toploaders in a thin-page
   binder don't physically fit, so those copies can't be assigned to one.
-  Use the 📦 button on Collection to send a copy here.
+  Use the 📦 button on Browse, Wishlist, or Collection to send a copy here. Click a filled slot to pick
+  it up (it outlines in red), then click any other slot to move it there — swapping places if that slot
+  was already filled.
 </footer>
 
 <script src="assets/api.js"></script>
@@ -143,6 +147,7 @@
   let currentBinder = null;
   let slotsByIndex = {};   // slot_index -> BinderSlotOut
   let spreadIndex = 0;     // 0 = cover (page 0 alone); 1+ = pages (2n-1, 2n) side by side
+  let pickedSlot = null;   // slot_index currently "picked up" for moving, or null
 
   function ensureModal(id){
     let el = document.getElementById(id);
@@ -261,11 +266,14 @@
 
   function slotCellHtml(index){
     const s = slotsByIndex[index];
+    const isPicked = pickedSlot === index;
     if (!s) {
-      return `<div class="binder-slot" data-slot="${index}"><button type="button" class="slot-empty-btn" data-act="empty" title="This slot is empty">·</button></div>`;
+      return `<div class="binder-slot ${isPicked ? 'picked' : ''}" data-slot="${index}">
+        <button type="button" class="slot-empty-btn" data-act="empty" title="Empty slot">·</button>
+      </div>`;
     }
     const img = s.card && s.card.image_url;
-    return `<div class="binder-slot ${s.greyed_out ? 'greyed' : ''}" data-slot="${index}">
+    return `<div class="binder-slot ${s.greyed_out ? 'greyed' : ''} ${isPicked ? 'picked' : ''}" data-slot="${index}">
       ${img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(s.card.name)}" title="${W.escapeHtml(s.card.name)}${s.greyed_out ? ' (not in a collection)' : ''}">` : ''}
       <span class="slot-copy-badge">#${s.copy_number}${s.grade ? ' '+W.escapeHtml(s.grade) : ''}</span>
       <button type="button" class="slot-remove" data-act="remove" title="Remove from this slot">✕</button>
@@ -300,6 +308,24 @@
     attachSlotHandlers();
   }
 
+  // Click-to-move: click a filled slot to "pick it up" (highlighted red),
+  // then click any other slot to move it there — swapping with whatever
+  // was already in that slot if it was occupied. Click the same slot
+  // again to cancel. Simpler and far more reliable than drag-and-drop,
+  // especially on a phone.
+  async function moveOrSwap(fromIndex, toIndex){
+    const fromCopy = slotsByIndex[fromIndex];
+    const toCopy = slotsByIndex[toIndex];
+    if (!fromCopy) return;
+    try {
+      await W.del(`/binders/${currentBinder.id}/slots/${fromIndex}`);
+      if (toCopy) await W.del(`/binders/${currentBinder.id}/slots/${toIndex}`);
+      await W.post(`/binders/${currentBinder.id}/slots/${toIndex}`, {copy_id: fromCopy.copy_id});
+      if (toCopy) await W.post(`/binders/${currentBinder.id}/slots/${fromIndex}`, {copy_id: toCopy.copy_id});
+      await loadSlots();
+    } catch (e) { alert(e.message); }
+  }
+
   function attachSlotHandlers(){
     binderView.querySelectorAll('.binder-slot').forEach(cell => {
       const index = Number(cell.dataset.slot);
@@ -307,16 +333,23 @@
       if (removeBtn) {
         removeBtn.addEventListener('click', async (ev) => {
           ev.stopPropagation();
-          try { await W.del(`/binders/${currentBinder.id}/slots/${index}`); await loadSlots(); }
+          try { await W.del(`/binders/${currentBinder.id}/slots/${index}`); pickedSlot = null; await loadSlots(); }
           catch (e) { alert(e.message); }
         });
       }
-      const emptyBtn = cell.querySelector('[data-act="empty"]');
-      if (emptyBtn) {
-        emptyBtn.addEventListener('click', () => {
-          alert('To place a card here, go to Collection and use the 📦 button on the card you want — it fills the next open slot automatically. Picking a specific empty slot to fill is coming soon.');
-        });
-      }
+      cell.addEventListener('click', () => {
+        const occupied = !!slotsByIndex[index];
+        if (pickedSlot === null) {
+          if (occupied) { pickedSlot = index; render(); }
+          // clicking an empty slot with nothing picked up does nothing
+        } else if (pickedSlot === index) {
+          pickedSlot = null; render(); // cancel
+        } else {
+          const from = pickedSlot;
+          pickedSlot = null;
+          moveOrSwap(from, index);
+        }
+      });
     });
   }
 

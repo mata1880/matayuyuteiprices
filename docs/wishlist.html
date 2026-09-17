@@ -317,6 +317,7 @@
         <div class="tile-media" data-act="zoom">
           ${img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(card.name)}" loading="lazy">` : '<div class="tile-noimg">No image</div>'}
           <button type="button" class="tile-add" data-act="add" data-picker-trigger title="Add to a collection">+</button>
+          <button type="button" class="tile-binder" data-act="binder" data-picker-trigger title="Send to a binder">📦</button>
           <button type="button" class="tile-wish active" data-act="unwish" title="Remove from this wishlist">♥</button>
         </div>
         <div class="tile-info">
@@ -335,6 +336,7 @@
       tile.querySelector('[data-act="zoom"]').addEventListener('click', () => openZoom(card));
       tile.querySelector('[data-act="info"]').addEventListener('click', () => openInfo(card));
       tile.querySelector('[data-act="add"]').addEventListener('click', (ev) => { ev.stopPropagation(); handleAddCopy(ev.currentTarget, card); });
+      tile.querySelector('[data-act="binder"]').addEventListener('click', (ev) => { ev.stopPropagation(); W.sendCardToBinder(ev.currentTarget, card); });
       tile.querySelector('[data-act="unwish"]').addEventListener('click', async (ev) => {
         ev.stopPropagation();
         try {
