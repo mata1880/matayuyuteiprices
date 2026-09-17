@@ -128,7 +128,7 @@
     border:1px solid var(--ink);
     max-height:280px;
     overflow-y:auto;
-    z-index:20;
+    z-index:30;
   }
   .suggestions button{
     display:block;
@@ -413,6 +413,46 @@
 
 <script>
 (function(){
+  // Robust dropdown open/close: uses an invisible full-screen backdrop to
+  // catch outside clicks, instead of trying to detect "was this click
+  // outside the box" (which breaks once the panel's own content
+  // re-renders itself, e.g. on checkbox toggle).
+  function createDropdown(toggleBtn, panelEl){
+    const backdropId = 'ws-dropdown-backdrop';
+    function backdrop(){
+      let el = document.getElementById(backdropId);
+      if (!el) {
+        el = document.createElement('div');
+        el.id = backdropId;
+        el.style.position = 'fixed';
+        el.style.inset = '0';
+        el.style.zIndex = '25';
+        el.style.display = 'none';
+        document.body.appendChild(el);
+      }
+      return el;
+    }
+    function closeAll(){
+      document.querySelectorAll('.suggestions[data-open="1"]').forEach(p => {
+        p.hidden = true;
+        p.removeAttribute('data-open');
+      });
+      backdrop().style.display = 'none';
+    }
+    function open(){
+      closeAll();
+      panelEl.hidden = false;
+      panelEl.setAttribute('data-open', '1');
+      const bd = backdrop();
+      bd.style.display = 'block';
+      bd.onclick = closeAll;
+    }
+    function toggle(){ panelEl.hidden ? open() : closeAll(); }
+    toggleBtn.addEventListener('click', (ev) => { ev.stopPropagation(); toggle(); });
+    panelEl.addEventListener('click', (ev) => ev.stopPropagation());
+    return {open, close: closeAll, toggle};
+  }
+
   const setsToggle = document.getElementById('sets-toggle');
   const setsPanel = document.getElementById('sets-panel');
   const setsPanelSearch = document.getElementById('sets-panel-search');
@@ -526,10 +566,7 @@
     } else setsToggle.textContent = selectedSetKeys.size + ' sets selected';
   }
 
-  setsToggle.addEventListener('click', () => {
-    setsPanel.hidden = !setsPanel.hidden;
-    if (!setsPanel.hidden) setsPanelSearch.focus();
-  });
+  createDropdown(setsToggle, setsPanel);
   setsPanelSearch.addEventListener('input', renderSetsPanel);
   setsPanel.querySelector('[data-act="all"]').addEventListener('click', () => {
     selectedSetKeys = new Set(manifest.map(setKey));
@@ -538,9 +575,6 @@
   setsPanel.querySelector('[data-act="none"]').addEventListener('click', () => {
     selectedSetKeys = new Set();
     renderSetsPanel(); updateSetsToggleLabel(); loadSelectedSets();
-  });
-  document.addEventListener('click', e => {
-    if (!e.target.closest('#sets-multiselect')) setsPanel.hidden = true;
   });
 
   function loadSelectedSets(){
@@ -624,12 +658,7 @@
     else rarityToggle.textContent = [...selectedRarities].join(', ');
   }
 
-  rarityToggle.addEventListener('click', () => {
-    rarityPanel.hidden = !rarityPanel.hidden;
-  });
-  document.addEventListener('click', e => {
-    if (!e.target.closest('.rarity-multiselect')) rarityPanel.hidden = true;
-  });
+  createDropdown(rarityToggle, rarityPanel);
 
   function showEmpty(msg){
     table.style.display = 'none';
