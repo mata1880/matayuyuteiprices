@@ -34,8 +34,7 @@
     display:grid;gap:8px;flex-shrink:0;
   }
   .binder-page.layout-3x3{grid-template-columns:repeat(3, 150px);}
-  .binder-page.layout-4x5{grid-template-columns:repeat(4, 118px);}
-  .binder-page.layout-5x5{grid-template-columns:repeat(5, 96px);}
+  .binder-page.layout-4x3{grid-template-columns:repeat(4, 118px);}
 
   .binder-slot{
     aspect-ratio:5/7;position:relative;background:var(--line-soft);border:1px solid var(--line);
@@ -116,9 +115,9 @@
 <footer>
   Live data from your <a href="https://ws-backend-z28t.onrender.com/docs" target="_blank" rel="noopener">backend API</a>.
   A slot shows greyed-out art when its copy isn't currently filed into any collection. 3×3 binders fit
-  raw/sleeved/toploader copies; 4×5 and 5×5 fit raw/sleeved only — slabs and toploaders in a thin-page
+  raw/sleeved/toploader copies; 4×3 (penny sleeve style) fits raw/sleeved only — slabs and toploaders in a thin-page
   binder don't physically fit, so those copies can't be assigned to one.
-  Use the 📦 button on Browse, Wishlist, or Collection to send a copy here. Click a filled slot to pick
+  Use the 📘 button on Browse, Wishlist, or Collection to send a copy here. Click a filled slot to pick
   it up (it outlines in red), then click any other slot to move it there — swapping places if that slot
   was already filled.
 </footer>
@@ -140,7 +139,12 @@
   const emptyState = document.getElementById('empty-state');
   const statusPill = document.getElementById('status-pill');
 
-  const PAGE_SIZE = {"3x3": 9, "4x5": 20, "5x5": 25};
+  const PAGE_SIZE = {"3x3": 9, "4x3": 12};
+  // A binder created before the layout options changed might still say
+  // "4x5" or "5x5" — treat those as the closest surviving layout so this
+  // page doesn't just break for it.
+  const LEGACY_LAYOUT_FALLBACK = {"4x5": "4x3", "5x5": "4x3"};
+  function resolvedLayout(layout){ return LEGACY_LAYOUT_FALLBACK[layout] || layout; }
   const PAGE_COLS = {"3x3": 3, "4x5": 4, "5x5": 5};
 
   let binders = [];
@@ -201,9 +205,8 @@
         <input type="text" id="bf-name" value="${existing ? W.escapeHtml(existing.name) : ''}" placeholder="e.g. Main SR binder">
         <label for="bf-layout">Layout</label>
         <select id="bf-layout">
-          <option value="3x3" ${existing && existing.layout==='3x3' ? 'selected':''}>3×3 (fits toploaders too)</option>
-          <option value="4x5" ${existing && existing.layout==='4x5' ? 'selected':''}>4×5 (sleeved/raw only)</option>
-          <option value="5x5" ${existing && existing.layout==='5x5' ? 'selected':''}>5×5 (sleeved/raw only)</option>
+          <option value="3x3" ${existing && resolvedLayout(existing.layout)==='3x3' ? 'selected':''}>3×3 — toploaders</option>
+          <option value="4x3" ${existing && resolvedLayout(existing.layout)==='4x3' ? 'selected':''}>4×3 — penny sleeves</option>
         </select>
         <label for="bf-priority">Priority (lower = filled first when sending cards here)</label>
         <input type="number" id="bf-priority" value="${existing ? existing.priority : 0}">
@@ -259,7 +262,7 @@
   }
 
   function pageRangeFor(pageNum){
-    const size = PAGE_SIZE[currentBinder.layout];
+    const size = PAGE_SIZE[resolvedLayout(currentBinder.layout)];
     const start = pageNum * size;
     return [start, start + size];
   }
@@ -284,7 +287,7 @@
     const [start, end] = pageRangeFor(pageNum);
     let cells = '';
     for (let i = start; i < end; i++) cells += slotCellHtml(i);
-    return `<div class="binder-page layout-${currentBinder.layout}">${cells}</div>`;
+    return `<div class="binder-page layout-${resolvedLayout(currentBinder.layout)}">${cells}</div>`;
   }
 
   function render(){
