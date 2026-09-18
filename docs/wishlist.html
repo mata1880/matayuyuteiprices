@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>(function(){try{var t=localStorage.getItem('ws-theme-pref')||'light';document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'light');}catch(e){}})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Wishlist — Weiss Schwarz</title>
@@ -17,7 +18,7 @@
       <h1>My <span>Wishlist</span></h1>
       <p>Cards you want — tracked for real, across as many named wishlists as you like.</p>
     </div>
-    <div id="status-pill">connecting…</div>
+<div style="display:flex;align-items:center;gap:8px;"><div id="status-pill">connecting…</div><span id="ws-theme-toggle-slot"></span></div>
   </div>
   <nav class="pagenav">
     <a href="index.html">Prices</a>
@@ -48,6 +49,14 @@
       <div class="multiselect" id="rarity-multiselect">
         <button type="button" id="rarity-toggle">All rarities</button>
         <div class="panel" id="rarity-panel" hidden></div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Ownership</label>
+      <div class="mode-toggle" id="owned-toggle">
+        <button data-owned="all" class="active">All</button>
+        <button data-owned="owned">Owned</button>
+        <button data-owned="not_owned">Not owned</button>
       </div>
     </div>
     <div class="field">
@@ -89,12 +98,15 @@
 <script>
 (function(){
   const W = window.WSAPI;
+  document.getElementById('ws-theme-toggle-slot').innerHTML = W.themeToggleHtml();
+  W.wireThemeToggle();
   const wishlistSelect = document.getElementById('wishlist-select');
   const newWishlistBtn = document.getElementById('new-wishlist-btn');
   const renameWishlistBtn = document.getElementById('rename-wishlist-btn');
   const deleteWishlistBtn = document.getElementById('delete-wishlist-btn');
   const rarityToggle = document.getElementById('rarity-toggle');
   const rarityPanel = document.getElementById('rarity-panel');
+  const ownedToggle = document.getElementById('owned-toggle');
   const currencySelect = document.getElementById('currency-select');
   const perPageSelect = document.getElementById('perpage-select');
   const searchInput = document.getElementById('search-input');
@@ -109,6 +121,7 @@
   let cards = [];
   let allRarities = [];
   let selectedRarities = new Set();
+  let ownedFilter = 'all';
   let page = 1;
   let perPage = 24;
 
@@ -271,6 +284,12 @@
   currencySelect.value = W.getCurrency();
   currencySelect.addEventListener('change', () => { W.setCurrency(currencySelect.value); render(); });
   searchInput.addEventListener('input', () => { page = 1; render(); });
+  ownedToggle.addEventListener('click', e => {
+    const btn = e.target.closest('button'); if (!btn) return;
+    ownedFilter = btn.dataset.owned;
+    [...ownedToggle.children].forEach(b => b.classList.toggle('active', b === btn));
+    page = 1; render();
+  });
 
   function showEmpty(msg){
     grid.innerHTML = '';
@@ -378,6 +397,8 @@
     const q = searchInput.value.trim().toLowerCase();
     if (q) list = list.filter(c => (c.name||'').toLowerCase().includes(q) || (c.card_number||'').toLowerCase().includes(q));
     if (allRarities.length && selectedRarities.size > 0) list = list.filter(c => c.rarity && selectedRarities.has(c.rarity));
+    if (ownedFilter === 'owned') list = list.filter(c => c.owned_copies > 0);
+    if (ownedFilter === 'not_owned') list = list.filter(c => !c.owned_copies);
 
     if (!list.length) {
       showEmpty(q ? `No cards match "${q}".` : 'Nothing on this wishlist yet — go to Browse and tap ♡ on some cards.');

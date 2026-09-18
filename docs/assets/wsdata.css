@@ -9,8 +9,24 @@
   --green:#3d6b4a;
   --gold:#a5772f;
   --card-bg:#ffffff;
+  --hover-bg:#fbf8f0;
+  --backdrop-tint:rgba(20,18,14,0.15);
   --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --sans: "Zen Kaku Gothic New", "Hiragino Sans", "Segoe UI", sans-serif;
+}
+:root[data-theme="dark"]{
+  --paper:#1a1814;
+  --ink:#ece7db;
+  --ink-soft:#a89d87;
+  --line:#3c362c;
+  --line-soft:#2a251d;
+  --red:#e2685a;
+  --red-deep:#ff8a7a;
+  --green:#6fbf88;
+  --gold:#d9a856;
+  --card-bg:#231f18;
+  --hover-bg:#2b2620;
+  --backdrop-tint:rgba(0,0,0,0.45);
 }
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
@@ -72,7 +88,7 @@ select:focus, input:focus{outline:2px solid var(--red);outline-offset:1px;}
 }
 .panel .none{padding:9px 12px;color:var(--ink-soft);font-size:13px;}
 .panel label{display:flex;align-items:flex-start;gap:8px;padding:7px 12px;font-size:13.5px;cursor:pointer;}
-.panel label:hover{background:#fbf8f0;}
+.panel label:hover{background:var(--hover-bg);}
 .panel-actions{
   display:flex;gap:10px;padding:4px 12px 8px;border-bottom:1px solid var(--line-soft);margin-bottom:4px;
 }
@@ -204,16 +220,16 @@ select:focus, input:focus{outline:2px solid var(--red);outline-offset:1px;}
   display:block;width:100%;text-align:left;padding:8px 12px;background:none;border:none;
   font-family:var(--sans);font-size:13.5px;color:var(--ink);cursor:pointer;
 }
-.ws-picker-item:hover{background:#fbf8f0;}
+.ws-picker-item:hover{background:var(--hover-bg);}
 .ws-picker-new{color:var(--red);border-top:1px solid var(--line-soft);margin-top:2px;}
 .ws-picker-empty, .ws-picker-error{padding:8px 12px;font-size:12.5px;color:var(--ink-soft);}
 .ws-picker-error{color:var(--red);}
 
-/* ---- owned badge on tiles ---- */
-.tile-owned-badge{
-  position:absolute;bottom:8px;left:8px;background:rgba(60,107,74,0.92);color:#fff;
-  font-family:var(--mono);font-size:10.5px;padding:2px 6px;border-radius:3px;
+/* ---- owned indicator, inline next to the rarity badge ---- */
+.owned-indicator{
+  font-family:var(--mono);font-size:10.5px;color:transparent;
 }
+.owned-indicator.owned{color:var(--green);font-weight:600;}
 .backup-note{font-size:11.5px;color:var(--ink-soft);}
 
 footer{padding:20px clamp(16px,4vw,48px) 40px;color:var(--ink-soft);font-size:12px;border-top:1px solid var(--line);}
@@ -234,8 +250,8 @@ footer a{color:var(--ink-soft);}
   display:block;padding:6px 8px;margin:0 -8px;font-size:13.5px;color:var(--ink);
   text-decoration:none;border-left:2px solid transparent;
 }
-.sidebar-link:hover{background:#fbf8f0;}
-.sidebar-link.active{border-left-color:var(--red);color:var(--red);font-weight:600;background:#fbf8f0;}
+.sidebar-link:hover{background:var(--hover-bg);}
+.sidebar-link.active{border-left-color:var(--red);color:var(--red);font-weight:600;background:var(--hover-bg);}
 .sidebar-empty{font-size:12px;color:var(--ink-soft);padding:4px 0;}
 .page-layout > main{flex:1;min-width:0;}
 

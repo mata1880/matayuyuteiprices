@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>(function(){try{var t=localStorage.getItem('ws-theme-pref')||'light';document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'light');}catch(e){}})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Browse — Weiss Schwarz</title>
@@ -14,7 +15,7 @@
       <h1>Browse <span>Weiss Schwarz</span> Cards</h1>
       <p>Live from your collection database.</p>
     </div>
-    <div id="status-pill">connecting…</div>
+<div style="display:flex;align-items:center;gap:8px;"><div id="status-pill">connecting…</div><span id="ws-theme-toggle-slot"></span></div>
   </div>
   <nav class="pagenav">
     <a href="index.html">Prices</a>
@@ -46,6 +47,14 @@
       <div class="multiselect" id="title-multiselect">
         <button type="button" id="title-toggle">All titles</button>
         <div class="panel" id="title-panel" hidden></div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Ownership</label>
+      <div class="mode-toggle" id="owned-toggle">
+        <button data-owned="all" class="active">All</button>
+        <button data-owned="owned">Owned</button>
+        <button data-owned="not_owned">Not owned</button>
       </div>
     </div>
     <div class="field">
@@ -86,9 +95,12 @@
 <script>
 (function(){
   const W = window.WSAPI;
+  document.getElementById('ws-theme-toggle-slot').innerHTML = W.themeToggleHtml();
+  W.wireThemeToggle();
   const rarityToggle = document.getElementById('rarity-toggle');
   const rarityPanel = document.getElementById('rarity-panel');
   const titleToggle = document.getElementById('title-toggle');
+  const ownedToggle = document.getElementById('owned-toggle');
   const titlePanel = document.getElementById('title-panel');
   const currencySelect = document.getElementById('currency-select');
   const perPageSelect = document.getElementById('perpage-select');
@@ -107,6 +119,7 @@
   let selectedRarities = new Set();
   let allTitles = [];
   let selectedTitles = new Set();
+  let ownedFilter = 'all'; // 'all' | 'owned' | 'not_owned'
   let page = 1;
   let perPage = 24;
 
@@ -295,6 +308,12 @@
   currencySelect.value = W.getCurrency();
   currencySelect.addEventListener('change', () => { W.setCurrency(currencySelect.value); render(); });
   searchInput.addEventListener('input', () => { populateRarities(); page = 1; render(); });
+  ownedToggle.addEventListener('click', e => {
+    const btn = e.target.closest('button'); if (!btn) return;
+    ownedFilter = btn.dataset.owned;
+    [...ownedToggle.children].forEach(b => b.classList.toggle('active', b === btn));
+    page = 1; render();
+  });
 
   function showEmpty(msg){
     grid.innerHTML = '';
@@ -315,11 +334,10 @@
           <button type="button" class="tile-binder" data-act="binder" data-picker-trigger title="Send to a binder">📘</button>
           <button type="button" class="tile-wish ${wished?'active':''}" data-act="wish" ${wished?'':'data-picker-trigger'}
             title="${wished ? 'Remove from wishlist' : 'Add to a wishlist'}">${wished ? '♥' : '♡'}</button>
-          ${card.owned_copies > 0 ? `<span class="tile-owned-badge">${card.owned_copies} owned</span>` : ''}
         </div>
         <div class="tile-info">
           <div class="tile-name" data-act="info" style="cursor:pointer;" title="Card details">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>
-          <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span></div>
+          <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="owned-indicator ${card.owned_copies>0?'owned':''}">${card.owned_copies>0?'✓ '+card.owned_copies+' owned':''}</span><span class="tile-number">${W.escapeHtml(card.card_number)}</span></div>
           <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span><span>Buy ${W.fmtYenConverted(card.buy_price_jpy)}</span></div>
         </div>
       </div>`;
@@ -369,20 +387,13 @@
     else btn.setAttribute('data-picker-trigger', '');
   }
 
-  // Updates (or creates) just the owned-count badge in place — same
-  // reasoning as updateWishButton: avoid re-rendering the whole tile.
+  // Updates just the owned-count indicator in place — same reasoning as
+  // updateWishButton: avoid re-rendering the whole tile / reloading images.
   function updateOwnedBadge(tile, count){
-    let badge = tile.querySelector('.tile-owned-badge');
-    if (count > 0) {
-      if (!badge) {
-        badge = document.createElement('span');
-        badge.className = 'tile-owned-badge';
-        tile.querySelector('.tile-media').appendChild(badge);
-      }
-      badge.textContent = `${count} owned`;
-    } else if (badge) {
-      badge.remove();
-    }
+    const el = tile.querySelector('.owned-indicator');
+    if (!el) return;
+    el.classList.toggle('owned', count > 0);
+    el.textContent = count > 0 ? `✓ ${count} owned` : '';
   }
 
   function render(){
@@ -391,6 +402,8 @@
     if (q) cards = cards.filter(c => (c.name||'').toLowerCase().includes(q) || (c.card_number||'').toLowerCase().includes(q));
     if (allRarities.length && selectedRarities.size > 0) cards = cards.filter(c => c.rarity && selectedRarities.has(c.rarity));
     if (allTitles.length && selectedTitles.size > 0) cards = cards.filter(c => selectedTitles.has(W.titlePrefix(c.card_number)));
+    if (ownedFilter === 'owned') cards = cards.filter(c => c.owned_copies > 0);
+    if (ownedFilter === 'not_owned') cards = cards.filter(c => !c.owned_copies);
     if (!cards.length) {
       showEmpty(q ? `No cards match "${q}".` : (allCards.length ? 'No cards for this filter.' : 'No cards yet — run a price scrape (see the API docs link below) to get started.'));
       return;

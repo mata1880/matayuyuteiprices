@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>(function(){try{var t=localStorage.getItem('ws-theme-pref')||'light';document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'light');}catch(e){}})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Yuyu-tei Price Viewer</title>
@@ -15,8 +16,21 @@
     --red-deep:#8c2c22;
     --green:#3d6b4a;
     --card-bg:#ffffff;
+    --hover-bg:#fbf8f0;
     --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     --sans: "Zen Kaku Gothic New", "Hiragino Sans", "Segoe UI", sans-serif;
+  }
+  :root[data-theme="dark"]{
+    --paper:#1a1814;
+    --ink:#ece7db;
+    --ink-soft:#a89d87;
+    --line:#3c362c;
+    --line-soft:#2a251d;
+    --red:#e2685a;
+    --red-deep:#ff8a7a;
+    --green:#6fbf88;
+    --card-bg:#231f18;
+    --hover-bg:#2b2620;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
@@ -144,7 +158,7 @@
     cursor:pointer;
   }
   .suggestions button:last-child{border-bottom:none;}
-  .suggestions button:hover, .suggestions button.hl{background:#fbf8f0;}
+  .suggestions button:hover, .suggestions button.hl{background:var(--hover-bg);}
   .suggestions button .code{
     font-family:var(--mono);
     font-size:11px;
@@ -187,7 +201,7 @@
     font-size:13.5px;
     cursor:pointer;
   }
-  #rarity-panel label:hover{background:#fbf8f0;}
+  #rarity-panel label:hover{background:var(--hover-bg);}
   #rarity-panel .rarity-actions{
     display:flex;
     gap:10px;
@@ -285,7 +299,7 @@
   thead th:hover{background:var(--red-deep);}
   thead th .arrow{opacity:0.6;font-size:10px;margin-left:4px;}
   tbody tr{border-top:1px solid var(--line-soft);}
-  tbody tr:hover{background:#fbf8f0;}
+  tbody tr:hover{background:var(--hover-bg);}
   td{padding:9px 12px;vertical-align:middle;}
   td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap;}
   td.card-cell{display:flex;align-items:center;gap:10px;min-width:220px;}
@@ -336,7 +350,10 @@
     <h1>Yuyu<span>-tei</span> Price Viewer</h1>
     <p>Weiss Schwarz sell &amp; buylist prices, scraped locally.</p>
   </div>
-  <div id="status-pill">loading manifest…</div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <div id="status-pill">loading manifest…</div>
+    <button type="button" id="ws-theme-toggle" title="Switch light/dark" style="font-family:inherit;font-size:12px;padding:6px 10px;border:1px solid var(--line);background:var(--card-bg);color:var(--ink);cursor:pointer;border-radius:999px;"></button>
+  </div>
 </header>
 <nav style="display:flex;gap:2px;padding:0 clamp(16px,4vw,48px);border-bottom:1px solid var(--line);background:var(--paper);">
   <a href="index.html" style="font-size:13.5px;padding:9px 16px;color:var(--ink);text-decoration:none;border-bottom:2px solid var(--red);margin-bottom:-1px;font-weight:600;">Prices</a>
@@ -420,6 +437,22 @@
 
 <script>
 (function(){
+  // Light/dark toggle — shared localStorage key with the other pages, so
+  // switching it here (or anywhere else) applies everywhere.
+  const THEME_KEY = 'ws-theme-pref';
+  const themeBtn = document.getElementById('ws-theme-toggle');
+  function paintThemeBtn(){
+    const isDark = (localStorage.getItem(THEME_KEY) || 'light') === 'dark';
+    themeBtn.textContent = isDark ? '☀ Light' : '☾ Dark';
+  }
+  paintThemeBtn();
+  themeBtn.addEventListener('click', () => {
+    const next = (localStorage.getItem(THEME_KEY) || 'light') === 'dark' ? 'light' : 'dark';
+    try { localStorage.setItem(THEME_KEY, next); } catch(e) {}
+    document.documentElement.setAttribute('data-theme', next);
+    paintThemeBtn();
+  });
+
   // Scrape prices for an entire title (e.g. "OSK") straight from the
   // live backend. NOTE: this page's own table below still reads from
   // the old static docs/data/*.json files, not the live database, so it

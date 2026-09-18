@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>(function(){try{var t=localStorage.getItem('ws-theme-pref')||'light';document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'light');}catch(e){}})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Collection — Weiss Schwarz</title>
@@ -50,7 +51,7 @@
       <h1>My <span>Collection</span></h1>
       <p>Cards you own — tracked per physical copy, across as many named collections as you like.</p>
     </div>
-    <div id="status-pill">connecting…</div>
+<div style="display:flex;align-items:center;gap:8px;"><div id="status-pill">connecting…</div><span id="ws-theme-toggle-slot"></span></div>
   </div>
   <nav class="pagenav">
     <a href="index.html">Prices</a>
@@ -133,6 +134,8 @@
 <script>
 (function(){
   const W = window.WSAPI;
+  document.getElementById('ws-theme-toggle-slot').innerHTML = W.themeToggleHtml();
+  W.wireThemeToggle();
   const collectionSelect = document.getElementById('collection-select');
   const newCollectionBtn = document.getElementById('new-collection-btn');
   const renameCollectionBtn = document.getElementById('rename-collection-btn');

@@ -63,26 +63,53 @@ window.WSAPI = (function(){
       const sellChanged = c.old_sell_price_jpy !== c.new_sell_price_jpy;
       const buyChanged = c.old_buy_price_jpy !== c.new_buy_price_jpy;
       return `<tr>
-        <td style="padding:6px 10px;border-bottom:1px solid #eee;">${escapeHtml(c.name)}<br><span style="font-family:monospace;font-size:11px;color:#888;">${escapeHtml(c.card_number)}</span></td>
-        <td style="padding:6px 10px;border-bottom:1px solid #eee;font-family:monospace;font-size:12.5px;${sellChanged?'color:#b23a2e;font-weight:600;':''}">${fmtYen(c.old_sell_price_jpy)} → ${fmtYen(c.new_sell_price_jpy)}</td>
-        <td style="padding:6px 10px;border-bottom:1px solid #eee;font-family:monospace;font-size:12.5px;${buyChanged?'color:#b23a2e;font-weight:600;':''}">${fmtYen(c.old_buy_price_jpy)} → ${fmtYen(c.new_buy_price_jpy)}</td>
+        <td style="padding:6px 10px;border-bottom:1px solid var(--line-soft);">${escapeHtml(c.name)}<br><span style="font-family:monospace;font-size:11px;color:var(--ink-soft);">${escapeHtml(c.card_number)}</span></td>
+        <td style="padding:6px 10px;border-bottom:1px solid var(--line-soft);font-family:monospace;font-size:12.5px;${sellChanged?'color:var(--red);font-weight:600;':''}">${fmtYen(c.old_sell_price_jpy)} → ${fmtYen(c.new_sell_price_jpy)}</td>
+        <td style="padding:6px 10px;border-bottom:1px solid var(--line-soft);font-family:monospace;font-size:12.5px;${buyChanged?'color:var(--red);font-weight:600;':''}">${fmtYen(c.old_buy_price_jpy)} → ${fmtYen(c.new_buy_price_jpy)}</td>
       </tr>`;
     }).join('');
     el.innerHTML = `<div class="modal" style="max-width:520px;">
       <button type="button" class="modal-close" aria-label="Close">×</button>
-      <div style="padding:20px;">
+      <div style="padding:20px;color:var(--ink);">
         <h2 style="margin:0 0 6px;font-size:16px;">Price update — ${result.checked} card${result.checked===1?'':'s'} checked</h2>
-        <p style="font-size:12.5px;color:#888;margin:0 0 14px;">${result.changed.length} price${result.changed.length===1?'':'s'} changed.${result.truncated ? ' Some cards were skipped this round — click again to work through the rest.' : ''}</p>
+        <p style="font-size:12.5px;color:var(--ink-soft);margin:0 0 14px;">${result.changed.length} price${result.changed.length===1?'':'s'} changed.${result.truncated ? ' Some cards were skipped this round — click again to work through the rest.' : ''}</p>
         ${result.changed.length ? `<table style="width:100%;border-collapse:collapse;font-size:13px;">
           <thead><tr><th style="text-align:left;padding:4px 10px;">Card</th><th style="text-align:left;padding:4px 10px;">Sell</th><th style="text-align:left;padding:4px 10px;">Buy</th></tr></thead>
           <tbody>${rows}</tbody>
-        </table>` : `<p style="font-size:13px;color:#888;">No price changes this time.</p>`}
+        </table>` : `<p style="font-size:13px;color:var(--ink-soft);">No price changes this time.</p>`}
       </div>
     </div>`;
     document.body.appendChild(el);
     const close = () => el.remove();
     el.addEventListener('click', (ev) => { if (ev.target === el) close(); });
     el.querySelector('.modal-close').addEventListener('click', close);
+  }
+
+  // ---------- dark/light theme (persisted, shared across all pages) ----------
+  const THEME_KEY = "ws-theme-pref";
+  function getTheme(){ try { return localStorage.getItem(THEME_KEY) || "light"; } catch(e) { return "light"; } }
+  function setTheme(theme){
+    try { localStorage.setItem(THEME_KEY, theme); } catch(e) {}
+    applyTheme(theme);
+  }
+  function applyTheme(theme){
+    document.documentElement.setAttribute("data-theme", theme === "dark" ? "dark" : "light");
+  }
+  function initTheme(){ applyTheme(getTheme()); }
+  // Renders a light/dark toggle button and wires it up. Call once per
+  // page, passing the element to fill (usually the header's status area).
+  function themeToggleHtml(){
+    const isDark = getTheme() === "dark";
+    return `<button type="button" id="ws-theme-toggle" title="Switch light/dark" style="font-family:var(--sans);font-size:12px;padding:6px 10px;border:1px solid var(--line);background:var(--card-bg);color:var(--ink);cursor:pointer;border-radius:999px;">${isDark ? '☀ Light' : '☾ Dark'}</button>`;
+  }
+  function wireThemeToggle(){
+    const btn = document.getElementById('ws-theme-toggle');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      const next = getTheme() === "dark" ? "light" : "dark";
+      setTheme(next);
+      btn.textContent = next === "dark" ? '☀ Light' : '☾ Dark';
+    });
   }
 
   function getUrlId(){
@@ -377,6 +404,7 @@ window.WSAPI = (function(){
     fmtYen, escapeHtml, normForMatch, sortRarities,
     getCurrency, setCurrency, loadRates, fmtYenConverted, stockClass, yenToCurrency, currencyToYen,
     loadSidebarData, sidebarHtml, getUrlId, sendCardToBinder,
+    getTheme, setTheme, applyTheme, initTheme, themeToggleHtml, wireThemeToggle,
     toast, titlePrefix, PAGE_SIZE, resolvedLayout, pageSlotLabel, showPriceChanges,
     paginate, renderPagination,
     openPicker, closePicker,
