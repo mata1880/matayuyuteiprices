@@ -18,9 +18,9 @@
   .spread-nav .spread-label{font-family:var(--mono);font-size:13px;color:var(--ink-soft);min-width:100px;text-align:center;}
 
   .binder-spread{
-    display:flex;gap:36px;justify-content:flex-start;align-items:flex-start;
-    background:#e9e4d6;padding:28px;border:1px solid var(--line);
-    overflow-x:auto;
+    display:flex;gap:20px;justify-content:center;align-items:flex-start;
+    background:#e9e4d6;padding:20px;border:1px solid var(--line);
+    overflow-x:auto;max-width:100%;
   }
   .binder-page{
     background:#fff;padding:14px;border:1px solid var(--line);box-shadow:0 2px 10px rgba(0,0,0,0.08);
@@ -302,13 +302,24 @@
     return `<div class="binder-page layout-${resolvedLayout(currentBinder.layout)}">${cells}</div>`;
   }
 
+  // Blank placeholder matching a real page's exact size — used on the
+  // left of the cover, so the cover itself sits on the right like the
+  // first page of a real binder does when you open it.
+  function ghostPageHtml(){
+    const layout = resolvedLayout(currentBinder.layout);
+    const size = PAGE_SIZE[layout];
+    let cells = '';
+    for (let i = 0; i < size; i++) cells += '<div class="binder-slot" style="visibility:hidden;"></div>';
+    return `<div class="binder-page layout-${layout}" style="box-shadow:none;border-color:transparent;">${cells}</div>`;
+  }
+
   function render(){
     if (!currentBinder) return;
     spreadNav.hidden = false;
 
     if (spreadIndex === 0) {
       spreadLabel.textContent = 'Cover';
-      binderView.innerHTML = `<div class="binder-spread">${pageHtml(0)}</div>`;
+      binderView.innerHTML = `<div class="binder-spread">${ghostPageHtml()}${pageHtml(0)}</div>`;
       prevSpreadBtn.disabled = true;
     } else {
       const left = spreadIndex * 2 - 1;
@@ -342,7 +353,7 @@
   }
 
   function attachSlotHandlers(){
-    binderView.querySelectorAll('.binder-slot').forEach(cell => {
+    binderView.querySelectorAll('.binder-slot[data-slot]').forEach(cell => {
       const index = Number(cell.dataset.slot);
       const removeBtn = cell.querySelector('[data-act="remove"]');
       if (removeBtn) {

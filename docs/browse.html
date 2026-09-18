@@ -27,9 +27,9 @@
 
 <main>
   <div class="wl-toolbar">
-    <label for="scrape-input" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);">Scrape a set:</label>
-    <input type="text" id="scrape-input" placeholder="e.g. MTI or OSK/S133" style="min-width:160px;font-family:var(--sans);font-size:13.5px;padding:7px 10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);">
-    <button type="button" id="scrape-btn">Scrape prices</button>
+    <label for="scrape-input" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);">Add a title:</label>
+    <input type="text" id="scrape-input" placeholder="e.g. MTI or OSK" style="min-width:160px;font-family:var(--sans);font-size:13.5px;padding:7px 10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);">
+    <button type="button" id="scrape-btn">Get card info</button>
     <span id="scrape-status" style="font-size:12.5px;color:var(--ink-soft);"></span>
   </div>
 
@@ -39,6 +39,13 @@
       <div class="multiselect" id="rarity-multiselect">
         <button type="button" id="rarity-toggle">All rarities</button>
         <div class="panel" id="rarity-panel" hidden></div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Title</label>
+      <div class="multiselect" id="title-multiselect">
+        <button type="button" id="title-toggle">All titles</button>
+        <div class="panel" id="title-panel" hidden></div>
       </div>
     </div>
     <div class="field">
@@ -81,6 +88,8 @@
   const W = window.WSAPI;
   const rarityToggle = document.getElementById('rarity-toggle');
   const rarityPanel = document.getElementById('rarity-panel');
+  const titleToggle = document.getElementById('title-toggle');
+  const titlePanel = document.getElementById('title-panel');
   const currencySelect = document.getElementById('currency-select');
   const perPageSelect = document.getElementById('perpage-select');
   const searchInput = document.getElementById('search-input');
@@ -96,6 +105,8 @@
   let allCards = [];
   let allRarities = [];
   let selectedRarities = new Set();
+  let allTitles = [];
+  let selectedTitles = new Set();
   let page = 1;
   let perPage = 24;
 
@@ -125,6 +136,7 @@
     panelEl.addEventListener('click', (ev) => ev.stopPropagation());
   }
   createDropdown(rarityToggle, rarityPanel);
+  createDropdown(titleToggle, titlePanel);
 
   // ---------- image zoom + info modal ----------
   function ensureModal(id, bodyBuilder){
@@ -236,6 +248,37 @@
     else rarityToggle.textContent = [...selectedRarities].join(', ');
   }
 
+  function populateTitles(){
+    const seen = [];
+    for (const c of allCards) {
+      const prefix = (c.card_number || '').split('/')[0];
+      if (prefix && !seen.includes(prefix)) seen.push(prefix);
+    }
+    allTitles = seen.sort();
+    selectedTitles = new Set();
+    renderTitlePanel();
+    updateTitleToggleLabel();
+  }
+  function renderTitlePanel(){
+    if (!allTitles.length) { titlePanel.innerHTML = '<div class="none">No titles yet.</div>'; return; }
+    const actions = `<div class="panel-actions"><button type="button" data-act="all">Select all</button><button type="button" data-act="none">Clear</button></div>`;
+    const boxes = allTitles.map(t => `<label><input type="checkbox" value="${W.escapeHtml(t)}" ${selectedTitles.has(t)?'checked':''}> ${W.escapeHtml(t)}</label>`).join('');
+    titlePanel.innerHTML = actions + boxes;
+    titlePanel.querySelector('[data-act="all"]').addEventListener('click', () => { selectedTitles = new Set(allTitles); renderTitlePanel(); updateTitleToggleLabel(); page=1; render(); });
+    titlePanel.querySelector('[data-act="none"]').addEventListener('click', () => { selectedTitles = new Set(); renderTitlePanel(); updateTitleToggleLabel(); page=1; render(); });
+    titlePanel.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        if (cb.checked) selectedTitles.add(cb.value); else selectedTitles.delete(cb.value);
+        updateTitleToggleLabel(); page = 1; render();
+      });
+    });
+  }
+  function updateTitleToggleLabel(){
+    if (!allTitles.length) { titleToggle.textContent = 'No titles'; return; }
+    if (selectedTitles.size === 0 || selectedTitles.size === allTitles.length) titleToggle.textContent = 'All titles';
+    else titleToggle.textContent = [...selectedTitles].join(', ');
+  }
+
   perPageSelect.addEventListener('change', () => { perPage = Number(perPageSelect.value); page = 1; render(); });
   currencySelect.value = W.getCurrency();
   currencySelect.addEventListener('change', () => { W.setCurrency(currencySelect.value); render(); });
@@ -263,7 +306,7 @@
           ${card.owned_copies > 0 ? `<span class="tile-owned-badge">${card.owned_copies} owned</span>` : ''}
         </div>
         <div class="tile-info">
-          <div class="tile-name" data-act="info" title="Click for card details">${W.escapeHtml(card.name)}</div>
+          <div class="tile-name">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>
           <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span></div>
           <div class="tile-prices"><span>Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span></div>
         </div>
@@ -305,6 +348,7 @@
     const q = searchInput.value.trim().toLowerCase();
     if (q) cards = cards.filter(c => (c.name||'').toLowerCase().includes(q) || (c.card_number||'').toLowerCase().includes(q));
     if (allRarities.length && selectedRarities.size > 0) cards = cards.filter(c => c.rarity && selectedRarities.has(c.rarity));
+    if (allTitles.length && selectedTitles.size > 0) cards = cards.filter(c => selectedTitles.has((c.card_number||'').split('/')[0]));
     if (!cards.length) {
       showEmpty(q ? `No cards match "${q}".` : (allCards.length ? 'No cards for this filter.' : 'No cards yet — run a price scrape (see the API docs link below) to get started.'));
       return;
@@ -328,6 +372,7 @@
       allCards = cards;
       statusPill.textContent = cards.length ? cards.length + ' card(s) in database' : 'no cards yet';
       populateRarities();
+      populateTitles();
       render();
     }).catch(err => {
       statusPill.textContent = 'connection failed';
@@ -337,15 +382,15 @@
 
   scrapeBtn.addEventListener('click', async () => {
     const code = scrapeInput.value.trim();
-    if (!code) { scrapeStatus.textContent = 'Type a set/card code first.'; return; }
+    if (!code) { scrapeStatus.textContent = 'Type a title code first.'; return; }
     scrapeBtn.disabled = true;
-    scrapeStatus.textContent = 'Scraping — this can take a little while for a big set…';
+    scrapeStatus.textContent = 'Fetching card info — this can take a little while for a big title…';
     try {
-      const result = await W.post('/scrape/prices', {game: 'ws', card_code: code, mode: 'both'});
-      scrapeStatus.textContent = `Done — ${result.cards_seen} card(s) seen, ${result.price_snapshots_added} price(s) recorded.`;
+      const result = await W.post('/scrape/catalog', {query: code});
+      scrapeStatus.textContent = `Done — ${result.cards_seen} card(s) added/updated with names, images, and stats. Prices aren't fetched here — use "Price check" on a Wishlist, Collection, or Binder for that.`;
       await reloadCards();
     } catch (e) {
-      scrapeStatus.textContent = 'Scrape failed: ' + e.message;
+      scrapeStatus.textContent = 'Failed: ' + e.message;
     } finally {
       scrapeBtn.disabled = false;
     }

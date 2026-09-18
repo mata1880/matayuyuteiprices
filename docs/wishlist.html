@@ -333,7 +333,7 @@
           <button type="button" class="tile-wish active" data-act="unwish" title="Remove from this wishlist">♥</button>
         </div>
         <div class="tile-info">
-          <div class="tile-name" data-act="info" title="Click for card details">${W.escapeHtml(card.name)}</div>
+          <div class="tile-name">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>
           <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span></div>
           <div class="tile-prices"><span>Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span></div>
         </div>

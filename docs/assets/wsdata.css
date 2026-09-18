@@ -122,8 +122,12 @@ select:focus, input:focus{outline:2px solid var(--red);outline-offset:1px;}
   display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,0.35);
 }
 .tile-info{padding:10px 10px 12px;display:flex;flex-direction:column;gap:4px;flex:1;}
-.tile-name{font-weight:600;font-size:13px;line-height:1.3;min-height:2.6em;cursor:pointer;}
-.tile-name:hover{color:var(--red);text-decoration:underline;}
+.tile-name{font-weight:600;font-size:13px;line-height:1.3;min-height:2.6em;}
+.tile-info-btn{
+  background:none;border:none;cursor:pointer;font-size:13px;color:var(--red);
+  padding:0;vertical-align:middle;line-height:1;
+}
+.tile-info-btn:hover{color:var(--red-deep);}
 .tile-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 .rarity-badge{font-family:var(--mono);font-size:10.5px;padding:1px 5px;border:1px solid var(--ink);white-space:nowrap;}
 .tile-number{font-family:var(--mono);font-size:10.5px;color:var(--ink-soft);}
