@@ -60,6 +60,44 @@ window.WSAPI = (function(){
     catch(e) { return null; }
   }
 
+  // ---------- non-blocking toast (replaces alert() for success messages) ----------
+  function toast(message, ms = 3200){
+    let el = document.getElementById('ws-toast');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'ws-toast';
+      el.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);'
+        + 'background:#1c1a16;color:#f7f4ee;padding:11px 18px;border-radius:5px;font-size:13.5px;'
+        + 'z-index:200;box-shadow:0 4px 16px rgba(0,0,0,0.3);max-width:90vw;text-align:center;'
+        + 'opacity:0;transition:opacity 0.2s ease;pointer-events:none;';
+      document.body.appendChild(el);
+    }
+    el.textContent = message;
+    el.style.opacity = '1';
+    clearTimeout(el._hideTimer);
+    el._hideTimer = setTimeout(() => { el.style.opacity = '0'; }, ms);
+  }
+
+  // ---------- title/set prefix (strictly the leading 2-4 letters before "/") ----------
+  // Not just "everything before the first slash" — a malformed or
+  // catalog-only card_number without a clean short letter code would
+  // otherwise pollute the Title filter with one-off junk entries.
+  function titlePrefix(cardNumber){
+    const before = (cardNumber || '').split('/')[0];
+    const m = before.match(/^[A-Za-z]{2,4}/);
+    return m ? m[0].toUpperCase() : null;
+  }
+
+  const PAGE_SIZE = {"3x3": 9, "4x3": 12};
+  const LEGACY_LAYOUT_FALLBACK = {"4x5": "4x3", "5x5": "4x3"};
+  function resolvedLayout(layout){ return LEGACY_LAYOUT_FALLBACK[layout] || layout; }
+  function pageSlotLabel(binderLayout, slotIndex){
+    const size = PAGE_SIZE[resolvedLayout(binderLayout)] || 9;
+    const page = Math.floor(slotIndex / size) + 1;
+    const local = (slotIndex % size) + 1;
+    return `page ${page}, slot ${local}`;
+  }
+
   // For Browse/Wishlist, where we only know the CARD, not a specific
   // copy (unlike Collection, which already has individual copies to work
   // with). Prefers linking an owned, unplaced copy if one's available;
@@ -70,13 +108,17 @@ window.WSAPI = (function(){
   async function sendCardToBinder(anchorEl, card){
     let binders;
     try { binders = await get('/binders'); } catch (e) { alert(e.message); return; }
-    if (!binders.length) { alert('No binders yet — create one on the Binder tab first.'); return; }
     await openPicker(anchorEl, {
       title: 'Send to binder', emptyLabel: 'No binders yet',
       listFn: () => Promise.resolve(binders),
-      createFn: () => { throw new Error('Create binders from the Binder tab.'); },
+      createFn: async (name) => {
+        const layoutInput = prompt('Layout — type 3x3 (fits toploaders) or 4x3 (sleeved/raw only):', '3x3');
+        const layout = (layoutInput || '').trim() === '4x3' ? '4x3' : '3x3';
+        return await post('/binders', {name, layout});
+      },
       onPick: async (binderId) => {
         try {
+          const binder = binders.find(b => b.id === binderId) || await get(`/binders/${binderId}`).catch(() => null);
           let copyId = null;
           const avail = await get(`/binders/${binderId}/available-copies?card_id=${card.id}`);
           if (avail.length === 1) {
@@ -88,7 +130,6 @@ window.WSAPI = (function(){
             if (picked) copyId = picked.id;
           }
 
-          // Reuse an existing planned slot for this card if one exists.
           let targetSlot = null;
           try {
             const planned = await get(`/binders/${binderId}/planned-slot?card_id=${card.id}`);
@@ -104,9 +145,8 @@ window.WSAPI = (function(){
 
           const body = copyId ? {copy_id: copyId} : {card_id: card.id};
           await post(`/binders/${binderId}/slots/${targetSlot}`, body);
-          alert(copyId
-            ? `Placed in slot ${targetSlot + 1}.`
-            : `Added as a planned card in slot ${targetSlot + 1} — it'll show greyed out until you own a copy and it gets linked here.`);
+          const layout = binder ? binder.layout : '3x3';
+          toast((copyId ? 'Added to ' : 'Added as planned — ') + pageSlotLabel(layout, targetSlot) + '.');
         } catch (e) { alert(e.message); }
       },
     });
@@ -159,6 +199,14 @@ window.WSAPI = (function(){
       });
   }
 
+  // "In Stock" -> green, "Sold Out" -> red, anything else/unknown -> default color
+  function stockClass(availability){
+    const a = (availability || '').toLowerCase();
+    if (a.includes('sold out')) return 'price-out-of-stock';
+    if (a.includes('in stock')) return 'price-in-stock';
+    return '';
+  }
+
   function fmtYenConverted(v){
     const base = fmtYen(v);
     if (v === null || v === undefined || v === "" || Number.isNaN(Number(v))) return base;
@@ -169,6 +217,20 @@ window.WSAPI = (function(){
     const shown = converted >= 10 ? Math.round(converted).toLocaleString("en-US") : converted.toFixed(2);
     const approx = ratesAreFallback ? "~" : "";
     return code === "NOK" ? `${base} (${approx}${shown} kr)` : `${base} (${approx}${sym}${shown})`;
+  }
+
+  // Raw conversion (no formatting/rounding-for-display) — for form fields
+  // where the user types a number in a chosen currency and it needs to
+  // become a plain JPY figure to store, or vice versa.
+  function yenToCurrency(yenAmount, code){
+    if (code === "JPY") return yenAmount;
+    if (!ratesCache || !ratesCache[code]) return null; // rates not loaded yet
+    return yenAmount * ratesCache[code];
+  }
+  function currencyToYen(amount, code){
+    if (code === "JPY") return amount;
+    if (!ratesCache || !ratesCache[code]) return null;
+    return amount / ratesCache[code];
   }
 
   // ---------- rarity ordering (highest to lowest, not alphabetical) ----------
@@ -283,8 +345,9 @@ window.WSAPI = (function(){
   return {
     API_BASE, get, post, patch, del,
     fmtYen, escapeHtml, normForMatch, sortRarities,
-    getCurrency, setCurrency, loadRates, fmtYenConverted,
+    getCurrency, setCurrency, loadRates, fmtYenConverted, stockClass, yenToCurrency, currencyToYen,
     loadSidebarData, sidebarHtml, getUrlId, sendCardToBinder,
+    toast, titlePrefix, PAGE_SIZE, resolvedLayout, pageSlotLabel,
     paginate, renderPagination,
     openPicker, closePicker,
   };

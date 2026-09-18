@@ -40,6 +40,7 @@
     width:100%;height:100%;border:none;background:none;color:var(--ink-soft);font-size:18px;cursor:pointer;
   }
   .binder-slot .slot-empty-btn:hover{background:#f2eee2;}
+  .binder-slot .tile-add:disabled{opacity:0.3;cursor:default;background:rgba(255,255,255,0.6);}
   .binder-slot .slot-remove{
     position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;border:none;
     background:rgba(255,255,255,0.9);color:var(--red);font-size:11px;cursor:pointer;line-height:1;
@@ -95,6 +96,7 @@
   </div>
 
   <p class="binder-meta" id="binder-meta"></p>
+  <div id="fillable-banner" class="wl-toolbar" style="display:none;"></div>
 
   <div class="spread-nav" id="spread-nav" hidden>
     <button type="button" id="prev-spread">‹ Prev</button>
@@ -109,10 +111,10 @@
 
 <footer>
   Live data from your <a href="https://ws-backend-z28t.onrender.com/docs" target="_blank" rel="noopener">backend API</a>.
-  A slot shows greyed-out art either because you don't own a copy of that card yet ("planned") or because a
-  copy exists but isn't filed into a collection. Once a copy is owned and in a collection, sending it to a
-  binder fills the greyed slot rather than making a second one. 3×3 binders fit raw/sleeved/toploader copies;
-  4×3 (penny sleeve style) fits raw/sleeved only — slabs and toploaders in a thin-page binder don't physically
+  A slot shows greyed-out art either because you don't own a copy of that card yet or because a copy exists
+  but isn't filed into a collection. A greyed slot's own + button fills it from your collection once a
+  matching copy is available — it's disabled until then. 3×3 binders fit raw/sleeved/toploader copies; 4×3
+  (penny sleeve style) fits raw/sleeved only — slabs and toploaders in a thin-page binder don't physically
   fit, so those copies can't be assigned to one. Use the 📘 button on Browse, Wishlist, or Collection to send
   a card here — even one you don't own yet. Click a filled slot to pick it up (it outlines in red), then
   click any other slot to move it there — swapping places if that slot was already filled.
@@ -146,6 +148,7 @@
   let binders = [];
   let currentBinder = null;
   let slotsByIndex = {};   // slot_index -> BinderSlotOut
+  let fillableBySlot = {}; // slot_index -> copy_id (only for planned slots with an available copy)
   let spreadIndex = 0;     // 0 = cover (page 0 alone); 1+ = pages (2n-1, 2n) side by side
   let pickedSlot = null;   // slot_index currently "picked up" for moving, or null
 
@@ -204,8 +207,6 @@
           <option value="3x3" ${existing && resolvedLayout(existing.layout)==='3x3' ? 'selected':''}>3×3 — toploaders</option>
           <option value="4x3" ${existing && resolvedLayout(existing.layout)==='4x3' ? 'selected':''}>4×3 — penny sleeves</option>
         </select>
-        <label for="bf-priority">Priority (lower = filled first when sending cards here)</label>
-        <input type="number" id="bf-priority" value="${existing ? existing.priority : 0}">
         <div class="edit-form-actions">
           <button type="button" class="cancel-btn" data-act="cancel">Cancel</button>
           <button type="button" class="save-btn" data-act="save">Save</button>
@@ -217,7 +218,7 @@
     el.querySelector('[data-act="save"]').addEventListener('click', async () => {
       const name = el.querySelector('#bf-name').value.trim();
       if (!name) { alert('Name is required.'); return; }
-      const body = {name, layout: el.querySelector('#bf-layout').value, priority: Number(el.querySelector('#bf-priority').value) || 0};
+      const body = {name, layout: el.querySelector('#bf-layout').value};
       try {
         if (existing) await W.patch(`/binders/${existing.id}`, body);
         else { const created = await W.post('/binders', body); await loadBinders(created.id); el.hidden = true; return; }
@@ -246,14 +247,36 @@
 
   // ---------- slots ----------
   function loadSlots(){
-    binderView.innerHTML = '';
-    emptyState.style.display = 'none';
-    binderMeta.textContent = 'Loading…';
-    return W.get(`/binders/${currentBinder.id}/slots`).then(slots => {
+    return Promise.all([
+      W.get(`/binders/${currentBinder.id}/slots`),
+      W.get(`/binders/${currentBinder.id}/fillable`),
+    ]).then(([slots, fillable]) => {
       slotsByIndex = {};
       slots.forEach(s => slotsByIndex[s.slot_index] = s);
-      binderMeta.textContent = `${currentBinder.layout} layout · ${slots.length} card${slots.length===1?'':'s'} placed · priority ${currentBinder.priority}`;
+      fillableBySlot = {};
+      fillable.forEach(f => fillableBySlot[f.slot_index] = f.copy_id);
+      binderMeta.textContent = `${currentBinder.layout} layout · ${slots.length} card${slots.length===1?'':'s'} placed`;
+      updateFillableBanner();
       render();
+    });
+  }
+
+  function updateFillableBanner(){
+    const banner = document.getElementById('fillable-banner');
+    const count = Object.keys(fillableBySlot).length;
+    if (!count) { banner.style.display = 'none'; return; }
+    banner.style.display = 'flex';
+    banner.innerHTML = `<span style="font-size:13.5px;color:var(--ink-soft);">You can add ${count} card${count===1?'':'s'} to this binder from your collection.</span>
+      <button type="button" id="fill-all-btn">Fill all</button>`;
+    document.getElementById('fill-all-btn').addEventListener('click', async () => {
+      const btn = document.getElementById('fill-all-btn');
+      btn.disabled = true;
+      try {
+        const result = await W.post(`/binders/${currentBinder.id}/fill-all`);
+        W.toast(`Filled ${result.filled} slot${result.filled===1?'':'s'}.`);
+        await loadSlots();
+      } catch (e) { alert(e.message); }
+      finally { btn.disabled = false; }
     });
   }
 
@@ -290,10 +313,15 @@
     }
     const img = s.card && s.card.image_url;
     const statusNote = s.planned ? ' (not owned yet)' : (s.greyed_out ? ' (not in a collection)' : '');
-    const badge = s.planned ? 'planned' : `#${s.copy_number}${s.grade ? ' '+W.escapeHtml(s.grade) : ''}`;
+    const badge = s.planned ? '' : `#${s.copy_number}${s.grade ? ' '+W.escapeHtml(s.grade) : ''}`;
+    const canFill = s.planned && fillableBySlot[index] != null;
+    const fillBtn = s.planned
+      ? `<button type="button" class="tile-add" data-act="fill" ${canFill ? '' : 'disabled'} style="position:absolute;top:4px;left:4px;width:22px;height:22px;font-size:13px;" title="${canFill ? 'Fill from collection' : 'No available copy in your collection yet'}">+</button>`
+      : '';
     return `<div class="binder-slot ${s.greyed_out ? 'greyed' : ''} ${isPicked ? 'picked' : ''}" data-slot="${index}">
       ${img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(s.card.name)}" title="${W.escapeHtml(s.card.name)}${statusNote}">` : ''}
-      <span class="slot-copy-badge">${badge}</span>
+      ${fillBtn}
+      ${badge ? `<span class="slot-copy-badge">${badge}</span>` : ''}
       <button type="button" class="slot-remove" data-act="remove" title="Remove from this slot">✕</button>
     </div>`;
   }
@@ -367,6 +395,19 @@
           ev.stopPropagation();
           try { await W.del(`/binders/${currentBinder.id}/slots/${index}`); pickedSlot = null; await loadSlots(); }
           catch (e) { alert(e.message); }
+        });
+      }
+      const fillBtn = cell.querySelector('[data-act="fill"]');
+      if (fillBtn && !fillBtn.disabled) {
+        fillBtn.addEventListener('click', async (ev) => {
+          ev.stopPropagation();
+          const copyId = fillableBySlot[index];
+          if (copyId == null) return;
+          try {
+            await W.post(`/binders/${currentBinder.id}/slots/${index}`, {copy_id: copyId});
+            W.toast(`Filled — ${W.pageSlotLabel(currentBinder.layout, index)}.`);
+            await loadSlots();
+          } catch (e) { alert(e.message); }
         });
       }
       cell.addEventListener('click', () => {

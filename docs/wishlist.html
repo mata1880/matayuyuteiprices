@@ -195,9 +195,6 @@
   });
 
   function loadItems(){
-    grid.innerHTML = '';
-    emptyState.style.display = 'none';
-    summary.textContent = 'Loading…';
     return W.get(`/wishlists/${currentWishlistId}/items`).then(items => {
       cards = items;
       populateRarities();
@@ -304,7 +301,7 @@
           ${card.traits ? `<div class="modal-traits">${W.escapeHtml(card.traits)}</div>` : ''}
           ${text ? `<div class="modal-text">${text}</div>` : ''}
           ${card.flavor ? `<div class="modal-flavor">${W.escapeHtml(card.flavor)}</div>` : ''}
-          <div class="modal-prices"><span>Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span></div>
+          <div class="modal-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span></div>
         </div>
       </div>
     </div>`;
@@ -334,7 +331,7 @@
         <div class="tile-info">
           <div class="tile-name" data-act="info" style="cursor:pointer;" title="Card details">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>
           <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span></div>
-          <div class="tile-prices"><span>Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span></div>
+          <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span></div>
         </div>
       </div>`;
   }

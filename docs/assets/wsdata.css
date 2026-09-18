@@ -132,6 +132,8 @@ select:focus, input:focus{outline:2px solid var(--red);outline-offset:1px;}
 .rarity-badge{font-family:var(--mono);font-size:10.5px;padding:1px 5px;border:1px solid var(--ink);white-space:nowrap;}
 .tile-number{font-family:var(--mono);font-size:10.5px;color:var(--ink-soft);}
 .tile-prices{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-top:auto;padding-top:6px;border-top:1px solid var(--line-soft);}
+.price-in-stock{color:var(--green);}
+.price-out-of-stock{color:var(--red);}
 
 /* ---- pagination ---- */
 .pagination{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:28px;flex-wrap:wrap;}
