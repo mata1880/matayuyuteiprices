@@ -380,6 +380,7 @@
   // tile (especially not its <img>), so toggling a wishlist doesn't
   // force every image on the page to reload and flicker.
   function updateWishButton(btn, wished){
+    if (!btn) return;
     btn.classList.toggle('active', wished);
     btn.textContent = wished ? '♥' : '♡';
     btn.title = wished ? 'Remove from wishlist' : 'Add to a wishlist';
