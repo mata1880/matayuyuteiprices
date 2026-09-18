@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Binders — Weiss Schwarz</title>
+<link rel="stylesheet" href="assets/wsdata.css">
+<style>
+
+  .binder-meta{font-size:12.5px;color:var(--ink-soft);margin-bottom:16px;}
+
+  .spread-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:20px;}
+  .spread-nav button{
+    font-family:var(--sans);font-size:13px;padding:8px 16px;border:1px solid var(--ink);
+    background:var(--card-bg);color:var(--ink);cursor:pointer;
+  }
+  .spread-nav button:disabled{opacity:0.35;cursor:default;}
+  .spread-nav .spread-label{font-family:var(--mono);font-size:13px;color:var(--ink-soft);min-width:100px;text-align:center;}
+
+  .binder-spread{
+    display:flex;gap:20px;justify-content:center;align-items:flex-start;
+    background:#e9e4d6;padding:20px;border:1px solid var(--line);
+    overflow-x:auto;max-width:100%;
+  }
+  .binder-page{
+    background:#fff;padding:14px;border:1px solid var(--line);box-shadow:0 2px 10px rgba(0,0,0,0.08);
+    display:grid;gap:8px;flex-shrink:0;
+  }
+  .binder-page.layout-3x3{grid-template-columns:repeat(3, 150px);}
+  .binder-page.layout-4x3{grid-template-columns:repeat(4, 118px);}
+
+  .binder-slot{
+    aspect-ratio:5/7;position:relative;background:var(--line-soft);border:1px solid var(--line);
+    overflow:hidden;cursor:pointer;
+  }
+  .binder-slot.picked{outline:3px solid var(--red);outline-offset:-3px;z-index:2;}
+  .binder-slot img{width:100%;height:100%;object-fit:cover;display:block;}
+  .binder-slot.greyed img{filter:grayscale(1) opacity(0.45);}
+  .binder-slot .slot-empty-btn{
+    width:100%;height:100%;border:none;background:none;color:var(--ink-soft);font-size:18px;cursor:pointer;
+  }
+  .binder-slot .slot-empty-btn:hover{background:#f2eee2;}
+  .binder-slot .tile-add:disabled{opacity:0.3;cursor:default;background:rgba(255,255,255,0.6);}
+  .binder-slot .slot-remove{
+    position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;border:none;
+    background:rgba(255,255,255,0.9);color:var(--red);font-size:11px;cursor:pointer;line-height:1;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .binder-slot .slot-copy-badge{
+    position:absolute;bottom:2px;left:2px;background:rgba(60,107,74,0.9);color:#fff;
+    font-family:var(--mono);font-size:8.5px;padding:1px 4px;border-radius:2px;
+  }
+
+  .edit-form{padding:20px;min-width:280px;}
+  .edit-form h2{margin:0 0 14px;font-size:16px;}
+  .edit-form label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);margin:12px 0 4px;}
+  .edit-form input, .edit-form select{
+    width:100%;font-family:var(--sans);font-size:14px;padding:7px 9px;border:1px solid var(--line);background:var(--paper);color:var(--ink);
+  }
+  .edit-form-actions{display:flex;gap:8px;margin-top:16px;justify-content:flex-end;}
+  .edit-form-actions button{font-family:var(--sans);font-size:13px;padding:8px 14px;border:1px solid var(--ink);cursor:pointer;}
+  .edit-form-actions .save-btn{background:var(--ink);color:var(--paper);}
+  .edit-form-actions .cancel-btn{background:var(--paper);color:var(--ink);}
+  .price-update-results{font-size:12.5px;color:var(--ink-soft);margin:0 0 14px;}
+  .price-update-results ul{margin:4px 0 0;padding-left:18px;}
+  .price-update-results li{margin:2px 0;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div>
+      <h1>My <span>Binders</span></h1>
+      <p>Where your cards physically live — page 1 is the cover, everything after is a two-page spread.</p>
+    </div>
+    <div id="status-pill">connecting…</div>
+  </div>
+  <nav class="pagenav">
+    <a href="index.html">Prices</a>
+    <a href="browse.html">Browse</a>
+    <a href="wishlist.html">Wishlist</a>
+    <a href="collection.html">Collection</a>
+    <a href="binder.html" class="active">Binders</a>
+  </nav>
+</header>
+
+<div class="page-layout">
+<aside class="sidebar" id="sidebar"></aside>
+<main>
+  <div class="wl-toolbar">
+    <label for="binder-select" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);">Binder:</label>
+    <select id="binder-select"><option>Loading…</option></select>
+    <button type="button" id="new-binder-btn">+ New binder</button>
+    <button type="button" id="edit-binder-btn">Edit</button>
+    <button type="button" id="delete-binder-btn">Delete</button>
+    <button type="button" id="price-check-btn" title="Fetch a price for cards that don't have one yet">Price check</button>
+    <button type="button" id="price-update-btn" title="Re-check every card's price, even ones already priced, and show what changed">Price update</button>
+    <span id="price-check-status" style="font-size:12px;color:var(--ink-soft);"></span>
+  </div>
+
+  <div id="price-update-results" class="price-update-results"></div>
+
+  <p class="binder-meta" id="binder-meta"></p>
+  <div id="fillable-banner" class="wl-toolbar" style="display:none;"></div>
+
+  <div class="spread-nav" id="spread-nav" hidden>
+    <button type="button" id="prev-spread">‹ Prev</button>
+    <span class="spread-label" id="spread-label">Cover</span>
+    <button type="button" id="next-spread">Next ›</button>
+  </div>
+
+  <div id="binder-view"></div>
+  <div class="empty-state" id="empty-state" style="display:none;"></div>
+</main>
+</div>
+
+<footer>
+  Live data from your <a href="https://ws-backend-z28t.onrender.com/docs" target="_blank" rel="noopener">backend API</a>.
+  A slot shows greyed-out art either because you don't own a copy of that card yet or because a copy exists
+  but isn't filed into a collection. A greyed slot's own + button fills it from your collection once a
+  matching copy is available — it's disabled until then. 3×3 binders fit raw/sleeved/toploader copies; 4×3
+  (penny sleeve style) fits raw/sleeved only — slabs and toploaders in a thin-page binder don't physically
+  fit, so those copies can't be assigned to one. Use the 📘 button on Browse, Wishlist, or Collection to send
+  a card here — even one you don't own yet. Click a filled slot to pick it up (it outlines in red), then
+  click any other slot to move it there — swapping places if that slot was already filled.
+</footer>
+
+<script src="assets/api.js"></script>
+<script>
+(function(){
+  const W = window.WSAPI;
+  const binderSelect = document.getElementById('binder-select');
+  const newBinderBtn = document.getElementById('new-binder-btn');
+  const editBinderBtn = document.getElementById('edit-binder-btn');
+  const deleteBinderBtn = document.getElementById('delete-binder-btn');
+  const binderMeta = document.getElementById('binder-meta');
+  const spreadNav = document.getElementById('spread-nav');
+  const spreadLabel = document.getElementById('spread-label');
+  const prevSpreadBtn = document.getElementById('prev-spread');
+  const nextSpreadBtn = document.getElementById('next-spread');
+  const binderView = document.getElementById('binder-view');
+  const emptyState = document.getElementById('empty-state');
+  const statusPill = document.getElementById('status-pill');
+
+  const PAGE_SIZE = {"3x3": 9, "4x3": 12};
+  // A binder created before the layout options changed might still say
+  // "4x5" or "5x5" — treat those as the closest surviving layout so this
+  // page doesn't just break for it.
+  const LEGACY_LAYOUT_FALLBACK = {"4x5": "4x3", "5x5": "4x3"};
+  function resolvedLayout(layout){ return LEGACY_LAYOUT_FALLBACK[layout] || layout; }
+  const PAGE_COLS = {"3x3": 3, "4x5": 4, "5x5": 5};
+
+  let binders = [];
+  let currentBinder = null;
+  let slotsByIndex = {};   // slot_index -> BinderSlotOut
+  let fillableBySlot = {}; // slot_index -> copy_id (only for planned slots with an available copy)
+  let spreadIndex = 0;     // 0 = cover (page 0 alone); 1+ = pages (2n-1, 2n) side by side
+  let pickedSlot = null;   // slot_index currently "picked up" for moving, or null
+
+  function ensureModal(id){
+    let el = document.getElementById(id);
+    if (el) return el;
+    el = document.createElement('div');
+    el.id = id; el.className = 'modal-backdrop'; el.hidden = true;
+    document.body.appendChild(el);
+    el.addEventListener('click', (ev) => { if (ev.target === el) el.hidden = true; });
+    document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') el.hidden = true; });
+    return el;
+  }
+
+  // ---------- binder picker (top toolbar) ----------
+  function loadBinders(selectId){
+    return W.get('/binders').then(list => {
+      binders = list;
+      if (!binders.length) {
+        binderSelect.innerHTML = '<option value="">No binders yet</option>';
+        currentBinder = null;
+        showEmpty('No binders yet — click "+ New binder" to create one.');
+        refreshSidebar();
+        return;
+      }
+      binderSelect.innerHTML = binders.map(b => `<option value="${b.id}">${W.escapeHtml(b.name)} (${b.layout})</option>`).join('');
+      const id = selectId && binders.some(b => b.id === selectId) ? selectId : binders[0].id;
+      binderSelect.value = String(id);
+      currentBinder = binders.find(b => b.id === id);
+      spreadIndex = 0;
+      refreshSidebar();
+      return loadSlots();
+    });
+  }
+  function refreshSidebar(){
+    W.loadSidebarData().then(data => {
+      document.getElementById('sidebar').innerHTML = W.sidebarHtml(data, 'binder', currentBinder ? currentBinder.id : null);
+    });
+  }
+  binderSelect.addEventListener('change', () => {
+    currentBinder = binders.find(b => b.id === Number(binderSelect.value));
+    spreadIndex = 0;
+    refreshSidebar();
+    loadSlots();
+  });
+
+  function openBinderForm(existing){
+    const el = ensureModal('binder-form-modal');
+    el.innerHTML = `<div class="modal"><button type="button" class="modal-close" aria-label="Close">×</button>
+      <div class="edit-form">
+        <h2>${existing ? 'Edit binder' : 'New binder'}</h2>
+        <label for="bf-name">Name</label>
+        <input type="text" id="bf-name" value="${existing ? W.escapeHtml(existing.name) : ''}" placeholder="e.g. Main SR binder">
+        <label for="bf-layout">Layout</label>
+        <select id="bf-layout">
+          <option value="3x3" ${existing && resolvedLayout(existing.layout)==='3x3' ? 'selected':''}>3×3 — toploaders</option>
+          <option value="4x3" ${existing && resolvedLayout(existing.layout)==='4x3' ? 'selected':''}>4×3 — penny sleeves</option>
+        </select>
+        <div class="edit-form-actions">
+          <button type="button" class="cancel-btn" data-act="cancel">Cancel</button>
+          <button type="button" class="save-btn" data-act="save">Save</button>
+        </div>
+      </div>
+    </div>`;
+    el.querySelector('.modal-close').addEventListener('click', () => el.hidden = true);
+    el.querySelector('[data-act="cancel"]').addEventListener('click', () => el.hidden = true);
+    el.querySelector('[data-act="save"]').addEventListener('click', async () => {
+      const name = el.querySelector('#bf-name').value.trim();
+      if (!name) { alert('Name is required.'); return; }
+      const body = {name, layout: el.querySelector('#bf-layout').value};
+      try {
+        if (existing) await W.patch(`/binders/${existing.id}`, body);
+        else { const created = await W.post('/binders', body); await loadBinders(created.id); el.hidden = true; return; }
+        el.hidden = true;
+        await loadBinders(existing.id);
+      } catch (e) { alert(e.message); }
+    });
+    el.hidden = false;
+  }
+  newBinderBtn.addEventListener('click', () => openBinderForm(null));
+  editBinderBtn.addEventListener('click', () => { if (currentBinder) openBinderForm(currentBinder); });
+  deleteBinderBtn.addEventListener('click', async () => {
+    if (!currentBinder) return;
+    if (!confirm(`Delete the binder "${currentBinder.name}"? Copies in it aren't deleted — they're just unassigned.`)) return;
+    try { await W.del(`/binders/${currentBinder.id}`); await loadBinders(); }
+    catch (e) { alert(e.message); }
+  });
+
+  function showEmpty(msg){
+    binderView.innerHTML = '';
+    spreadNav.hidden = true;
+    binderMeta.textContent = '';
+    emptyState.style.display = 'block';
+    emptyState.textContent = msg;
+  }
+
+  // ---------- slots ----------
+  function loadSlots(){
+    return Promise.all([
+      W.get(`/binders/${currentBinder.id}/slots`),
+      W.get(`/binders/${currentBinder.id}/fillable`),
+    ]).then(([slots, fillable]) => {
+      slotsByIndex = {};
+      slots.forEach(s => slotsByIndex[s.slot_index] = s);
+      fillableBySlot = {};
+      fillable.forEach(f => fillableBySlot[f.slot_index] = f.copy_id);
+      binderMeta.textContent = `${currentBinder.layout} layout · ${slots.length} card${slots.length===1?'':'s'} placed`;
+      updateFillableBanner();
+      render();
+    });
+  }
+
+  function updateFillableBanner(){
+    const banner = document.getElementById('fillable-banner');
+    const count = Object.keys(fillableBySlot).length;
+    if (!count) { banner.style.display = 'none'; return; }
+    banner.style.display = 'flex';
+    banner.innerHTML = `<span style="font-size:13.5px;color:var(--ink-soft);">You can add ${count} card${count===1?'':'s'} to this binder from your collection.</span>
+      <button type="button" id="fill-all-btn">Fill all</button>`;
+    document.getElementById('fill-all-btn').addEventListener('click', async () => {
+      const btn = document.getElementById('fill-all-btn');
+      btn.disabled = true;
+      try {
+        const result = await W.post(`/binders/${currentBinder.id}/fill-all`);
+        W.toast(`Filled ${result.filled} slot${result.filled===1?'':'s'}.`);
+        await loadSlots();
+      } catch (e) { alert(e.message); }
+      finally { btn.disabled = false; }
+    });
+  }
+
+  function renderPriceChanges(changes){
+    const el = document.getElementById('price-update-results');
+    if (!changes || !changes.length) { el.innerHTML = ''; return; }
+    el.innerHTML = '<strong>Price changes:</strong><ul>' +
+      changes.map(c => `<li>${W.escapeHtml(c.name)} (${W.escapeHtml(c.card_number)}): Sell ${W.fmtYen(c.old_sell_price_jpy)} → ${W.fmtYen(c.new_sell_price_jpy)}, Buy ${W.fmtYen(c.old_buy_price_jpy)} → ${W.fmtYen(c.new_buy_price_jpy)}</li>`).join('') +
+      '</ul>';
+  }
+
+  document.getElementById('price-check-btn').addEventListener('click', async () => {
+    if (!currentBinder) return;
+    const btn = document.getElementById('price-check-btn');
+    const status = document.getElementById('price-check-status');
+    document.getElementById('price-update-results').innerHTML = '';
+    btn.disabled = true;
+    status.textContent = 'Checking prices for cards without one yet…';
+    try {
+      const result = await W.post(`/binders/${currentBinder.id}/price-check`);
+      status.textContent = `Checked ${result.prefixes_checked.join(', ') || 'nothing'} — ${result.total_price_snapshots_added} price(s) updated.${result.truncated ? ' (some sets skipped — too many at once)' : ''}`;
+      await loadSlots();
+    } catch (e) {
+      status.textContent = 'Price check failed: ' + e.message;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById('price-update-btn').addEventListener('click', async () => {
+    if (!currentBinder) return;
+    const btn = document.getElementById('price-update-btn');
+    const status = document.getElementById('price-check-status');
+    btn.disabled = true;
+    status.textContent = 'Updating all prices — can take a little while…';
+    document.getElementById('price-update-results').innerHTML = '';
+    try {
+      const result = await W.post(`/binders/${currentBinder.id}/price-update`);
+      status.textContent = `Updated ${result.prefixes_checked.length} card(s) — ${result.changes.length} price change(s).${result.truncated ? ' (some cards skipped — too many at once)' : ''}`;
+      renderPriceChanges(result.changes);
+      await loadSlots();
+    } catch (e) {
+      status.textContent = 'Price update failed: ' + e.message;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  function pageRangeFor(pageNum){
+    const size = PAGE_SIZE[resolvedLayout(currentBinder.layout)];
+    const start = pageNum * size;
+    return [start, start + size];
+  }
+
+  function slotCellHtml(index){
+    const s = slotsByIndex[index];
+    const isPicked = pickedSlot === index;
+    if (!s) {
+      return `<div class="binder-slot ${isPicked ? 'picked' : ''}" data-slot="${index}">
+        <button type="button" class="slot-empty-btn" data-act="empty" title="Empty slot">·</button>
+      </div>`;
+    }
+    const img = s.card && s.card.image_url;
+    const statusNote = s.planned ? ' (not owned yet)' : (s.greyed_out ? ' (not in a collection)' : '');
+    const badge = s.planned ? '' : `#${s.copy_number}${s.grade ? ' '+W.escapeHtml(s.grade) : ''}`;
+    const canFill = s.planned && fillableBySlot[index] != null;
+    const fillBtn = s.planned
+      ? `<button type="button" class="tile-add" data-act="fill" ${canFill ? '' : 'disabled'} style="position:absolute;top:4px;left:4px;width:22px;height:22px;font-size:13px;" title="${canFill ? 'Fill from collection' : 'No available copy in your collection yet'}">+</button>`
+      : '';
+    return `<div class="binder-slot ${s.greyed_out ? 'greyed' : ''} ${isPicked ? 'picked' : ''}" data-slot="${index}">
+      ${img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(s.card.name)}" title="${W.escapeHtml(s.card.name)}${statusNote}">` : ''}
+      ${fillBtn}
+      ${badge ? `<span class="slot-copy-badge">${badge}</span>` : ''}
+      <button type="button" class="slot-remove" data-act="remove" title="Remove from this slot">✕</button>
+    </div>`;
+  }
+
+  function pageHtml(pageNum){
+    const [start, end] = pageRangeFor(pageNum);
+    let cells = '';
+    for (let i = start; i < end; i++) cells += slotCellHtml(i);
+    return `<div class="binder-page layout-${resolvedLayout(currentBinder.layout)}">${cells}</div>`;
+  }
+
+  // Blank placeholder matching a real page's exact size — used on the
+  // left of the cover, so the cover itself sits on the right like the
+  // first page of a real binder does when you open it.
+  function ghostPageHtml(){
+    const layout = resolvedLayout(currentBinder.layout);
+    const size = PAGE_SIZE[layout];
+    let cells = '';
+    for (let i = 0; i < size; i++) cells += '<div class="binder-slot" style="visibility:hidden;"></div>';
+    return `<div class="binder-page layout-${layout}" style="box-shadow:none;border-color:transparent;">${cells}</div>`;
+  }
+
+  function render(){
+    if (!currentBinder) return;
+    spreadNav.hidden = false;
+
+    if (spreadIndex === 0) {
+      spreadLabel.textContent = 'Cover';
+      binderView.innerHTML = `<div class="binder-spread">${ghostPageHtml()}${pageHtml(0)}</div>`;
+      prevSpreadBtn.disabled = true;
+    } else {
+      const left = spreadIndex * 2 - 1;
+      const right = spreadIndex * 2;
+      spreadLabel.textContent = `Pages ${left + 1}–${right + 1}`;
+      binderView.innerHTML = `<div class="binder-spread">${pageHtml(left)}${pageHtml(right)}</div>`;
+      prevSpreadBtn.disabled = false;
+    }
+    // Next is always enabled — pages grow as needed, there's no fixed ceiling.
+    nextSpreadBtn.disabled = false;
+
+    attachSlotHandlers();
+  }
+
+  // Click-to-move: click a filled slot to "pick it up" (highlighted red),
+  // then click any other slot to move it there — swapping with whatever
+  // was already in that slot if it was occupied. Click the same slot
+  // again to cancel. Simpler and far more reliable than drag-and-drop,
+  // especially on a phone.
+  function slotBody(slot){
+    return slot.copy_id ? {copy_id: slot.copy_id} : {card_id: slot.card.id};
+  }
+  async function moveOrSwap(fromIndex, toIndex){
+    const fromSlot = slotsByIndex[fromIndex];
+    const toSlot = slotsByIndex[toIndex];
+    if (!fromSlot) return;
+    try {
+      await W.del(`/binders/${currentBinder.id}/slots/${fromIndex}`);
+      if (toSlot) await W.del(`/binders/${currentBinder.id}/slots/${toIndex}`);
+      await W.post(`/binders/${currentBinder.id}/slots/${toIndex}`, slotBody(fromSlot));
+      if (toSlot) await W.post(`/binders/${currentBinder.id}/slots/${fromIndex}`, slotBody(toSlot));
+      await loadSlots();
+    } catch (e) { alert(e.message); }
+  }
+
+  function attachSlotHandlers(){
+    binderView.querySelectorAll('.binder-slot[data-slot]').forEach(cell => {
+      const index = Number(cell.dataset.slot);
+      const removeBtn = cell.querySelector('[data-act="remove"]');
+      if (removeBtn) {
+        removeBtn.addEventListener('click', async (ev) => {
+          ev.stopPropagation();
+          try { await W.del(`/binders/${currentBinder.id}/slots/${index}`); pickedSlot = null; await loadSlots(); }
+          catch (e) { alert(e.message); }
+        });
+      }
+      const fillBtn = cell.querySelector('[data-act="fill"]');
+      if (fillBtn && !fillBtn.disabled) {
+        fillBtn.addEventListener('click', async (ev) => {
+          ev.stopPropagation();
+          const copyId = fillableBySlot[index];
+          if (copyId == null) return;
+          try {
+            await W.post(`/binders/${currentBinder.id}/slots/${index}`, {copy_id: copyId});
+            W.toast(`Filled — ${W.pageSlotLabel(currentBinder.layout, index)}.`);
+            await loadSlots();
+          } catch (e) { alert(e.message); }
+        });
+      }
+      cell.addEventListener('click', () => {
+        const occupied = !!slotsByIndex[index];
+        if (pickedSlot === null) {
+          if (occupied) { pickedSlot = index; render(); }
+          // clicking an empty slot with nothing picked up does nothing
+        } else if (pickedSlot === index) {
+          pickedSlot = null; render(); // cancel
+        } else {
+          const from = pickedSlot;
+          pickedSlot = null;
+          moveOrSwap(from, index);
+        }
+      });
+    });
+  }
+
+  prevSpreadBtn.addEventListener('click', () => { if (spreadIndex > 0) { spreadIndex--; render(); } });
+  nextSpreadBtn.addEventListener('click', () => { spreadIndex++; render(); });
+
+  loadBinders(W.getUrlId()).then(() => {
+    statusPill.textContent = binders.length ? binders.length + ' binder(s)' : 'no binders yet';
+  }).catch(err => {
+    statusPill.textContent = 'connection failed';
+    showEmpty('Could not reach the backend API: ' + err.message);
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Browse — Weiss Schwarz</title>
+<link rel="stylesheet" href="assets/wsdata.css">
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div>
+      <h1>Browse <span>Weiss Schwarz</span> Cards</h1>
+      <p>Live from your collection database.</p>
+    </div>
+    <div id="status-pill">connecting…</div>
+  </div>
+  <nav class="pagenav">
+    <a href="index.html">Prices</a>
+    <a href="browse.html" class="active">Browse</a>
+    <a href="wishlist.html">Wishlist</a>
+    <a href="collection.html">Collection</a>
+    <a href="binder.html">Binders</a>
+  </nav>
+</header>
+
+<main>
+  <div class="wl-toolbar">
+    <label for="scrape-input" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);">Add a title:</label>
+    <input type="text" id="scrape-input" placeholder="e.g. MTI or OSK" style="min-width:160px;font-family:var(--sans);font-size:13.5px;padding:7px 10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);">
+    <button type="button" id="scrape-btn">Get card info</button>
+    <span id="scrape-status" style="font-size:12.5px;color:var(--ink-soft);"></span>
+  </div>
+
+  <div class="controls">
+    <div class="field">
+      <label>Rarity</label>
+      <div class="multiselect" id="rarity-multiselect">
+        <button type="button" id="rarity-toggle">All rarities</button>
+        <div class="panel" id="rarity-panel" hidden></div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Title</label>
+      <div class="multiselect" id="title-multiselect">
+        <button type="button" id="title-toggle">All titles</button>
+        <div class="panel" id="title-panel" hidden></div>
+      </div>
+    </div>
+    <div class="field">
+      <label for="currency-select">Currency</label>
+      <select id="currency-select">
+        <option value="USD">USD ($)</option>
+        <option value="GBP">GBP (£)</option>
+        <option value="NOK">NOK (kr)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="perpage-select">Per page</label>
+      <select id="perpage-select">
+        <option value="24" selected>24</option>
+        <option value="48">48</option>
+        <option value="96">96</option>
+      </select>
+    </div>
+    <div class="field search">
+      <label for="search-input">Filter by name / number</label>
+      <input type="search" id="search-input" placeholder="e.g. ピカチュウ or OSK/S133-002SSP">
+    </div>
+  </div>
+
+  <p id="summary"></p>
+  <div class="card-grid" id="card-grid"></div>
+  <div class="empty-state" id="empty-state" style="display:none;"></div>
+  <div class="pagination" id="pagination"></div>
+</main>
+
+<footer>
+  Live data from your <a href="https://ws-backend-z28t.onrender.com/docs" target="_blank" rel="noopener">backend API</a>
+  (scraped from yuyu-tei.jp and ws-tcg.com). + adds a copy to a collection, ♥ adds to a wishlist — both
+  saved for real in your database now, not just this browser.
+</footer>
+
+<script src="assets/api.js"></script>
+<script>
+(function(){
+  const W = window.WSAPI;
+  const rarityToggle = document.getElementById('rarity-toggle');
+  const rarityPanel = document.getElementById('rarity-panel');
+  const titleToggle = document.getElementById('title-toggle');
+  const titlePanel = document.getElementById('title-panel');
+  const currencySelect = document.getElementById('currency-select');
+  const perPageSelect = document.getElementById('perpage-select');
+  const searchInput = document.getElementById('search-input');
+  const grid = document.getElementById('card-grid');
+  const emptyState = document.getElementById('empty-state');
+  const summary = document.getElementById('summary');
+  const statusPill = document.getElementById('status-pill');
+  const scrapeInput = document.getElementById('scrape-input');
+  const scrapeBtn = document.getElementById('scrape-btn');
+  const scrapeStatus = document.getElementById('scrape-status');
+  const paginationEl = document.getElementById('pagination');
+
+  let allCards = [];
+  let allRarities = [];
+  let selectedRarities = new Set();
+  let allTitles = [];
+  let selectedTitles = new Set();
+  let page = 1;
+  let perPage = 24;
+
+  // ---------- dropdown open/close (backdrop pattern) ----------
+  function createDropdown(toggleBtn, panelEl){
+    const backdropId = 'ws-dropdown-backdrop';
+    function backdrop(){
+      let el = document.getElementById(backdropId);
+      if (!el) {
+        el = document.createElement('div');
+        el.id = backdropId;
+        el.style.position = 'fixed'; el.style.inset = '0'; el.style.zIndex = '25'; el.style.display = 'none';
+        document.body.appendChild(el);
+      }
+      return el;
+    }
+    function closeAll(){
+      document.querySelectorAll('.panel[data-open="1"]').forEach(p => { p.hidden = true; p.removeAttribute('data-open'); });
+      backdrop().style.display = 'none';
+    }
+    function open(){
+      closeAll();
+      panelEl.hidden = false; panelEl.setAttribute('data-open', '1');
+      const bd = backdrop(); bd.style.display = 'block'; bd.onclick = closeAll;
+    }
+    toggleBtn.addEventListener('click', (ev) => { ev.stopPropagation(); panelEl.hidden ? open() : closeAll(); });
+    panelEl.addEventListener('click', (ev) => ev.stopPropagation());
+  }
+  createDropdown(rarityToggle, rarityPanel);
+  createDropdown(titleToggle, titlePanel);
+
+  // ---------- image zoom + info modal ----------
+  function ensureModal(id, bodyBuilder){
+    let el = document.getElementById(id);
+    if (el) return el;
+    el = document.createElement('div');
+    el.id = id;
+    el.className = 'modal-backdrop';
+    el.hidden = true;
+    document.body.appendChild(el);
+    el.addEventListener('click', (ev) => { if (ev.target === el) el.hidden = true; });
+    document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') el.hidden = true; });
+    return el;
+  }
+  function openZoom(card){
+    if (!card.image_url) return;
+    const el = ensureModal('zoom-modal');
+    el.innerHTML = `<div style="width:min(92vw, 520px);position:relative;">
+      <button type="button" class="modal-close" style="position:absolute;top:-40px;right:0;color:#fff;">×</button>
+      <img src="${W.escapeHtml(card.image_url)}" style="width:100%;height:auto;display:block;box-shadow:0 8px 30px rgba(0,0,0,0.5);">
+      ${card.image_url.includes('yuyu-tei.jp') ? '<p style="color:#fff;font-size:12px;text-align:center;margin-top:8px;">Low-res thumbnail — run a catalog scrape (see API /docs) for a sharper official image.</p>' : ''}
+    </div>`;
+    el.querySelector('.modal-close').addEventListener('click', () => el.hidden = true);
+    el.hidden = false;
+  }
+  function openInfo(card){
+    const el = ensureModal('info-modal');
+    const stats = [
+      card.color && `Color: ${W.escapeHtml(card.color)}`,
+      card.level && `Level: ${W.escapeHtml(card.level)}`,
+      card.cost && `Cost: ${W.escapeHtml(card.cost)}`,
+      card.power && `Power: ${W.escapeHtml(card.power)}`,
+      card.soul && `Soul: ${W.escapeHtml(card.soul)}`,
+      card.trigger && `Trigger: ${W.escapeHtml(card.trigger)}`,
+    ].filter(Boolean).join(' · ');
+    const text = card.text ? card.text.replace(/<br\s*\/?>/gi, '<br>') : '';
+    el.innerHTML = `<div class="modal">
+      <button type="button" class="modal-close" aria-label="Close">×</button>
+      <div class="modal-body">
+        <div class="modal-info" style="max-width:100%;">
+          <h2>${W.escapeHtml(card.name)}</h2>
+          <div class="modal-number">${W.escapeHtml(card.card_number)}${card.rarity ? ' · ' + W.escapeHtml(card.rarity) : ''}</div>
+          ${stats ? `<div class="modal-stats">${stats}</div>` : ''}
+          ${card.traits ? `<div class="modal-traits">${W.escapeHtml(card.traits)}</div>` : ''}
+          ${text ? `<div class="modal-text">${text}</div>` : ''}
+          ${card.flavor ? `<div class="modal-flavor">${W.escapeHtml(card.flavor)}</div>` : ''}
+          <div class="modal-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span><span>Buy ${W.fmtYenConverted(card.buy_price_jpy)}</span></div>
+        </div>
+      </div>
+    </div>`;
+    el.querySelector('.modal-close').addEventListener('click', () => el.hidden = true);
+    el.hidden = false;
+  }
+
+  // ---------- + / ♥ pickers ----------
+  async function handleAddCopy(anchorEl, card, onDone){
+    await W.openPicker(anchorEl, {
+      title: 'Add to collection',
+      emptyLabel: 'No collections yet',
+      listFn: () => W.get('/collections'),
+      createFn: (name) => W.post('/collections', {name}),
+      onPick: async (collectionId) => {
+        await W.post('/copies', {card_id: card.id, collection_id: collectionId});
+        card.owned_copies = (card.owned_copies || 0) + 1;
+        onDone();
+      },
+    });
+  }
+  async function handleAddWish(anchorEl, card, onDone){
+    await W.openPicker(anchorEl, {
+      title: 'Add to wishlist',
+      emptyLabel: 'No wishlists yet',
+      listFn: () => W.get('/wishlists'),
+      createFn: (name) => W.post('/wishlists', {name}),
+      onPick: async (wishlistId) => {
+        await W.post(`/wishlists/${wishlistId}/items`, {card_id: card.id});
+        onDone(wishlistId);
+      },
+    });
+  }
+
+  // ---------- rarity filter ----------
+  function populateRarities(){
+    // Scoped to whatever titles are currently selected — if you've
+    // filtered down to "OSK", the rarity list should only show rarities
+    // that actually exist within OSK, not every rarity in the database.
+    const scoped = (allTitles.length && selectedTitles.size > 0)
+      ? allCards.filter(c => selectedTitles.has(W.titlePrefix(c.card_number)))
+      : allCards;
+    const seen = [];
+    for (const c of scoped) if (c.rarity && !seen.includes(c.rarity)) seen.push(c.rarity);
+    allRarities = W.sortRarities(seen);
+    // Keep whichever previously-selected rarities are still valid in the
+    // new scope, rather than wiping the rarity filter every time the
+    // title selection changes.
+    selectedRarities = new Set([...selectedRarities].filter(r => allRarities.includes(r)));
+    renderRarityPanel();
+    updateRarityToggleLabel();
+  }
+  function renderRarityPanel(){
+    if (!allRarities.length) { rarityPanel.innerHTML = '<div class="none">No rarity data.</div>'; return; }
+    const actions = `<div class="panel-actions"><button type="button" data-act="all">Select all</button><button type="button" data-act="none">Clear</button></div>`;
+    const boxes = allRarities.map(r => `<label><input type="checkbox" value="${W.escapeHtml(r)}" ${selectedRarities.has(r)?'checked':''}> ${W.escapeHtml(r)}</label>`).join('');
+    rarityPanel.innerHTML = actions + boxes;
+    rarityPanel.querySelector('[data-act="all"]').addEventListener('click', () => { selectedRarities = new Set(allRarities); renderRarityPanel(); updateRarityToggleLabel(); page=1; render(); });
+    rarityPanel.querySelector('[data-act="none"]').addEventListener('click', () => { selectedRarities = new Set(); renderRarityPanel(); updateRarityToggleLabel(); page=1; render(); });
+    rarityPanel.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        if (cb.checked) selectedRarities.add(cb.value); else selectedRarities.delete(cb.value);
+        updateRarityToggleLabel(); page = 1; render();
+      });
+    });
+  }
+  function updateRarityToggleLabel(){
+    if (!allRarities.length) { rarityToggle.textContent = 'No rarities'; return; }
+    if (selectedRarities.size === 0 || selectedRarities.size === allRarities.length) rarityToggle.textContent = 'All rarities';
+    else rarityToggle.textContent = [...selectedRarities].join(', ');
+  }
+
+  function populateTitles(){
+    const seen = [];
+    for (const c of allCards) {
+      const prefix = W.titlePrefix(c.card_number);
+      if (prefix && !seen.includes(prefix)) seen.push(prefix);
+    }
+    allTitles = seen.sort();
+    selectedTitles = new Set();
+    renderTitlePanel();
+    updateTitleToggleLabel();
+  }
+  function renderTitlePanel(){
+    if (!allTitles.length) { titlePanel.innerHTML = '<div class="none">No titles yet.</div>'; return; }
+    const actions = `<div class="panel-actions"><button type="button" data-act="all">Select all</button><button type="button" data-act="none">Clear</button></div>`;
+    const boxes = allTitles.map(t => `<label><input type="checkbox" value="${W.escapeHtml(t)}" ${selectedTitles.has(t)?'checked':''}> ${W.escapeHtml(t)}</label>`).join('');
+    titlePanel.innerHTML = actions + boxes;
+    titlePanel.querySelector('[data-act="all"]').addEventListener('click', () => { selectedTitles = new Set(allTitles); renderTitlePanel(); updateTitleToggleLabel(); populateRarities(); page=1; render(); });
+    titlePanel.querySelector('[data-act="none"]').addEventListener('click', () => { selectedTitles = new Set(); renderTitlePanel(); updateTitleToggleLabel(); populateRarities(); page=1; render(); });
+    titlePanel.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        if (cb.checked) selectedTitles.add(cb.value); else selectedTitles.delete(cb.value);
+        updateTitleToggleLabel(); populateRarities(); page = 1; render();
+      });
+    });
+  }
+  function updateTitleToggleLabel(){
+    if (!allTitles.length) { titleToggle.textContent = 'No titles'; return; }
+    if (selectedTitles.size === 0 || selectedTitles.size === allTitles.length) titleToggle.textContent = 'All titles';
+    else titleToggle.textContent = [...selectedTitles].join(', ');
+  }
+
+  perPageSelect.addEventListener('change', () => { perPage = Number(perPageSelect.value); page = 1; render(); });
+  currencySelect.value = W.getCurrency();
+  currencySelect.addEventListener('change', () => { W.setCurrency(currencySelect.value); render(); });
+  searchInput.addEventListener('input', () => { page = 1; render(); });
+
+  function showEmpty(msg){
+    grid.innerHTML = '';
+    paginationEl.innerHTML = '';
+    emptyState.style.display = 'block';
+    emptyState.textContent = msg;
+    summary.textContent = '';
+  }
+
+  function tileHtml(card){
+    const img = card.image_url;
+    const wished = !!card.wishlist_id;
+    return `
+      <div class="card-tile" data-id="${card.id}">
+        <div class="tile-media" data-act="zoom">
+          ${img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(card.name)}" loading="lazy">` : '<div class="tile-noimg">No image</div>'}
+          <button type="button" class="tile-add" data-act="add" data-picker-trigger title="Add to a collection">+</button>
+          <button type="button" class="tile-binder" data-act="binder" data-picker-trigger title="Send to a binder">📘</button>
+          <button type="button" class="tile-wish ${wished?'active':''}" data-act="wish" ${wished?'':'data-picker-trigger'}
+            title="${wished ? 'Remove from wishlist' : 'Add to a wishlist'}">${wished ? '♥' : '♡'}</button>
+          ${card.owned_copies > 0 ? `<span class="tile-owned-badge">${card.owned_copies} owned</span>` : ''}
+        </div>
+        <div class="tile-info">
+          <div class="tile-name" data-act="info" style="cursor:pointer;" title="Card details">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>
+          <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span></div>
+          <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span></div>
+          <div class="tile-prices" style="margin-top:2px;"><span>Buy ${W.fmtYenConverted(card.buy_price_jpy)}</span></div>
+        </div>
+      </div>`;
+  }
+
+  function attachHandlers(pageCards){
+    const byId = {};
+    pageCards.forEach(c => byId[c.id] = c);
+    grid.querySelectorAll('.card-tile').forEach(tile => {
+      const card = byId[Number(tile.dataset.id)];
+      tile.querySelector('[data-act="zoom"]').addEventListener('click', () => openZoom(card));
+      tile.querySelector('[data-act="info"]').addEventListener('click', () => openInfo(card));
+      tile.querySelector('[data-act="add"]').addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        handleAddCopy(ev.currentTarget, card, () => render());
+      });
+      tile.querySelector('[data-act="binder"]').addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        W.sendCardToBinder(ev.currentTarget, card);
+      });
+      tile.querySelector('[data-act="wish"]').addEventListener('click', async (ev) => {
+        ev.stopPropagation();
+        if (card.wishlist_id) {
+          try {
+            await W.del(`/wishlists/${card.wishlist_id}/items/${card.id}`);
+            card.wishlist_id = null;
+            render();
+          } catch (e) { alert(e.message); }
+        } else {
+          handleAddWish(ev.currentTarget, card, (wishlistId) => { card.wishlist_id = wishlistId; render(); });
+        }
+      });
+    });
+  }
+
+  function render(){
+    let cards = allCards.slice();
+    const q = searchInput.value.trim().toLowerCase();
+    if (q) cards = cards.filter(c => (c.name||'').toLowerCase().includes(q) || (c.card_number||'').toLowerCase().includes(q));
+    if (allRarities.length && selectedRarities.size > 0) cards = cards.filter(c => c.rarity && selectedRarities.has(c.rarity));
+    if (allTitles.length && selectedTitles.size > 0) cards = cards.filter(c => selectedTitles.has(W.titlePrefix(c.card_number)));
+    if (!cards.length) {
+      showEmpty(q ? `No cards match "${q}".` : (allCards.length ? 'No cards for this filter.' : 'No cards yet — run a price scrape (see the API docs link below) to get started.'));
+      return;
+    }
+    emptyState.style.display = 'none';
+
+    const totalPages = Math.max(1, Math.ceil(cards.length / perPage));
+    if (page > totalPages) page = totalPages;
+    const pageCards = W.paginate(cards, page, perPage);
+
+    summary.innerHTML = `<strong>${cards.length}</strong> card${cards.length===1?'':'s'} · page <strong>${page}</strong> of ${totalPages}`;
+    grid.innerHTML = pageCards.map(tileHtml).join('');
+    attachHandlers(pageCards);
+    W.renderPagination(paginationEl, page, totalPages, (p) => { page = p; render(); window.scrollTo({top:0, behavior:'smooth'}); });
+  }
+
+  statusPill.textContent = 'waking up server… (can take up to a minute if it was idle)';
+  showEmpty('Connecting to the backend — this can take up to a minute the first time if it was idle (free hosting tier sleeps when unused).');
+  function reloadCards(){
+    return W.get('/cards').then(cards => {
+      allCards = cards;
+      statusPill.textContent = cards.length ? cards.length + ' card(s) in database' : 'no cards yet';
+      populateRarities();
+      populateTitles();
+      render();
+    }).catch(err => {
+      statusPill.textContent = 'connection failed';
+      showEmpty('Could not reach the backend API: ' + err.message);
+    });
+  }
+
+  scrapeBtn.addEventListener('click', async () => {
+    const code = scrapeInput.value.trim();
+    if (!code) { scrapeStatus.textContent = 'Type a title code first.'; return; }
+    scrapeBtn.disabled = true;
+    scrapeStatus.textContent = 'Fetching card info — this can take a little while for a big title…';
+    try {
+      const result = await W.post('/scrape/catalog', {query: code});
+      scrapeStatus.textContent = `Done — ${result.cards_seen} card(s) added/updated with names, images, and stats. Prices aren't fetched here — use "Price check" on a Wishlist, Collection, or Binder for that.`;
+      await reloadCards();
+    } catch (e) {
+      scrapeStatus.textContent = 'Failed: ' + e.message;
+    } finally {
+      scrapeBtn.disabled = false;
+    }
+  });
+  scrapeInput.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') scrapeBtn.click(); });
+
+  W.loadRates().then(() => render());
+  reloadCards();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wishlist — Weiss Schwarz</title>
+<link rel="stylesheet" href="assets/wsdata.css">
+<style>
+  .tile-wish.active{color:var(--red);}
+  .price-update-results{font-size:12.5px;color:var(--ink-soft);margin:0 0 14px;}
+  .price-update-results ul{margin:4px 0 0;padding-left:18px;}
+  .price-update-results li{margin:2px 0;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div>
+      <h1>My <span>Wishlist</span></h1>
+      <p>Cards you want — tracked for real, across as many named wishlists as you like.</p>
+    </div>
+    <div id="status-pill">connecting…</div>
+  </div>
+  <nav class="pagenav">
+    <a href="index.html">Prices</a>
+    <a href="browse.html">Browse</a>
+    <a href="wishlist.html" class="active">Wishlist</a>
+    <a href="collection.html">Collection</a>
+    <a href="binder.html">Binders</a>
+  </nav>
+</header>
+
+<div class="page-layout">
+<aside class="sidebar" id="sidebar"></aside>
+<main>
+  <div class="wl-toolbar">
+    <label for="wishlist-select" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);">Wishlist:</label>
+    <select id="wishlist-select"><option>Loading…</option></select>
+    <button type="button" id="new-wishlist-btn">+ New wishlist</button>
+    <button type="button" id="rename-wishlist-btn">Rename</button>
+    <button type="button" id="delete-wishlist-btn">Delete</button>
+    <button type="button" id="price-check-btn" title="Fetch a price for cards that don't have one yet">Price check</button>
+    <button type="button" id="price-update-btn" title="Re-check every card's price, even ones already priced, and show what changed">Price update</button>
+    <span id="price-check-status" style="font-size:12px;color:var(--ink-soft);"></span>
+  </div>
+
+  <div id="price-update-results" class="price-update-results"></div>
+
+  <div class="controls">
+    <div class="field">
+      <label>Rarity</label>
+      <div class="multiselect" id="rarity-multiselect">
+        <button type="button" id="rarity-toggle">All rarities</button>
+        <div class="panel" id="rarity-panel" hidden></div>
+      </div>
+    </div>
+    <div class="field">
+      <label for="currency-select">Currency</label>
+      <select id="currency-select">
+        <option value="USD">USD ($)</option>
+        <option value="GBP">GBP (£)</option>
+        <option value="NOK">NOK (kr)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="perpage-select">Per page</label>
+      <select id="perpage-select">
+        <option value="24" selected>24</option>
+        <option value="48">48</option>
+        <option value="96">96</option>
+      </select>
+    </div>
+    <div class="field search">
+      <label for="search-input">Filter by name / number</label>
+      <input type="search" id="search-input" placeholder="e.g. ピカチュウ or OSK/S133-002SSP">
+    </div>
+  </div>
+
+  <p id="summary"></p>
+  <div class="card-grid" id="card-grid"></div>
+  <div class="empty-state" id="empty-state" style="display:none;"></div>
+  <div class="pagination" id="pagination"></div>
+</main>
+</div>
+
+<footer>
+  Live data from your <a href="https://ws-backend-z28t.onrender.com/docs" target="_blank" rel="noopener">backend API</a>.
+  ♥ here removes a card from this wishlist (always manual — adding a copy to your collection elsewhere
+  does <em>not</em> auto-remove it). + adds a copy straight to a collection.
+</footer>
+
+<script src="assets/api.js"></script>
+<script>
+(function(){
+  const W = window.WSAPI;
+  const wishlistSelect = document.getElementById('wishlist-select');
+  const newWishlistBtn = document.getElementById('new-wishlist-btn');
+  const renameWishlistBtn = document.getElementById('rename-wishlist-btn');
+  const deleteWishlistBtn = document.getElementById('delete-wishlist-btn');
+  const rarityToggle = document.getElementById('rarity-toggle');
+  const rarityPanel = document.getElementById('rarity-panel');
+  const currencySelect = document.getElementById('currency-select');
+  const perPageSelect = document.getElementById('perpage-select');
+  const searchInput = document.getElementById('search-input');
+  const grid = document.getElementById('card-grid');
+  const emptyState = document.getElementById('empty-state');
+  const summary = document.getElementById('summary');
+  const statusPill = document.getElementById('status-pill');
+  const paginationEl = document.getElementById('pagination');
+
+  let wishlists = [];
+  let currentWishlistId = null;
+  let cards = [];
+  let allRarities = [];
+  let selectedRarities = new Set();
+  let page = 1;
+  let perPage = 24;
+
+  function createDropdown(toggleBtn, panelEl){
+    const backdropId = 'ws-dropdown-backdrop';
+    function backdrop(){
+      let el = document.getElementById(backdropId);
+      if (!el) {
+        el = document.createElement('div');
+        el.id = backdropId;
+        el.style.position = 'fixed'; el.style.inset = '0'; el.style.zIndex = '90';
+        el.style.background = 'rgba(20,18,14,0.15)'; el.style.display = 'none';
+        document.body.appendChild(el);
+      }
+      return el;
+    }
+    function closeAll(){
+      document.querySelectorAll('.panel[data-open="1"]').forEach(p => { p.hidden = true; p.removeAttribute('data-open'); });
+      backdrop().style.display = 'none';
+    }
+    function open(){
+      closeAll();
+      panelEl.hidden = false; panelEl.setAttribute('data-open', '1');
+      const bd = backdrop(); bd.style.display = 'block'; bd.onclick = closeAll;
+    }
+    toggleBtn.addEventListener('click', (ev) => { ev.stopPropagation(); panelEl.hidden ? open() : closeAll(); });
+    panelEl.addEventListener('click', (ev) => ev.stopPropagation());
+  }
+  createDropdown(rarityToggle, rarityPanel);
+
+  // ---------- wishlist picker (top toolbar) ----------
+  function loadWishlists(selectId){
+    return W.get('/wishlists').then(list => {
+      wishlists = list;
+      if (!wishlists.length) {
+        wishlistSelect.innerHTML = '<option value="">No wishlists yet</option>';
+        currentWishlistId = null;
+        showEmpty('No wishlists yet — click "+ New wishlist" to create one.');
+        refreshSidebar();
+        return;
+      }
+      wishlistSelect.innerHTML = wishlists.map(w => `<option value="${w.id}">${W.escapeHtml(w.name)}</option>`).join('');
+      currentWishlistId = selectId && wishlists.some(w => w.id === selectId) ? selectId : wishlists[0].id;
+      wishlistSelect.value = String(currentWishlistId);
+      refreshSidebar();
+      return loadItems();
+    });
+  }
+  function refreshSidebar(){
+    W.loadSidebarData().then(data => {
+      document.getElementById('sidebar').innerHTML = W.sidebarHtml(data, 'wishlist', currentWishlistId);
+    });
+  }
+  wishlistSelect.addEventListener('change', () => {
+    currentWishlistId = Number(wishlistSelect.value);
+    refreshSidebar();
+    loadItems();
+  });
+  newWishlistBtn.addEventListener('click', async () => {
+    const name = prompt('Name for the new wishlist:');
+    if (!name) return;
+    try {
+      const created = await W.post('/wishlists', {name});
+      await loadWishlists(created.id);
+    } catch (e) { alert(e.message); }
+  });
+  renameWishlistBtn.addEventListener('click', async () => {
+    if (!currentWishlistId) return;
+    const current = wishlists.find(w => w.id === currentWishlistId);
+    const name = prompt('New name:', current ? current.name : '');
+    if (!name) return;
+    try {
+      await W.patch(`/wishlists/${currentWishlistId}`, {name});
+      await loadWishlists(currentWishlistId);
+    } catch (e) { alert(e.message); }
+  });
+  deleteWishlistBtn.addEventListener('click', async () => {
+    if (!currentWishlistId) return;
+    const current = wishlists.find(w => w.id === currentWishlistId);
+    if (!confirm(`Delete the wishlist "${current ? current.name : ''}"? Cards on it aren't deleted, just this list.`)) return;
+    try {
+      await W.del(`/wishlists/${currentWishlistId}`);
+      await loadWishlists();
+    } catch (e) { alert(e.message); }
+  });
+
+  function loadItems(){
+    return W.get(`/wishlists/${currentWishlistId}/items`).then(items => {
+      cards = items;
+      populateRarities();
+      page = 1;
+      render();
+    });
+  }
+
+  function renderPriceChanges(changes){
+    const el = document.getElementById('price-update-results');
+    if (!changes || !changes.length) { el.innerHTML = ''; return; }
+    el.innerHTML = '<strong>Price changes:</strong><ul>' +
+      changes.map(c => `<li>${W.escapeHtml(c.name)} (${W.escapeHtml(c.card_number)}): Sell ${W.fmtYen(c.old_sell_price_jpy)} → ${W.fmtYen(c.new_sell_price_jpy)}, Buy ${W.fmtYen(c.old_buy_price_jpy)} → ${W.fmtYen(c.new_buy_price_jpy)}</li>`).join('') +
+      '</ul>';
+  }
+
+  document.getElementById('price-check-btn').addEventListener('click', async () => {
+    if (!currentWishlistId) return;
+    const btn = document.getElementById('price-check-btn');
+    const status = document.getElementById('price-check-status');
+    document.getElementById('price-update-results').innerHTML = '';
+    btn.disabled = true;
+    status.textContent = 'Checking prices for cards without one yet…';
+    try {
+      const result = await W.post(`/wishlists/${currentWishlistId}/price-check`);
+      status.textContent = `Checked ${result.prefixes_checked.join(', ') || 'nothing'} — ${result.total_price_snapshots_added} price(s) updated.${result.truncated ? ' (some sets skipped — too many at once)' : ''}`;
+      await loadItems();
+    } catch (e) {
+      status.textContent = 'Price check failed: ' + e.message;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById('price-update-btn').addEventListener('click', async () => {
+    if (!currentWishlistId) return;
+    const btn = document.getElementById('price-update-btn');
+    const status = document.getElementById('price-check-status');
+    btn.disabled = true;
+    status.textContent = 'Updating all prices — can take a little while…';
+    document.getElementById('price-update-results').innerHTML = '';
+    try {
+      const result = await W.post(`/wishlists/${currentWishlistId}/price-update`);
+      status.textContent = `Updated ${result.prefixes_checked.length} card(s) — ${result.changes.length} price change(s).${result.truncated ? ' (some cards skipped — too many at once)' : ''}`;
+      renderPriceChanges(result.changes);
+      await loadItems();
+    } catch (e) {
+      status.textContent = 'Price update failed: ' + e.message;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  // ---------- rarity filter ----------
+  function populateRarities(){
+    const seen = [];
+    for (const c of cards) if (c.rarity && !seen.includes(c.rarity)) seen.push(c.rarity);
+    allRarities = W.sortRarities(seen);
+    selectedRarities = new Set();
+    renderRarityPanel();
+    updateRarityToggleLabel();
+  }
+  function renderRarityPanel(){
+    if (!allRarities.length) { rarityPanel.innerHTML = '<div class="none">No rarity data.</div>'; return; }
+    const actions = `<div class="panel-actions"><button type="button" data-act="all">Select all</button><button type="button" data-act="none">Clear</button></div>`;
+    const boxes = allRarities.map(r => `<label><input type="checkbox" value="${W.escapeHtml(r)}" ${selectedRarities.has(r)?'checked':''}> ${W.escapeHtml(r)}</label>`).join('');
+    rarityPanel.innerHTML = actions + boxes;
+    rarityPanel.querySelector('[data-act="all"]').addEventListener('click', () => { selectedRarities = new Set(allRarities); renderRarityPanel(); updateRarityToggleLabel(); page=1; render(); });
+    rarityPanel.querySelector('[data-act="none"]').addEventListener('click', () => { selectedRarities = new Set(); renderRarityPanel(); updateRarityToggleLabel(); page=1; render(); });
+    rarityPanel.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        if (cb.checked) selectedRarities.add(cb.value); else selectedRarities.delete(cb.value);
+        updateRarityToggleLabel(); page = 1; render();
+      });
+    });
+  }
+  function updateRarityToggleLabel(){
+    if (!allRarities.length) { rarityToggle.textContent = 'No rarities'; return; }
+    if (selectedRarities.size === 0 || selectedRarities.size === allRarities.length) rarityToggle.textContent = 'All rarities';
+    else rarityToggle.textContent = [...selectedRarities].join(', ');
+  }
+
+  perPageSelect.addEventListener('change', () => { perPage = Number(perPageSelect.value); page = 1; render(); });
+  currencySelect.value = W.getCurrency();
+  currencySelect.addEventListener('change', () => { W.setCurrency(currencySelect.value); render(); });
+  searchInput.addEventListener('input', () => { page = 1; render(); });
+
+  function showEmpty(msg){
+    grid.innerHTML = '';
+    paginationEl.innerHTML = '';
+    emptyState.style.display = 'block';
+    emptyState.textContent = msg;
+    summary.textContent = '';
+  }
+
+  // ---------- image zoom + info modal (same as Browse) ----------
+  function ensureModal(id){
+    let el = document.getElementById(id);
+    if (el) return el;
+    el = document.createElement('div');
+    el.id = id; el.className = 'modal-backdrop'; el.hidden = true;
+    document.body.appendChild(el);
+    el.addEventListener('click', (ev) => { if (ev.target === el) el.hidden = true; });
+    document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') el.hidden = true; });
+    return el;
+  }
+  function openZoom(card){
+    if (!card.image_url) return;
+    const el = ensureModal('zoom-modal');
+    el.innerHTML = `<div style="max-width:95vw;max-height:95vh;position:relative;">
+      <button type="button" class="modal-close" style="position:absolute;top:-40px;right:0;color:#fff;">×</button>
+      <img src="${W.escapeHtml(card.image_url)}" style="max-width:95vw;max-height:95vh;display:block;box-shadow:0 8px 30px rgba(0,0,0,0.5);">
+    </div>`;
+    el.querySelector('.modal-close').addEventListener('click', () => el.hidden = true);
+    el.hidden = false;
+  }
+  function openInfo(card){
+    const el = ensureModal('info-modal');
+    const stats = [
+      card.color && `Color: ${W.escapeHtml(card.color)}`, card.level && `Level: ${W.escapeHtml(card.level)}`,
+      card.cost && `Cost: ${W.escapeHtml(card.cost)}`, card.power && `Power: ${W.escapeHtml(card.power)}`,
+      card.soul && `Soul: ${W.escapeHtml(card.soul)}`, card.trigger && `Trigger: ${W.escapeHtml(card.trigger)}`,
+    ].filter(Boolean).join(' · ');
+    const text = card.text ? card.text.replace(/<br\s*\/?>/gi, '<br>') : '';
+    el.innerHTML = `<div class="modal">
+      <button type="button" class="modal-close" aria-label="Close">×</button>
+      <div class="modal-body">
+        <div class="modal-info" style="max-width:100%;">
+          <h2>${W.escapeHtml(card.name)}</h2>
+          <div class="modal-number">${W.escapeHtml(card.card_number)}${card.rarity ? ' · ' + W.escapeHtml(card.rarity) : ''}</div>
+          ${stats ? `<div class="modal-stats">${stats}</div>` : ''}
+          ${card.traits ? `<div class="modal-traits">${W.escapeHtml(card.traits)}</div>` : ''}
+          ${text ? `<div class="modal-text">${text}</div>` : ''}
+          ${card.flavor ? `<div class="modal-flavor">${W.escapeHtml(card.flavor)}</div>` : ''}
+          <div class="modal-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span><span>Buy ${W.fmtYenConverted(card.buy_price_jpy)}</span></div>
+        </div>
+      </div>
+    </div>`;
+    el.querySelector('.modal-close').addEventListener('click', () => el.hidden = true);
+    el.hidden = false;
+  }
+
+  async function handleAddCopy(anchorEl, card){
+    await W.openPicker(anchorEl, {
+      title: 'Add to collection', emptyLabel: 'No collections yet',
+      listFn: () => W.get('/collections'),
+      createFn: (name) => W.post('/collections', {name}),
+      onPick: async (collectionId) => { await W.post('/copies', {card_id: card.id, collection_id: collectionId}); },
+    });
+  }
+
+  function tileHtml(card){
+    const img = card.image_url;
+    return `
+      <div class="card-tile" data-id="${card.id}">
+        <div class="tile-media" data-act="zoom">
+          ${img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(card.name)}" loading="lazy">` : '<div class="tile-noimg">No image</div>'}
+          <button type="button" class="tile-add" data-act="add" data-picker-trigger title="Add to a collection">+</button>
+          <button type="button" class="tile-binder" data-act="binder" data-picker-trigger title="Send to a binder">📘</button>
+          <button type="button" class="tile-wish active" data-act="unwish" title="Remove from this wishlist">♥</button>
+        </div>
+        <div class="tile-info">
+          <div class="tile-name" data-act="info" style="cursor:pointer;" title="Card details">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>
+          <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span></div>
+          <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span></div>
+          <div class="tile-prices" style="margin-top:2px;"><span>Buy ${W.fmtYenConverted(card.buy_price_jpy)}</span></div>
+        </div>
+      </div>`;
+  }
+
+  function attachHandlers(pageCards){
+    const byId = {};
+    pageCards.forEach(c => byId[c.id] = c);
+    grid.querySelectorAll('.card-tile').forEach(tile => {
+      const card = byId[Number(tile.dataset.id)];
+      tile.querySelector('[data-act="zoom"]').addEventListener('click', () => openZoom(card));
+      tile.querySelector('[data-act="info"]').addEventListener('click', () => openInfo(card));
+      tile.querySelector('[data-act="add"]').addEventListener('click', (ev) => { ev.stopPropagation(); handleAddCopy(ev.currentTarget, card); });
+      tile.querySelector('[data-act="binder"]').addEventListener('click', (ev) => { ev.stopPropagation(); W.sendCardToBinder(ev.currentTarget, card); });
+      tile.querySelector('[data-act="unwish"]').addEventListener('click', async (ev) => {
+        ev.stopPropagation();
+        try {
+          await W.del(`/wishlists/${currentWishlistId}/items/${card.id}`);
+          await loadItems();
+        } catch (e) { alert(e.message); }
+      });
+    });
+  }
+
+  function render(){
+    let list = cards.slice();
+    const q = searchInput.value.trim().toLowerCase();
+    if (q) list = list.filter(c => (c.name||'').toLowerCase().includes(q) || (c.card_number||'').toLowerCase().includes(q));
+    if (allRarities.length && selectedRarities.size > 0) list = list.filter(c => c.rarity && selectedRarities.has(c.rarity));
+
+    if (!list.length) {
+      showEmpty(q ? `No cards match "${q}".` : 'Nothing on this wishlist yet — go to Browse and tap ♡ on some cards.');
+      return;
+    }
+    emptyState.style.display = 'none';
+
+    const totalPages = Math.max(1, Math.ceil(list.length / perPage));
+    if (page > totalPages) page = totalPages;
+    const pageCards = W.paginate(list, page, perPage);
+
+    summary.innerHTML = `<strong>${list.length}</strong> card${list.length===1?'':'s'} on this wishlist · page <strong>${page}</strong> of ${totalPages}`;
+    grid.innerHTML = pageCards.map(tileHtml).join('');
+    attachHandlers(pageCards);
+    W.renderPagination(paginationEl, page, totalPages, (p) => { page = p; render(); window.scrollTo({top:0, behavior:'smooth'}); });
+  }
+
+  W.loadRates().then(() => render());
+  loadWishlists(W.getUrlId()).then(() => {
+    statusPill.textContent = wishlists.length ? wishlists.length + ' wishlist(s)' : 'no wishlists yet';
+  }).catch(err => {
+    statusPill.textContent = 'connection failed';
+    showEmpty('Could not reach the backend API: ' + err.message);
+  });
+})();
+</script>
+
+</body>
+</html>
