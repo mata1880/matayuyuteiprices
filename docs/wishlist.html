@@ -297,8 +297,7 @@
     el.innerHTML = `<div class="modal">
       <button type="button" class="modal-close" aria-label="Close">×</button>
       <div class="modal-body">
-        ${card.image_url ? `<img src="${W.escapeHtml(card.image_url)}" alt="">` : ''}
-        <div class="modal-info">
+        <div class="modal-info" style="max-width:100%;">
           <h2>${W.escapeHtml(card.name)}</h2>
           <div class="modal-number">${W.escapeHtml(card.card_number)}${card.rarity ? ' · ' + W.escapeHtml(card.rarity) : ''}</div>
           ${stats ? `<div class="modal-stats">${stats}</div>` : ''}
@@ -333,7 +332,7 @@
           <button type="button" class="tile-wish active" data-act="unwish" title="Remove from this wishlist">♥</button>
         </div>
         <div class="tile-info">
-          <div class="tile-name">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>
+          <div class="tile-name" data-act="info" style="cursor:pointer;" title="Card details">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>
           <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span></div>
           <div class="tile-prices"><span>Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span></div>
         </div>

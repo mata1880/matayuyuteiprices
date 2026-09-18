@@ -346,6 +346,12 @@
   <a href="binder.html" style="font-size:13.5px;padding:9px 16px;color:var(--ink-soft);text-decoration:none;">Binders</a>
 </nav>
 
+<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:14px clamp(16px,4vw,48px);background:#fdfaf2;border-bottom:1px solid var(--line);">
+  <label for="set-scrape-input" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);">Scrape prices for a whole title:</label>
+  <input type="text" id="set-scrape-input" placeholder="e.g. OSK" style="min-width:140px;font-family:inherit;font-size:13.5px;padding:7px 10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);">
+  <button type="button" id="set-scrape-btn" style="font-family:inherit;font-size:12.5px;padding:7px 12px;border:1px solid var(--ink);background:var(--paper);color:var(--ink);cursor:pointer;">Scrape prices</button>
+  <span id="set-scrape-status" style="font-size:12.5px;color:var(--ink-soft);"></span>
+</div>
 
 <main>
   <div class="controls">
@@ -412,6 +418,41 @@
   to refresh a set, then commit &amp; push.
 </footer>
 
+<script>
+(function(){
+  // Scrape prices for an entire title (e.g. "OSK") straight from the
+  // live backend. NOTE: this page's own table below still reads from
+  // the old static docs/data/*.json files, not the live database, so it
+  // will NOT visibly update here — check Browse to see the refreshed
+  // prices. Fixing that properly means rebuilding this whole page
+  // against the live API the way Browse/Wishlist/Collection/Binder
+  // already were; this button is a quick, honest stopgap in the meantime.
+  const API_BASE = "https://ws-backend-z28t.onrender.com";
+  const setScrapeInput = document.getElementById('set-scrape-input');
+  const setScrapeBtn = document.getElementById('set-scrape-btn');
+  const setScrapeStatus = document.getElementById('set-scrape-status');
+  setScrapeBtn.addEventListener('click', async () => {
+    const code = setScrapeInput.value.trim();
+    if (!code) { setScrapeStatus.textContent = 'Type a title code first.'; return; }
+    setScrapeBtn.disabled = true;
+    setScrapeStatus.textContent = 'Scraping — this can take a while for a big title…';
+    try {
+      const res = await fetch(API_BASE + '/scrape/prices', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({game: 'ws', card_code: code, mode: 'both'}),
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const result = await res.json();
+      setScrapeStatus.textContent = `Done — ${result.cards_seen} card(s), ${result.price_snapshots_added} price(s) updated. This page's own table won't show it (see Browse) — that's a known limitation, not a bug.`;
+    } catch (e) {
+      setScrapeStatus.textContent = 'Failed: ' + e.message;
+    } finally {
+      setScrapeBtn.disabled = false;
+    }
+  });
+  setScrapeInput.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') setScrapeBtn.click(); });
+})();
+</script>
 <script>
 (function(){
   // Robust dropdown open/close: uses an invisible full-screen backdrop to

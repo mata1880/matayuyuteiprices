@@ -378,8 +378,7 @@
     el.innerHTML = `<div class="modal">
       <button type="button" class="modal-close" aria-label="Close">×</button>
       <div class="modal-body">
-        ${card.image_url ? `<img src="${W.escapeHtml(card.image_url)}" alt="">` : ''}
-        <div class="modal-info">
+        <div class="modal-info" style="max-width:100%;">
           <h2>${W.escapeHtml(card.name)}</h2>
           <div class="modal-number">${W.escapeHtml(card.card_number)}${card.rarity ? ' · ' + W.escapeHtml(card.rarity) : ''}</div>
           ${stats ? `<div class="modal-stats">${stats}</div>` : ''}
@@ -491,7 +490,7 @@
           <button type="button" class="tile-gear" data-act="edit" title="Edit grade / frame / note">⚙</button>
         </div>
         <div class="tile-info">
-          <div class="tile-name">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>
+          <div class="tile-name" data-act="info" style="cursor:pointer;" title="Card details">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>
           <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span><span class="frame-badge">${FRAME_LABELS[copy.frame_type]||copy.frame_type}</span></div>
           <div class="tile-prices"><span>Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span></div>
           ${copy.purchase_price_jpy != null ? `<div class="tile-prices" style="margin-top:2px;"><span style="color:var(--ink-soft);">Paid ${W.fmtYenConverted(copy.purchase_price_jpy)}</span></div>` : ''}
@@ -515,7 +514,7 @@
           <button type="button" class="tile-gear" data-act="edit" data-picker-trigger title="Edit a copy in this stack">⚙</button>
         </div>
         <div class="tile-info">
-          <div class="tile-name">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>
+          <div class="tile-name" data-act="info" style="cursor:pointer;" title="Card details">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>
           <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span><span class="frame-badge">${n} copies</span></div>
           <div class="tile-prices"><span>Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span></div>
         </div>
