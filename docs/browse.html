@@ -364,22 +364,12 @@
           try {
             await W.del(`/wishlists/${card.wishlist_id}/items/${card.id}`);
             card.wishlist_id = null;
-            const btn = ev.currentTarget;
-
-if (card.wishlist_id) {
-  try {
-    // whatever code you already have here to remove the wishlist item
-
-    updateWishButton(btn, false);
-  } catch (e) {
-    alert(e.message);
-  }
-} else {
-  handleAddWish(btn, card, (wishlistId) => {
-    card.wishlist_id = wishlistId;
-    updateWishButton(btn, true);
-  });
-}
+            updateWishButton(ev.currentTarget, false);
+          } catch (e) { alert(e.message); }
+        } else {
+          handleAddWish(ev.currentTarget, card, (wishlistId) => {
+            card.wishlist_id = wishlistId;
+            updateWishButton(ev.currentTarget, true);
           });
         }
       });
@@ -390,7 +380,6 @@ if (card.wishlist_id) {
   // tile (especially not its <img>), so toggling a wishlist doesn't
   // force every image on the page to reload and flicker.
   function updateWishButton(btn, wished){
-    if (!btn) return;
     btn.classList.toggle('active', wished);
     btn.textContent = wished ? '♥' : '♡';
     btn.title = wished ? 'Remove from wishlist' : 'Add to a wishlist';
