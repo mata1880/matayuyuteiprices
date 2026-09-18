@@ -62,13 +62,12 @@ window.WSAPI = (function(){
 
   // For Browse/Wishlist, where we only know the CARD, not a specific
   // copy (unlike Collection, which already has individual copies to work
-  // with). Resolves which of the card's owned, unplaced copies can go
-  // into the chosen binder, then places the first free compatible one.
+  // with). Prefers linking an owned, unplaced copy if one's available;
+  // otherwise creates a "planned" placeholder (greyed out) for a card you
+  // don't own yet — either way, reuses an existing planned slot for this
+  // exact card in the chosen binder if there is one, rather than making a
+  // second slot for the same card.
   async function sendCardToBinder(anchorEl, card){
-    if (!card.owned_copies || card.owned_copies < 1) {
-      alert("You don't own this card yet — add a copy first, then send it to a binder from the Collection page.");
-      return;
-    }
     let binders;
     try { binders = await get('/binders'); } catch (e) { alert(e.message); return; }
     if (!binders.length) { alert('No binders yet — create one on the Binder tab first.'); return; }
@@ -78,25 +77,36 @@ window.WSAPI = (function(){
       createFn: () => { throw new Error('Create binders from the Binder tab.'); },
       onPick: async (binderId) => {
         try {
+          let copyId = null;
           const avail = await get(`/binders/${binderId}/available-copies?card_id=${card.id}`);
-          if (!avail.length) {
-            alert("No available copy of this card fits that binder — either every copy you own is already placed somewhere, or none of them physically fit this binder's layout (e.g. a slabbed/toploader copy in a sleeve-page binder).");
-            return;
-          }
-          let copyId = avail[0].id;
-          if (avail.length > 1) {
+          if (avail.length === 1) {
+            copyId = avail[0].id;
+          } else if (avail.length > 1) {
             const label = avail.map(c => `#${c.copy_number}${c.grade ? ' ('+c.grade+')' : ''}`).join(', ');
-            const choice = prompt(`Multiple copies available: ${label}\nType which copy number to place:`, String(avail[0].copy_number));
+            const choice = prompt(`Multiple copies available: ${label}\nType which copy number to place (or leave blank to place as a planned/not-yet-owned card):`, String(avail[0].copy_number));
             const picked = avail.find(c => String(c.copy_number) === (choice || '').trim());
-            if (!picked) return;
-            copyId = picked.id;
+            if (picked) copyId = picked.id;
           }
-          const slots = await get(`/binders/${binderId}/slots`);
-          const occupied = new Set(slots.map(s => s.slot_index));
-          let free = 0;
-          while (occupied.has(free)) free++;
-          await post(`/binders/${binderId}/slots/${free}`, {copy_id: copyId});
-          alert(`Placed in slot ${free + 1}.`);
+
+          // Reuse an existing planned slot for this card if one exists.
+          let targetSlot = null;
+          try {
+            const planned = await get(`/binders/${binderId}/planned-slot?card_id=${card.id}`);
+            targetSlot = planned.slot_index;
+          } catch (e) { /* none — fine, fall through to next free slot */ }
+
+          if (targetSlot === null) {
+            const slots = await get(`/binders/${binderId}/slots`);
+            const occupied = new Set(slots.map(s => s.slot_index));
+            targetSlot = 0;
+            while (occupied.has(targetSlot)) targetSlot++;
+          }
+
+          const body = copyId ? {copy_id: copyId} : {card_id: card.id};
+          await post(`/binders/${binderId}/slots/${targetSlot}`, body);
+          alert(copyId
+            ? `Placed in slot ${targetSlot + 1}.`
+            : `Added as a planned card in slot ${targetSlot + 1} — it'll show greyed out until you own a copy and it gets linked here.`);
         } catch (e) { alert(e.message); }
       },
     });

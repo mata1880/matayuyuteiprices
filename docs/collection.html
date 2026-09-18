@@ -454,12 +454,22 @@
       createFn: () => { throw new Error('Create binders from the Binder tab.'); },
       onPick: async (binderId) => {
         try {
-          const slots = await W.get(`/binders/${binderId}/slots`);
-          const occupied = new Set(slots.map(s => s.slot_index));
-          let free = 0;
-          while (occupied.has(free)) free++;
-          await W.post(`/binders/${binderId}/slots/${free}`, {copy_id: copy.id});
-          alert(`Placed in slot ${free + 1}.`);
+          // Reuse an existing planned slot for this card in this binder,
+          // if there is one, instead of creating a second slot for it.
+          let targetSlot = null;
+          try {
+            const planned = await W.get(`/binders/${binderId}/planned-slot?card_id=${copy.card_id}`);
+            targetSlot = planned.slot_index;
+          } catch (e) { /* none — fine */ }
+
+          if (targetSlot === null) {
+            const slots = await W.get(`/binders/${binderId}/slots`);
+            const occupied = new Set(slots.map(s => s.slot_index));
+            targetSlot = 0;
+            while (occupied.has(targetSlot)) targetSlot++;
+          }
+          await W.post(`/binders/${binderId}/slots/${targetSlot}`, {copy_id: copy.id});
+          alert(`Placed in slot ${targetSlot + 1}.`);
         } catch (e) { alert(e.message); }
       },
     });

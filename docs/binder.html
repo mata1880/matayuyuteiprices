@@ -109,12 +109,13 @@
 
 <footer>
   Live data from your <a href="https://ws-backend-z28t.onrender.com/docs" target="_blank" rel="noopener">backend API</a>.
-  A slot shows greyed-out art when its copy isn't currently filed into any collection. 3×3 binders fit
-  raw/sleeved/toploader copies; 4×3 (penny sleeve style) fits raw/sleeved only — slabs and toploaders in a thin-page
-  binder don't physically fit, so those copies can't be assigned to one.
-  Use the 📘 button on Browse, Wishlist, or Collection to send a copy here. Click a filled slot to pick
-  it up (it outlines in red), then click any other slot to move it there — swapping places if that slot
-  was already filled.
+  A slot shows greyed-out art either because you don't own a copy of that card yet ("planned") or because a
+  copy exists but isn't filed into a collection. Once a copy is owned and in a collection, sending it to a
+  binder fills the greyed slot rather than making a second one. 3×3 binders fit raw/sleeved/toploader copies;
+  4×3 (penny sleeve style) fits raw/sleeved only — slabs and toploaders in a thin-page binder don't physically
+  fit, so those copies can't be assigned to one. Use the 📘 button on Browse, Wishlist, or Collection to send
+  a card here — even one you don't own yet. Click a filled slot to pick it up (it outlines in red), then
+  click any other slot to move it there — swapping places if that slot was already filled.
 </footer>
 
 <script src="assets/api.js"></script>
@@ -288,9 +289,11 @@
       </div>`;
     }
     const img = s.card && s.card.image_url;
+    const statusNote = s.planned ? ' (not owned yet)' : (s.greyed_out ? ' (not in a collection)' : '');
+    const badge = s.planned ? 'planned' : `#${s.copy_number}${s.grade ? ' '+W.escapeHtml(s.grade) : ''}`;
     return `<div class="binder-slot ${s.greyed_out ? 'greyed' : ''} ${isPicked ? 'picked' : ''}" data-slot="${index}">
-      ${img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(s.card.name)}" title="${W.escapeHtml(s.card.name)}${s.greyed_out ? ' (not in a collection)' : ''}">` : ''}
-      <span class="slot-copy-badge">#${s.copy_number}${s.grade ? ' '+W.escapeHtml(s.grade) : ''}</span>
+      ${img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(s.card.name)}" title="${W.escapeHtml(s.card.name)}${statusNote}">` : ''}
+      <span class="slot-copy-badge">${badge}</span>
       <button type="button" class="slot-remove" data-act="remove" title="Remove from this slot">✕</button>
     </div>`;
   }
@@ -339,15 +342,18 @@
   // was already in that slot if it was occupied. Click the same slot
   // again to cancel. Simpler and far more reliable than drag-and-drop,
   // especially on a phone.
+  function slotBody(slot){
+    return slot.copy_id ? {copy_id: slot.copy_id} : {card_id: slot.card.id};
+  }
   async function moveOrSwap(fromIndex, toIndex){
-    const fromCopy = slotsByIndex[fromIndex];
-    const toCopy = slotsByIndex[toIndex];
-    if (!fromCopy) return;
+    const fromSlot = slotsByIndex[fromIndex];
+    const toSlot = slotsByIndex[toIndex];
+    if (!fromSlot) return;
     try {
       await W.del(`/binders/${currentBinder.id}/slots/${fromIndex}`);
-      if (toCopy) await W.del(`/binders/${currentBinder.id}/slots/${toIndex}`);
-      await W.post(`/binders/${currentBinder.id}/slots/${toIndex}`, {copy_id: fromCopy.copy_id});
-      if (toCopy) await W.post(`/binders/${currentBinder.id}/slots/${fromIndex}`, {copy_id: toCopy.copy_id});
+      if (toSlot) await W.del(`/binders/${currentBinder.id}/slots/${toIndex}`);
+      await W.post(`/binders/${currentBinder.id}/slots/${toIndex}`, slotBody(fromSlot));
+      if (toSlot) await W.post(`/binders/${currentBinder.id}/slots/${fromIndex}`, slotBody(toSlot));
       await loadSlots();
     } catch (e) { alert(e.message); }
   }
