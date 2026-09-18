@@ -364,12 +364,22 @@
           try {
             await W.del(`/wishlists/${card.wishlist_id}/items/${card.id}`);
             card.wishlist_id = null;
-            updateWishButton(ev.currentTarget, false);
-          } catch (e) { alert(e.message); }
-        } else {
-          handleAddWish(ev.currentTarget, card, (wishlistId) => {
-            card.wishlist_id = wishlistId;
-            updateWishButton(ev.currentTarget, true);
+            const btn = ev.currentTarget;
+
+if (card.wishlist_id) {
+  try {
+    // whatever code you already have here to remove the wishlist item
+
+    updateWishButton(btn, false);
+  } catch (e) {
+    alert(e.message);
+  }
+} else {
+  handleAddWish(btn, card, (wishlistId) => {
+    card.wishlist_id = wishlistId;
+    updateWishButton(btn, true);
+  });
+}
           });
         }
       });
