@@ -6,13 +6,6 @@
 <title>My Binders — Weiss Schwarz</title>
 <link rel="stylesheet" href="assets/wsdata.css">
 <style>
-  .wl-toolbar{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;}
-  .wl-toolbar select{min-width:180px;}
-  .wl-toolbar button{
-    font-family:var(--sans);font-size:12.5px;padding:7px 12px;border:1px solid var(--ink);
-    background:var(--paper);color:var(--ink);cursor:pointer;
-  }
-  .wl-toolbar button:hover{background:var(--ink);color:var(--paper);}
 
   .binder-meta{font-size:12.5px;color:var(--ink-soft);margin-bottom:16px;}
 
@@ -97,6 +90,8 @@
     <button type="button" id="new-binder-btn">+ New binder</button>
     <button type="button" id="edit-binder-btn">Edit</button>
     <button type="button" id="delete-binder-btn">Delete</button>
+    <button type="button" id="price-check-btn">Price check</button>
+    <span id="price-check-status" style="font-size:12px;color:var(--ink-soft);"></span>
   </div>
 
   <p class="binder-meta" id="binder-meta"></p>
@@ -260,6 +255,23 @@
       render();
     });
   }
+
+  document.getElementById('price-check-btn').addEventListener('click', async () => {
+    if (!currentBinder) return;
+    const btn = document.getElementById('price-check-btn');
+    const status = document.getElementById('price-check-status');
+    btn.disabled = true;
+    status.textContent = 'Checking prices — can take a little while…';
+    try {
+      const result = await W.post(`/binders/${currentBinder.id}/price-check`);
+      status.textContent = `Checked ${result.prefixes_checked.join(', ') || 'nothing'} — ${result.total_price_snapshots_added} price(s) updated.${result.truncated ? ' (some sets skipped — too many at once)' : ''}`;
+      await loadSlots();
+    } catch (e) {
+      status.textContent = 'Price check failed: ' + e.message;
+    } finally {
+      btn.disabled = false;
+    }
+  });
 
   function pageRangeFor(pageNum){
     const size = PAGE_SIZE[resolvedLayout(currentBinder.layout)];

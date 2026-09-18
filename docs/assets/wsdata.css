@@ -174,6 +174,16 @@ select:focus, input:focus{outline:2px solid var(--red);outline-offset:1px;}
 .backup-actions button:hover, .backup-actions label:hover{background:var(--ink);color:var(--paper);}
 .backup-actions input[type="file"]{display:none;}
 
+/* ---- toolbar rows (collection/wishlist/binder pickers, scrape controls) ---- */
+.wl-toolbar{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;}
+.wl-toolbar select{min-width:180px;}
+.wl-toolbar button{
+  font-family:var(--sans);font-size:12.5px;padding:7px 12px;border:1px solid var(--ink);
+  background:var(--paper);color:var(--ink);cursor:pointer;
+}
+.wl-toolbar button:hover{background:var(--ink);color:var(--paper);}
+.wl-toolbar button:disabled{opacity:0.5;cursor:default;}
+
 /* ---- collection/wishlist picker popover ---- */
 .ws-picker{
   position:absolute;z-index:120;background:var(--card-bg);border:1px solid var(--ink);

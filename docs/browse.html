@@ -26,6 +26,13 @@
 </header>
 
 <main>
+  <div class="wl-toolbar">
+    <label for="scrape-input" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);">Scrape a set:</label>
+    <input type="text" id="scrape-input" placeholder="e.g. MTI or OSK/S133" style="min-width:160px;font-family:var(--sans);font-size:13.5px;padding:7px 10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);">
+    <button type="button" id="scrape-btn">Scrape prices</button>
+    <span id="scrape-status" style="font-size:12.5px;color:var(--ink-soft);"></span>
+  </div>
+
   <div class="controls">
     <div class="field">
       <label>Rarity</label>
@@ -81,6 +88,9 @@
   const emptyState = document.getElementById('empty-state');
   const summary = document.getElementById('summary');
   const statusPill = document.getElementById('status-pill');
+  const scrapeInput = document.getElementById('scrape-input');
+  const scrapeBtn = document.getElementById('scrape-btn');
+  const scrapeStatus = document.getElementById('scrape-status');
   const paginationEl = document.getElementById('pagination');
 
   let allCards = [];
@@ -313,16 +323,37 @@
 
   statusPill.textContent = 'waking up server… (can take up to a minute if it was idle)';
   showEmpty('Connecting to the backend — this can take up to a minute the first time if it was idle (free hosting tier sleeps when unused).');
-  W.loadRates().then(() => render());
-  W.get('/cards').then(cards => {
-    allCards = cards;
-    statusPill.textContent = cards.length ? cards.length + ' card(s) in database' : 'no cards yet';
-    populateRarities();
-    render();
-  }).catch(err => {
-    statusPill.textContent = 'connection failed';
-    showEmpty('Could not reach the backend API: ' + err.message);
+  function reloadCards(){
+    return W.get('/cards').then(cards => {
+      allCards = cards;
+      statusPill.textContent = cards.length ? cards.length + ' card(s) in database' : 'no cards yet';
+      populateRarities();
+      render();
+    }).catch(err => {
+      statusPill.textContent = 'connection failed';
+      showEmpty('Could not reach the backend API: ' + err.message);
+    });
+  }
+
+  scrapeBtn.addEventListener('click', async () => {
+    const code = scrapeInput.value.trim();
+    if (!code) { scrapeStatus.textContent = 'Type a set/card code first.'; return; }
+    scrapeBtn.disabled = true;
+    scrapeStatus.textContent = 'Scraping — this can take a little while for a big set…';
+    try {
+      const result = await W.post('/scrape/prices', {game: 'ws', card_code: code, mode: 'both'});
+      scrapeStatus.textContent = `Done — ${result.cards_seen} card(s) seen, ${result.price_snapshots_added} price(s) recorded.`;
+      await reloadCards();
+    } catch (e) {
+      scrapeStatus.textContent = 'Scrape failed: ' + e.message;
+    } finally {
+      scrapeBtn.disabled = false;
+    }
   });
+  scrapeInput.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') scrapeBtn.click(); });
+
+  W.loadRates().then(() => render());
+  reloadCards();
 })();
 </script>
 
