@@ -38,6 +38,7 @@
     <button type="button" id="rename-wishlist-btn">Rename</button>
     <button type="button" id="delete-wishlist-btn">Delete</button>
     <button type="button" id="price-check-btn">Price check</button>
+    <button type="button" id="price-update-btn">Price update</button>
     <span id="price-check-status" style="font-size:12px;color:var(--ink-soft);"></span>
   </div>
 
@@ -211,10 +212,27 @@
     status.textContent = 'Checking prices — can take a little while…';
     try {
       const result = await W.post(`/wishlists/${currentWishlistId}/price-check`);
-      status.textContent = `Checked ${result.prefixes_checked.join(', ') || 'nothing'} — ${result.total_price_snapshots_added} price(s) updated.${result.truncated ? ' (some sets skipped — too many at once)' : ''}`;
+      status.textContent = `Checked ${result.prefixes_checked.length} new card(s) — ${result.total_price_snapshots_added} price(s) added.${result.truncated ? ' (some skipped — click again for the rest)' : ''}`;
       await loadItems();
     } catch (e) {
       status.textContent = 'Price check failed: ' + e.message;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+  document.getElementById('price-update-btn').addEventListener('click', async () => {
+    if (!currentWishlistId) return;
+    const btn = document.getElementById('price-update-btn');
+    const status = document.getElementById('price-check-status');
+    btn.disabled = true;
+    status.textContent = 'Updating prices — re-checking every card, can take a while…';
+    try {
+      const result = await W.post(`/wishlists/${currentWishlistId}/price-update`);
+      status.textContent = `Updated ${result.checked} card(s) — ${result.changed.length} price(s) changed.${result.truncated ? ' (some skipped — click again for the rest)' : ''}`;
+      W.showPriceChanges(result);
+      await loadItems();
+    } catch (e) {
+      status.textContent = 'Price update failed: ' + e.message;
     } finally {
       btn.disabled = false;
     }
@@ -331,7 +349,7 @@
         <div class="tile-info">
           <div class="tile-name" data-act="info" style="cursor:pointer;" title="Card details">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>
           <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span></div>
-          <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span></div>
+          <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span><span>Buy ${W.fmtYenConverted(card.buy_price_jpy)}</span></div>
         </div>
       </div>`;
   }

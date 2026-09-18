@@ -220,12 +220,16 @@
 
   // ---------- rarity filter ----------
   function populateRarities(){
-    // Scoped to whatever titles are currently selected — if you've
-    // filtered down to "OSK", the rarity list should only show rarities
-    // that actually exist within OSK, not every rarity in the database.
-    const scoped = (allTitles.length && selectedTitles.size > 0)
+    // Scoped to whatever titles are currently selected AND whatever's
+    // typed in the search box — if you've filtered down to "OSK" or
+    // typed part of a name/number, the rarity list should only show
+    // rarities that actually exist within that narrowed set, not every
+    // rarity in the whole database.
+    let scoped = (allTitles.length && selectedTitles.size > 0)
       ? allCards.filter(c => selectedTitles.has(W.titlePrefix(c.card_number)))
       : allCards;
+    const q = searchInput.value.trim().toLowerCase();
+    if (q) scoped = scoped.filter(c => (c.name||'').toLowerCase().includes(q) || (c.card_number||'').toLowerCase().includes(q));
     const seen = [];
     for (const c of scoped) if (c.rarity && !seen.includes(c.rarity)) seen.push(c.rarity);
     allRarities = W.sortRarities(seen);
@@ -290,7 +294,7 @@
   perPageSelect.addEventListener('change', () => { perPage = Number(perPageSelect.value); page = 1; render(); });
   currencySelect.value = W.getCurrency();
   currencySelect.addEventListener('change', () => { W.setCurrency(currencySelect.value); render(); });
-  searchInput.addEventListener('input', () => { page = 1; render(); });
+  searchInput.addEventListener('input', () => { populateRarities(); page = 1; render(); });
 
   function showEmpty(msg){
     grid.innerHTML = '';
@@ -316,7 +320,7 @@
         <div class="tile-info">
           <div class="tile-name" data-act="info" style="cursor:pointer;" title="Card details">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>
           <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span></div>
-          <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span></div>
+          <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span><span>Buy ${W.fmtYenConverted(card.buy_price_jpy)}</span></div>
         </div>
       </div>`;
   }
@@ -330,7 +334,7 @@
       tile.querySelector('[data-act="info"]').addEventListener('click', () => openInfo(card));
       tile.querySelector('[data-act="add"]').addEventListener('click', (ev) => {
         ev.stopPropagation();
-        handleAddCopy(ev.currentTarget, card, () => render());
+        handleAddCopy(ev.currentTarget, card, () => updateOwnedBadge(tile, card.owned_copies));
       });
       tile.querySelector('[data-act="binder"]').addEventListener('click', (ev) => {
         ev.stopPropagation();
@@ -342,13 +346,43 @@
           try {
             await W.del(`/wishlists/${card.wishlist_id}/items/${card.id}`);
             card.wishlist_id = null;
-            render();
+            updateWishButton(ev.currentTarget, false);
           } catch (e) { alert(e.message); }
         } else {
-          handleAddWish(ev.currentTarget, card, (wishlistId) => { card.wishlist_id = wishlistId; render(); });
+          handleAddWish(ev.currentTarget, card, (wishlistId) => {
+            card.wishlist_id = wishlistId;
+            updateWishButton(ev.currentTarget, true);
+          });
         }
       });
     });
+  }
+
+  // Swaps just the heart button's look — never touches the rest of the
+  // tile (especially not its <img>), so toggling a wishlist doesn't
+  // force every image on the page to reload and flicker.
+  function updateWishButton(btn, wished){
+    btn.classList.toggle('active', wished);
+    btn.textContent = wished ? '♥' : '♡';
+    btn.title = wished ? 'Remove from wishlist' : 'Add to a wishlist';
+    if (wished) btn.removeAttribute('data-picker-trigger');
+    else btn.setAttribute('data-picker-trigger', '');
+  }
+
+  // Updates (or creates) just the owned-count badge in place — same
+  // reasoning as updateWishButton: avoid re-rendering the whole tile.
+  function updateOwnedBadge(tile, count){
+    let badge = tile.querySelector('.tile-owned-badge');
+    if (count > 0) {
+      if (!badge) {
+        badge = document.createElement('span');
+        badge.className = 'tile-owned-badge';
+        tile.querySelector('.tile-media').appendChild(badge);
+      }
+      badge.textContent = `${count} owned`;
+    } else if (badge) {
+      badge.remove();
+    }
   }
 
   function render(){

@@ -55,6 +55,36 @@ window.WSAPI = (function(){
          + section("Wishlists", data.wishlists, "wishlist", "wishlist")
          + section("Binders", data.binders, "binder", "binder");
   }
+  function showPriceChanges(result){
+    const el = document.createElement('div');
+    el.className = 'modal-backdrop';
+    el.id = 'ws-price-changes-modal';
+    const rows = result.changed.map(c => {
+      const sellChanged = c.old_sell_price_jpy !== c.new_sell_price_jpy;
+      const buyChanged = c.old_buy_price_jpy !== c.new_buy_price_jpy;
+      return `<tr>
+        <td style="padding:6px 10px;border-bottom:1px solid #eee;">${escapeHtml(c.name)}<br><span style="font-family:monospace;font-size:11px;color:#888;">${escapeHtml(c.card_number)}</span></td>
+        <td style="padding:6px 10px;border-bottom:1px solid #eee;font-family:monospace;font-size:12.5px;${sellChanged?'color:#b23a2e;font-weight:600;':''}">${fmtYen(c.old_sell_price_jpy)} → ${fmtYen(c.new_sell_price_jpy)}</td>
+        <td style="padding:6px 10px;border-bottom:1px solid #eee;font-family:monospace;font-size:12.5px;${buyChanged?'color:#b23a2e;font-weight:600;':''}">${fmtYen(c.old_buy_price_jpy)} → ${fmtYen(c.new_buy_price_jpy)}</td>
+      </tr>`;
+    }).join('');
+    el.innerHTML = `<div class="modal" style="max-width:520px;">
+      <button type="button" class="modal-close" aria-label="Close">×</button>
+      <div style="padding:20px;">
+        <h2 style="margin:0 0 6px;font-size:16px;">Price update — ${result.checked} card${result.checked===1?'':'s'} checked</h2>
+        <p style="font-size:12.5px;color:#888;margin:0 0 14px;">${result.changed.length} price${result.changed.length===1?'':'s'} changed.${result.truncated ? ' Some cards were skipped this round — click again to work through the rest.' : ''}</p>
+        ${result.changed.length ? `<table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead><tr><th style="text-align:left;padding:4px 10px;">Card</th><th style="text-align:left;padding:4px 10px;">Sell</th><th style="text-align:left;padding:4px 10px;">Buy</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>` : `<p style="font-size:13px;color:#888;">No price changes this time.</p>`}
+      </div>
+    </div>`;
+    document.body.appendChild(el);
+    const close = () => el.remove();
+    el.addEventListener('click', (ev) => { if (ev.target === el) close(); });
+    el.querySelector('.modal-close').addEventListener('click', close);
+  }
+
   function getUrlId(){
     try { const v = new URLSearchParams(location.search).get("id"); return v ? Number(v) : null; }
     catch(e) { return null; }
@@ -347,7 +377,7 @@ window.WSAPI = (function(){
     fmtYen, escapeHtml, normForMatch, sortRarities,
     getCurrency, setCurrency, loadRates, fmtYenConverted, stockClass, yenToCurrency, currencyToYen,
     loadSidebarData, sidebarHtml, getUrlId, sendCardToBinder,
-    toast, titlePrefix, PAGE_SIZE, resolvedLayout, pageSlotLabel,
+    toast, titlePrefix, PAGE_SIZE, resolvedLayout, pageSlotLabel, showPriceChanges,
     paginate, renderPagination,
     openPicker, closePicker,
   };
