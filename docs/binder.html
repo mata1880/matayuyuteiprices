@@ -382,7 +382,7 @@
       updateFillableBanner();
       renderPageIndex();
       render();
-      alignPageIndexToBinderView();
+      alignMainWidthToBinderSpread(); alignPageIndexToBinderView();
     });
   }
   // Measures exactly how far down #binder-view's actual content starts
@@ -390,6 +390,24 @@
   // offset as the index's top padding — so page "1" lines up with the
   // top of the binder page itself, not the top of the whole sidebar,
   // regardless of how tall the toolbar area happens to be.
+  // Measures the ACTUAL rendered width of the binder page(s) and locks
+  // <main> to exactly that width (plus its own padding) — rather than
+  // letting <main> size itself to whatever its widest child happens to
+  // be (which was the toolbar row, wider than a binder page, leaving the
+  // page sitting too far left with a gap before the index). This forces
+  // the toolbar to wrap instead of dictating the layout's width, and
+  // makes every sibling (the zoom button, the page index) line up with
+  // the page's TRUE edge, since that's now <main>'s edge too.
+  function alignMainWidthToBinderSpread(){
+    const spread = binderView.querySelector('.binder-spread');
+    const mainEl = document.querySelector('main');
+    if (!spread || !mainEl) return;
+    const spreadWidth = spread.getBoundingClientRect().width;
+    const style = getComputedStyle(mainEl);
+    const padL = parseFloat(style.paddingLeft) || 0;
+    const padR = parseFloat(style.paddingRight) || 0;
+    mainEl.style.width = Math.ceil(spreadWidth + padL + padR) + 'px';
+  }
   function alignPageIndexToBinderView(){
     const pageIndexEl = document.getElementById('page-index');
     const wrap = pageIndexEl && pageIndexEl.parentElement;
@@ -463,7 +481,7 @@
         spreadIndex = spreadIndexForPage(p);
         render();
         renderPageIndex();
-        alignPageIndexToBinderView();
+        alignMainWidthToBinderSpread(); alignPageIndexToBinderView();
       });
       entry.querySelector('[data-act="rename"]').addEventListener('click', async (ev) => {
         ev.stopPropagation();
@@ -691,8 +709,8 @@
     });
   }
 
-  prevSpreadBtn.addEventListener('click', () => { if (spreadIndex > 0) { spreadIndex--; render(); renderPageIndex(); alignPageIndexToBinderView(); } });
-  nextSpreadBtn.addEventListener('click', () => { spreadIndex++; render(); renderPageIndex(); alignPageIndexToBinderView(); });
+  prevSpreadBtn.addEventListener('click', () => { if (spreadIndex > 0) { spreadIndex--; render(); renderPageIndex(); alignMainWidthToBinderSpread(); alignPageIndexToBinderView(); } });
+  nextSpreadBtn.addEventListener('click', () => { spreadIndex++; render(); renderPageIndex(); alignMainWidthToBinderSpread(); alignPageIndexToBinderView(); });
 
   const currencySelect = document.getElementById('currency-select');
   currencySelect.value = W.getCurrency();
@@ -764,6 +782,12 @@
     const btn = document.getElementById('refresh-binder-btn');
     btn.disabled = true;
     try { await loadSlots(); } catch (e) { alert(e.message); } finally { btn.disabled = false; }
+  });
+
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => { alignMainWidthToBinderSpread(); alignPageIndexToBinderView(); }, 150);
   });
 
   loadBinders(W.getUrlId()).then(() => {
