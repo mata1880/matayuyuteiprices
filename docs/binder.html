@@ -37,8 +37,14 @@
   .binder-zoom-overlay .zoom-body{
     flex:1;display:flex;overflow:auto;min-height:0;
   }
-  .binder-zoom-overlay .zoom-body #binder-view{
-    flex:1;padding:16px 20px;overflow-y:auto;min-width:0;
+  .binder-zoom-overlay .zoom-body .zoom-stack{
+    flex:1;display:flex;flex-direction:column;min-width:0;padding:16px 20px;overflow-y:auto;
+  }
+  .binder-zoom-overlay .zoom-body .zoom-stack #spread-nav{
+    margin-bottom:14px;flex-shrink:0;
+  }
+  .binder-zoom-overlay .zoom-body .zoom-stack #binder-view{
+    flex:1;min-height:0;
   }
   .binder-zoom-overlay .zoom-body .page-index{
     display:block !important;position:static;max-height:none;flex-shrink:0;
@@ -126,7 +132,7 @@
       <h1>My <span>Binders</span></h1>
       <p>Where your cards physically live — page 1 is the cover, everything after is a two-page spread.</p>
     </div>
-<div style="display:flex;align-items:center;gap:8px;"><div id="status-pill">connecting…</div><span id="ws-theme-toggle-slot"></span></div>
+<div style="display:flex;align-items:center;gap:8px;"><div id="status-pill">connecting…</div><button type="button" id="zoom-open-btn" title="Zoom the binder to fill most of the screen" style="font-family:var(--sans);font-size:12px;padding:6px 10px;border:1px solid var(--line);background:var(--card-bg);color:var(--ink);cursor:pointer;border-radius:999px;">🔍 Zoom</button><span id="ws-theme-toggle-slot"></span></div>
   </div>
   <nav class="pagenav">
     <a href="index.html">Prices</a>
@@ -187,10 +193,10 @@
   (penny sleeve style) fits raw/sleeved only — slabs and toploaders in a thin-page binder don't physically
   fit, so those copies can't be assigned to one. Use the 📘 button on Browse, Wishlist, or Collection to send
   a card here — even one you don't own yet. Click a filled slot to pick it up (it outlines in red), then
-  click any other slot to move it there — swapping places if that slot was already filled. Right-click
-  anywhere on the binder to zoom it to fill most of the screen — just the card grid and the page index,
-  attached side by side, with moving cards still working normally. Use the page index to jump between pages
-  while zoomed. Right-click again, press Escape, or use the Exit zoom button to leave.
+  click any other slot to move it there — swapping places if that slot was already filled. Use the 🔍 Zoom
+  button (top right) to fill most of the screen with just the card grid and the page index, attached side
+  by side — Prev/Next and moving cards both still work while zoomed. Click the button again, or press
+  Escape, to leave.
 </footer>
 
 <script src="assets/api.js"></script>
@@ -533,21 +539,13 @@
   // Blank placeholder matching a real page's exact size — used on the
   // left of the cover, so the cover itself sits on the right like the
   // first page of a real binder does when you open it.
-  function ghostPageHtml(){
-    const layout = resolvedLayout(currentBinder.layout);
-    const size = PAGE_SIZE[layout];
-    let cells = '';
-    for (let i = 0; i < size; i++) cells += '<div class="binder-slot" style="visibility:hidden;"></div>';
-    return `<div class="binder-page layout-${layout}" style="box-shadow:none;border-color:transparent;">${cells}</div>`;
-  }
-
   function render(){
     if (!currentBinder) return;
     spreadNav.hidden = false;
 
     if (spreadIndex === 0) {
       spreadLabel.textContent = 'Cover';
-      binderView.innerHTML = `<div class="binder-spread">${ghostPageHtml()}${pageHtml(0)}</div>`;
+      binderView.innerHTML = `<div class="binder-spread">${pageHtml(0)}</div>`;
       prevSpreadBtn.disabled = true;
     } else {
       const left = spreadIndex * 2 - 1;
@@ -666,7 +664,7 @@
   // it can be moved back exactly on exit. Since nothing is rebuilt, every
   // existing click handler (pick-up-and-move cards, page index, Prev/
   // Next) keeps working completely unchanged inside the zoomed view.
-  const ZOOM_ELEMENT_IDS = ['binder-view']; // only the card grid — the page index gets attached to it separately, nothing else comes along
+  const ZOOM_ELEMENT_IDS = ['spread-nav', 'binder-view']; // nav + the card grid — the page index gets attached to it separately
   let zoomed = false;
   let zoomPlaceholders = {};
   function enterZoomMode(){
@@ -675,15 +673,19 @@
     const overlay = document.getElementById('binder-zoom-overlay');
     const body = document.getElementById('zoom-body');
     body.innerHTML = '';
-    // Exactly two flex children, in order: the card grid, then the page
-    // index — so the index always ends up attached directly to its right.
+    // spread-nav (Prev/Next) stacks above binder-view; that wrapper and
+    // the page index are the only two side-by-side flex children, so the
+    // index always ends up attached directly to the grid's right.
+    const stack = document.createElement('div');
+    stack.className = 'zoom-stack';
+    body.appendChild(stack);
     ZOOM_ELEMENT_IDS.forEach(id => {
       const el = document.getElementById(id);
       if (!el) return;
       const placeholder = document.createComment('zoom-placeholder-' + id);
       el.parentNode.insertBefore(placeholder, el);
       zoomPlaceholders[id] = placeholder;
-      body.appendChild(el);
+      stack.appendChild(el);
     });
     const pageIndexEl = document.getElementById('page-index');
     const piPlaceholder = document.createComment('zoom-placeholder-page-index');
@@ -693,6 +695,7 @@
 
     overlay.hidden = false;
     document.body.classList.add('binder-zoomed');
+    document.getElementById('zoom-open-btn').textContent = '✕ Exit zoom';
   }
   function exitZoomMode(){
     if (!zoomed) return;
@@ -705,14 +708,10 @@
     zoomPlaceholders = {};
     document.getElementById('binder-zoom-overlay').hidden = true;
     document.body.classList.remove('binder-zoomed');
+    document.getElementById('zoom-open-btn').textContent = '🔍 Zoom';
   }
-  document.getElementById('binder-view').addEventListener('contextmenu', (ev) => {
-    ev.preventDefault();
+  document.getElementById('zoom-open-btn').addEventListener('click', () => {
     if (zoomed) exitZoomMode(); else enterZoomMode();
-  });
-  document.getElementById('binder-zoom-overlay').addEventListener('contextmenu', (ev) => {
-    ev.preventDefault();
-    exitZoomMode();
   });
   document.getElementById('zoom-close-btn').addEventListener('click', exitZoomMode);
   document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape' && zoomed) exitZoomMode(); });
