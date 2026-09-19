@@ -174,6 +174,11 @@
 <aside class="page-index" id="page-index"></aside>
 </div>
 
+<div id="binder-zoom-overlay" class="binder-zoom-overlay" hidden>
+  <button type="button" id="zoom-close-btn" class="zoom-close-btn" title="Exit zoomed view (Esc, or right-click again)">✕ Exit zoom</button>
+  <div class="zoom-body" id="zoom-body"></div>
+</div>
+
 <footer>
   Live data from your <a href="https://ws-backend-z28t.onrender.com/docs" target="_blank" rel="noopener">backend API</a>.
   A slot shows greyed-out art either because you don't own a copy of that card yet or because a copy exists
@@ -726,11 +731,6 @@
   });
 })();
 </script>
-
-<div id="binder-zoom-overlay" class="binder-zoom-overlay" hidden>
-  <button type="button" id="zoom-close-btn" class="zoom-close-btn" title="Exit zoomed view (Esc, or right-click again)">✕ Exit zoom</button>
-  <div class="zoom-body" id="zoom-body"></div>
-</div>
 
 </body>
 </html>
