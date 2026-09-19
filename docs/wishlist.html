@@ -60,6 +60,14 @@
       </div>
     </div>
     <div class="field">
+      <label>Binder</label>
+      <div class="mode-toggle" id="binder-filter-toggle">
+        <button data-binder="all" class="active">All</button>
+        <button data-binder="in">In a binder</button>
+        <button data-binder="not_in">Not in a binder</button>
+      </div>
+    </div>
+    <div class="field">
       <label for="currency-select">Currency</label>
       <select id="currency-select">
         <option value="USD">USD ($)</option>
@@ -107,6 +115,7 @@
   const rarityToggle = document.getElementById('rarity-toggle');
   const rarityPanel = document.getElementById('rarity-panel');
   const ownedToggle = document.getElementById('owned-toggle');
+  const binderFilterToggle = document.getElementById('binder-filter-toggle');
   const currencySelect = document.getElementById('currency-select');
   const perPageSelect = document.getElementById('perpage-select');
   const searchInput = document.getElementById('search-input');
@@ -122,6 +131,7 @@
   let allRarities = [];
   let selectedRarities = new Set();
   let ownedFilter = 'all';
+  let binderFilter = 'all';
   let page = 1;
   let perPage = 24;
 
@@ -304,6 +314,12 @@
     [...ownedToggle.children].forEach(b => b.classList.toggle('active', b === btn));
     page = 1; render();
   });
+  binderFilterToggle.addEventListener('click', e => {
+    const btn = e.target.closest('button'); if (!btn) return;
+    binderFilter = btn.dataset.binder;
+    [...binderFilterToggle.children].forEach(b => b.classList.toggle('active', b === btn));
+    page = 1; render();
+  });
 
   function showEmpty(msg){
     grid.innerHTML = '';
@@ -389,7 +405,7 @@
         <div class="tile-media" data-act="zoom">
           ${img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(card.name)}" loading="lazy">` : '<div class="tile-noimg">No image</div>'}
           <button type="button" class="tile-add" data-act="add" data-picker-trigger title="Add to a collection">+</button>
-          <button type="button" class="tile-binder" data-act="binder" data-picker-trigger title="Send to a binder">📘</button>
+          <button type="button" class="tile-binder ${card.in_binder?'active':''}" data-act="binder" data-picker-trigger title="Send to a binder">📘</button>
           <button type="button" class="tile-wish active" data-act="unwish" title="Remove from this wishlist">♥</button>
         </div>
         <div class="tile-info">
@@ -426,6 +442,8 @@
     if (allRarities.length && selectedRarities.size > 0) list = list.filter(c => c.rarity && selectedRarities.has(c.rarity));
     if (ownedFilter === 'owned') list = list.filter(c => c.owned_copies > 0);
     if (ownedFilter === 'not_owned') list = list.filter(c => !c.owned_copies);
+    if (binderFilter === 'in') list = list.filter(c => c.in_binder);
+    if (binderFilter === 'not_in') list = list.filter(c => !c.in_binder);
 
     if (!list.length) {
       showEmpty(q ? `No cards match "${q}".` : 'Nothing on this wishlist yet — go to Browse and tap ♡ on some cards.');

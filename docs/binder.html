@@ -37,11 +37,11 @@
   .binder-zoom-overlay .zoom-body{
     flex:1;display:flex;overflow:auto;min-height:0;
   }
-  .binder-zoom-overlay .zoom-body main{
+  .binder-zoom-overlay .zoom-body #binder-view{
     flex:1;padding:16px 20px;overflow-y:auto;min-width:0;
   }
   .binder-zoom-overlay .zoom-body .page-index{
-    display:block !important;position:static;max-height:none;
+    display:block !important;position:static;max-height:none;flex-shrink:0;
   }
   .zoom-close-btn{
     align-self:flex-end;margin:10px 14px 0 0;font-family:var(--sans);font-size:12.5px;
@@ -188,8 +188,9 @@
   fit, so those copies can't be assigned to one. Use the 📘 button on Browse, Wishlist, or Collection to send
   a card here — even one you don't own yet. Click a filled slot to pick it up (it outlines in red), then
   click any other slot to move it there — swapping places if that slot was already filled. Right-click
-  anywhere on the binder to zoom it to fill most of the screen — the page index and moving cards both still
-  work while zoomed. Right-click again, press Escape, or use the Exit zoom button to leave.
+  anywhere on the binder to zoom it to fill most of the screen — just the card grid and the page index,
+  attached side by side, with moving cards still working normally. Use the page index to jump between pages
+  while zoomed. Right-click again, press Escape, or use the Exit zoom button to leave.
 </footer>
 
 <script src="assets/api.js"></script>
@@ -665,7 +666,7 @@
   // it can be moved back exactly on exit. Since nothing is rebuilt, every
   // existing click handler (pick-up-and-move cards, page index, Prev/
   // Next) keeps working completely unchanged inside the zoomed view.
-  const ZOOM_ELEMENT_IDS = ['binder-meta', 'binder-value', 'fillable-banner', 'spread-nav', 'binder-view', 'empty-state'];
+  const ZOOM_ELEMENT_IDS = ['binder-view']; // only the card grid — the page index gets attached to it separately, nothing else comes along
   let zoomed = false;
   let zoomPlaceholders = {};
   function enterZoomMode(){
@@ -674,15 +675,15 @@
     const overlay = document.getElementById('binder-zoom-overlay');
     const body = document.getElementById('zoom-body');
     body.innerHTML = '';
-    const mainWrap = document.createElement('main');
-    body.appendChild(mainWrap);
+    // Exactly two flex children, in order: the card grid, then the page
+    // index — so the index always ends up attached directly to its right.
     ZOOM_ELEMENT_IDS.forEach(id => {
       const el = document.getElementById(id);
       if (!el) return;
       const placeholder = document.createComment('zoom-placeholder-' + id);
       el.parentNode.insertBefore(placeholder, el);
       zoomPlaceholders[id] = placeholder;
-      mainWrap.appendChild(el);
+      body.appendChild(el);
     });
     const pageIndexEl = document.getElementById('page-index');
     const piPlaceholder = document.createComment('zoom-placeholder-page-index');

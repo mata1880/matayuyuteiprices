@@ -96,6 +96,14 @@
       </div>
     </div>
     <div class="field">
+      <label>Binder</label>
+      <div class="mode-toggle" id="binder-filter-toggle">
+        <button data-binder="all" class="active">All</button>
+        <button data-binder="in">In a binder</button>
+        <button data-binder="not_in">Not in a binder</button>
+      </div>
+    </div>
+    <div class="field">
       <label for="currency-select">Currency</label>
       <select id="currency-select">
         <option value="USD">USD ($)</option>
@@ -143,6 +151,7 @@
   const rarityToggle = document.getElementById('rarity-toggle');
   const rarityPanel = document.getElementById('rarity-panel');
   const stackToggle = document.getElementById('stack-toggle');
+  const binderFilterToggle = document.getElementById('binder-filter-toggle');
   const stackPanel = document.getElementById('stack-panel');
   const currencySelect = document.getElementById('currency-select');
   const perPageSelect = document.getElementById('perpage-select');
@@ -159,6 +168,7 @@
   let allRarities = [];
   let selectedRarities = new Set();
   let stackedRarities = new Set();
+  let binderFilter = 'all'; // 'all' | 'in' | 'not_in'
   let page = 1;
   let perPage = 24;
 
@@ -390,6 +400,12 @@
   currencySelect.value = W.getCurrency();
   currencySelect.addEventListener('change', () => { W.setCurrency(currencySelect.value); refreshCollectionValue(); render(); });
   searchInput.addEventListener('input', () => { page = 1; render(); });
+  binderFilterToggle.addEventListener('click', e => {
+    const btn = e.target.closest('button'); if (!btn) return;
+    binderFilter = btn.dataset.binder;
+    [...binderFilterToggle.children].forEach(b => b.classList.toggle('active', b === btn));
+    page = 1; render();
+  });
 
   function showEmpty(msg){
     grid.innerHTML = '';
@@ -569,7 +585,7 @@
           <span class="copy-badge">#${copy.copy_number}</span>
           ${copy.grade ? `<span class="grade-badge">${W.escapeHtml(copy.grade)}</span>` : ''}
           <button type="button" class="tile-add" data-act="add" title="Add another copy to this collection">+</button>
-          <button type="button" class="tile-binder" data-act="binder" data-picker-trigger title="Send to a binder">📘</button>
+          <button type="button" class="tile-binder ${card.in_binder?'active':''}" data-act="binder" data-picker-trigger title="Send to a binder">📘</button>
           <button type="button" class="tile-wish" data-act="wish" data-picker-trigger title="Add to a wishlist">♡</button>
           <button type="button" class="tile-del" data-act="del" title="Remove this copy (e.g. sold)">🗑</button>
           <button type="button" class="tile-gear" data-act="edit" title="Edit grade / frame / note">⚙</button>
@@ -593,7 +609,7 @@
           ${img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(card.name)}" loading="lazy">` : '<div class="tile-noimg">No image</div>'}
           <span class="copy-badge">×${n}</span>
           <button type="button" class="tile-add" data-act="add" title="Add another copy to this collection">+</button>
-          <button type="button" class="tile-binder" data-act="binder" data-picker-trigger title="Send a copy to a binder">📘</button>
+          <button type="button" class="tile-binder ${card.in_binder?'active':''}" data-act="binder" data-picker-trigger title="Send a copy to a binder">📘</button>
           <button type="button" class="tile-wish" data-act="wish" data-picker-trigger title="Add to a wishlist">♡</button>
           <button type="button" class="tile-del" data-act="del" data-picker-trigger title="Remove a copy from this stack">🗑</button>
           <button type="button" class="tile-gear" data-act="edit" data-picker-trigger title="Edit a copy in this stack">⚙</button>
@@ -712,6 +728,8 @@
     const q = searchInput.value.trim().toLowerCase();
     if (q) list = list.filter(c => (c.card.name||'').toLowerCase().includes(q) || (c.card.card_number||'').toLowerCase().includes(q));
     if (allRarities.length && selectedRarities.size > 0) list = list.filter(c => c.card.rarity && selectedRarities.has(c.card.rarity));
+    if (binderFilter === 'in') list = list.filter(c => c.card.in_binder);
+    if (binderFilter === 'not_in') list = list.filter(c => !c.card.in_binder);
 
     if (!list.length) {
       showEmpty(q ? `No copies match "${q}".` : 'Nothing in this collection yet — go to Browse and tap + on some cards.');

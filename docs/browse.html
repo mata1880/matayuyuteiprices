@@ -58,6 +58,14 @@
       </div>
     </div>
     <div class="field">
+      <label>Binder</label>
+      <div class="mode-toggle" id="binder-filter-toggle">
+        <button data-binder="all" class="active">All</button>
+        <button data-binder="in">In a binder</button>
+        <button data-binder="not_in">Not in a binder</button>
+      </div>
+    </div>
+    <div class="field">
       <label>Rarity tier</label>
       <div class="mode-toggle" id="rarity-tier-toggle">
         <button data-tier="all" class="active">All</button>
@@ -108,6 +116,7 @@
   const rarityPanel = document.getElementById('rarity-panel');
   const titleToggle = document.getElementById('title-toggle');
   const ownedToggle = document.getElementById('owned-toggle');
+  const binderFilterToggle = document.getElementById('binder-filter-toggle');
   const rarityTierToggle = document.getElementById('rarity-tier-toggle');
   const titlePanel = document.getElementById('title-panel');
   const currencySelect = document.getElementById('currency-select');
@@ -128,6 +137,7 @@
   let allTitles = [];
   let selectedTitles = new Set();
   let ownedFilter = 'all'; // 'all' | 'owned' | 'not_owned'
+  let binderFilter = 'all'; // 'all' | 'in' | 'not_in'
   let rarityTier = 'all'; // 'all' | 'high'
   const LOW_RARITIES = new Set(['C', 'U', 'R', 'RR', 'CX', 'CR', 'TD', 'PR']);
   let page = 1;
@@ -324,6 +334,12 @@
     [...ownedToggle.children].forEach(b => b.classList.toggle('active', b === btn));
     page = 1; render();
   });
+  binderFilterToggle.addEventListener('click', e => {
+    const btn = e.target.closest('button'); if (!btn) return;
+    binderFilter = btn.dataset.binder;
+    [...binderFilterToggle.children].forEach(b => b.classList.toggle('active', b === btn));
+    page = 1; render();
+  });
   rarityTierToggle.addEventListener('click', e => {
     const btn = e.target.closest('button'); if (!btn) return;
     rarityTier = btn.dataset.tier;
@@ -347,7 +363,7 @@
         <div class="tile-media" data-act="zoom">
           ${img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(card.name)}" loading="lazy">` : '<div class="tile-noimg">No image</div>'}
           <button type="button" class="tile-add" data-act="add" data-picker-trigger title="Add to a collection">+</button>
-          <button type="button" class="tile-binder" data-act="binder" data-picker-trigger title="Send to a binder">📘</button>
+          <button type="button" class="tile-binder ${card.in_binder?'active':''}" data-act="binder" data-picker-trigger title="Send to a binder">📘</button>
           <button type="button" class="tile-wish ${wished?'active':''}" data-act="wish" ${wished?'':'data-picker-trigger'}
             title="${wished ? 'Remove from wishlist' : 'Add to a wishlist'}">${wished ? '♥' : '♡'}</button>
         </div>
@@ -422,6 +438,8 @@
     if (ownedFilter === 'owned') cards = cards.filter(c => c.owned_copies > 0);
     if (ownedFilter === 'not_owned') cards = cards.filter(c => !c.owned_copies);
     if (rarityTier === 'high') cards = cards.filter(c => !LOW_RARITIES.has((c.rarity||'').toUpperCase()));
+    if (binderFilter === 'in') cards = cards.filter(c => c.in_binder);
+    if (binderFilter === 'not_in') cards = cards.filter(c => !c.in_binder);
     if (!cards.length) {
       showEmpty(q ? `No cards match "${q}".` : (allCards.length ? 'No cards for this filter.' : 'No cards yet — run a price scrape (see the API docs link below) to get started.'));
       return;
