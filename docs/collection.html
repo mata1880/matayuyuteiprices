@@ -256,6 +256,19 @@
       render();
     });
   }
+  // Same as loadCopies(), but keeps whatever page you're currently on —
+  // for refreshing after an in-place action (delete/edit/add a copy),
+  // not a genuine context switch like picking a different collection.
+  function refreshCopies(){
+    refreshCollectionValue();
+    return W.get(`/collections/${currentCollectionId}/copies`).then(list => {
+      copies = list;
+      populateRarities();
+      const maxPage = Math.max(1, Math.ceil(copies.length / perPage));
+      if (page > maxPage) page = maxPage; // only pull back if the page you were on no longer exists
+      render();
+    });
+  }
   function refreshCollectionValue(){
     const el = document.getElementById('collection-value');
     if (!currentCollectionId) { el.textContent = 'Value: —'; return; }
@@ -273,7 +286,7 @@
     try {
       const result = await W.post(`/collections/${currentCollectionId}/price-check`);
       status.textContent = `Checked ${result.prefixes_checked.length} new card(s) — ${result.total_price_snapshots_added} price(s) added.${result.truncated ? ' (some skipped — click again for the rest)' : ''}`;
-      await loadCopies();
+      await refreshCopies();
     } catch (e) {
       status.textContent = 'Price check failed: ' + e.message;
     } finally {
@@ -291,7 +304,7 @@
     // one long blocking call with no feedback.
     const titles = [];
     for (const c of copies) {
-      const t = W.titlePrefix(c.card.card_number);
+      const t = W.setCodePrefix(c.card.card_number);
       if (t && !titles.includes(t)) titles.push(t);
     }
     if (!titles.length) { status.textContent = 'Nothing to update.'; btn.disabled = false; return; }
@@ -300,14 +313,14 @@
     const allChanged = [];
     try {
       for (let i = 0; i < titles.length; i++) {
-        status.textContent = `Updating title ${i + 1} of ${titles.length} (${titles[i]})… ${allChanged.length} price(s) changed so far.`;
+        status.textContent = `Updating expansion ${i + 1} of ${titles.length} (${titles[i]})… ${allChanged.length} price(s) changed so far.`;
         const result = await W.post(`/collections/${currentCollectionId}/price-update`, {only_titles: [titles[i]]});
         totalChecked += result.checked;
         allChanged.push(...result.changed);
       }
-      status.textContent = `Done — ${totalChecked} card(s) checked across ${titles.length} title(s), ${allChanged.length} price(s) changed.`;
+      status.textContent = `Done — ${totalChecked} card(s) checked across ${titles.length} expansion(s), ${allChanged.length} price(s) changed.`;
       W.showPriceChanges({checked: totalChecked, changed: allChanged, total_price_snapshots_added: 0, truncated: false});
-      await loadCopies();
+      await refreshCopies();
     } catch (e) {
       status.textContent = 'Price update failed: ' + e.message;
     } finally {
@@ -319,7 +332,11 @@
     const seen = [];
     for (const c of copies) if (c.card.rarity && !seen.includes(c.card.rarity)) seen.push(c.card.rarity);
     allRarities = W.sortRarities(seen);
-    selectedRarities = new Set();
+    // Keep whichever previously-selected rarities are still valid,
+    // rather than wiping the filter on every refresh (e.g. after
+    // deleting or editing a single copy) — same reasoning as stacking
+    // choices right below.
+    selectedRarities = new Set([...selectedRarities].filter(r => allRarities.includes(r)));
     renderRarityPanel();
     updateRarityToggleLabel();
     // Stacking choices persist across a reload of the same collection
@@ -491,7 +508,7 @@
       try {
         await W.patch(`/copies/${copy.id}`, body);
         el.hidden = true;
-        await loadCopies();
+        await refreshCopies();
       } catch (e) { alert(e.message); }
     });
     el.hidden = false;
@@ -560,7 +577,7 @@
         <div class="tile-info">
           <div class="tile-name" data-act="info" style="cursor:pointer;" title="Card details">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>
           <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span><span class="frame-badge">${FRAME_LABELS[copy.frame_type]||copy.frame_type}</span></div>
-          <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span><span>Buy ${W.fmtYenConverted(card.buy_price_jpy)}</span></div>
+          <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}${W.trendArrow(card.sell_trend)}</span><span>Buy ${W.fmtYenConverted(card.buy_price_jpy)}${W.trendArrow(card.buy_trend)}</span></div>
           ${copy.purchase_price_jpy != null ? `<div class="tile-prices" style="margin-top:2px;"><span style="color:var(--ink-soft);">Paid ${W.fmtYenConverted(copy.purchase_price_jpy)}</span></div>` : ''}
         </div>
       </div>`;
@@ -584,7 +601,7 @@
         <div class="tile-info">
           <div class="tile-name" data-act="info" style="cursor:pointer;" title="Card details">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>
           <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span><span class="frame-badge">${n} copies</span></div>
-          <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span><span>Buy ${W.fmtYenConverted(card.buy_price_jpy)}</span></div>
+          <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}${W.trendArrow(card.sell_trend)}</span><span>Buy ${W.fmtYenConverted(card.buy_price_jpy)}${W.trendArrow(card.buy_trend)}</span></div>
         </div>
       </div>`;
   }
@@ -636,12 +653,12 @@
         tile.querySelector('[data-act="binder"]').addEventListener('click', (ev) => { ev.stopPropagation(); handleSendToBinder(ev.currentTarget, copy); });
         tile.querySelector('[data-act="add"]').addEventListener('click', async (ev) => {
           ev.stopPropagation();
-          try { await W.post('/copies', {card_id: card.id, collection_id: currentCollectionId}); await loadCopies(); }
+          try { await W.post('/copies', {card_id: card.id, collection_id: currentCollectionId}); await refreshCopies(); }
           catch (e) { alert(e.message); }
         });
         tile.querySelector('[data-act="del"]').addEventListener('click', async (ev) => {
           ev.stopPropagation();
-          try { await W.del(`/copies/${copy.id}`); await loadCopies(); }
+          try { await W.del(`/copies/${copy.id}`); await refreshCopies(); }
           catch (e) { alert(e.message); }
         });
       } else {
@@ -661,7 +678,7 @@
         });
         tile.querySelector('[data-act="add"]').addEventListener('click', async (ev) => {
           ev.stopPropagation();
-          try { await W.post('/copies', {card_id: card.id, collection_id: currentCollectionId}); await loadCopies(); }
+          try { await W.post('/copies', {card_id: card.id, collection_id: currentCollectionId}); await refreshCopies(); }
           catch (e) { alert(e.message); }
         });
         tile.querySelector('[data-act="edit"]').addEventListener('click', async (ev) => {
@@ -683,7 +700,7 @@
             } else {
               await W.del(`/copies/${choice.copyId}`);
             }
-            await loadCopies();
+            await refreshCopies();
           } catch (e) { alert(e.message); }
         });
       }

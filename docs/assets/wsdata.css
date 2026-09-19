@@ -84,7 +84,7 @@ select:focus, input:focus{outline:2px solid var(--red);outline-offset:1px;}
 }
 .panel{
   position:absolute;top:100%;left:0;margin-top:2px;background:var(--card-bg);border:1px solid var(--ink);
-  max-height:320px;overflow-y:auto;z-index:30;min-width:220px;
+  max-height:320px;overflow-y:auto;z-index:95;min-width:220px;
 }
 .panel .none{padding:9px 12px;color:var(--ink-soft);font-size:13px;}
 .panel label{display:flex;align-items:flex-start;gap:8px;padding:7px 12px;font-size:13.5px;cursor:pointer;}
@@ -150,6 +150,9 @@ select:focus, input:focus{outline:2px solid var(--red);outline-offset:1px;}
 .tile-prices{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-top:auto;padding-top:6px;border-top:1px solid var(--line-soft);}
 .price-in-stock{color:var(--green);}
 .price-out-of-stock{color:var(--red);}
+.trend-up{color:var(--green);font-size:10px;margin-left:2px;}
+.trend-down{color:var(--red);font-size:10px;margin-left:2px;}
+.trend-same{color:var(--ink-soft);font-size:10px;margin-left:2px;}
 
 /* ---- pagination ---- */
 .pagination{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:28px;flex-wrap:wrap;}
