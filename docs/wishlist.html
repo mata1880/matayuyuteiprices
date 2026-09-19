@@ -238,11 +238,25 @@
     const btn = document.getElementById('price-update-btn');
     const status = document.getElementById('price-check-status');
     btn.disabled = true;
-    status.textContent = 'Updating prices — re-checking every card, can take a while…';
+
+    const titles = [];
+    for (const c of cards) {
+      const t = W.titlePrefix(c.card_number);
+      if (t && !titles.includes(t)) titles.push(t);
+    }
+    if (!titles.length) { status.textContent = 'Nothing to update.'; btn.disabled = false; return; }
+
+    let totalChecked = 0;
+    const allChanged = [];
     try {
-      const result = await W.post(`/wishlists/${currentWishlistId}/price-update`);
-      status.textContent = `Updated ${result.checked} card(s) — ${result.changed.length} price(s) changed.${result.truncated ? ' (some skipped — click again for the rest)' : ''}`;
-      W.showPriceChanges(result);
+      for (let i = 0; i < titles.length; i++) {
+        status.textContent = `Updating title ${i + 1} of ${titles.length} (${titles[i]})… ${allChanged.length} price(s) changed so far.`;
+        const result = await W.post(`/wishlists/${currentWishlistId}/price-update`, {only_titles: [titles[i]]});
+        totalChecked += result.checked;
+        allChanged.push(...result.changed);
+      }
+      status.textContent = `Done — ${totalChecked} card(s) checked across ${titles.length} title(s), ${allChanged.length} price(s) changed.`;
+      W.showPriceChanges({checked: totalChecked, changed: allChanged, total_price_snapshots_added: 0, truncated: false});
       await loadItems();
     } catch (e) {
       status.textContent = 'Price update failed: ' + e.message;
