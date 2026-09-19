@@ -241,7 +241,7 @@
 
     const titles = [];
     for (const c of cards) {
-      const t = W.titlePrefix(c.card_number);
+      const t = W.setCodePrefix(c.card_number);
       if (t && !titles.includes(t)) titles.push(t);
     }
     if (!titles.length) { status.textContent = 'Nothing to update.'; btn.disabled = false; return; }
@@ -250,12 +250,12 @@
     const allChanged = [];
     try {
       for (let i = 0; i < titles.length; i++) {
-        status.textContent = `Updating title ${i + 1} of ${titles.length} (${titles[i]})… ${allChanged.length} price(s) changed so far.`;
+        status.textContent = `Updating expansion ${i + 1} of ${titles.length} (${titles[i]})… ${allChanged.length} price(s) changed so far.`;
         const result = await W.post(`/wishlists/${currentWishlistId}/price-update`, {only_titles: [titles[i]]});
         totalChecked += result.checked;
         allChanged.push(...result.changed);
       }
-      status.textContent = `Done — ${totalChecked} card(s) checked across ${titles.length} title(s), ${allChanged.length} price(s) changed.`;
+      status.textContent = `Done — ${totalChecked} card(s) checked across ${titles.length} expansion(s), ${allChanged.length} price(s) changed.`;
       W.showPriceChanges({checked: totalChecked, changed: allChanged, total_price_snapshots_added: 0, truncated: false});
       await loadItems();
     } catch (e) {
@@ -360,13 +360,26 @@
     el.hidden = false;
   }
 
-  async function handleAddCopy(anchorEl, card){
+  async function handleAddCopy(anchorEl, card, onDone){
     await W.openPicker(anchorEl, {
       title: 'Add to collection', emptyLabel: 'No collections yet',
       listFn: () => W.get('/collections'),
       createFn: (name) => W.post('/collections', {name}),
-      onPick: async (collectionId) => { await W.post('/copies', {card_id: card.id, collection_id: collectionId}); },
+      onPick: async (collectionId) => {
+        await W.post('/copies', {card_id: card.id, collection_id: collectionId});
+        card.owned_copies = (card.owned_copies || 0) + 1;
+        if (onDone) onDone();
+      },
     });
+  }
+
+  // Updates just the owned-count indicator in place — avoids re-rendering
+  // the whole tile (and reloading its image) for a one-field change.
+  function updateOwnedBadge(tile, count){
+    const el = tile.querySelector('.owned-indicator');
+    if (!el) return;
+    el.classList.toggle('owned', count > 0);
+    el.textContent = count > 0 ? `${count} owned` : '';
   }
 
   function tileHtml(card){
@@ -381,8 +394,8 @@
         </div>
         <div class="tile-info">
           <div class="tile-name" data-act="info" style="cursor:pointer;" title="Card details">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>
-          <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span></div>
-          <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span><span>Buy ${W.fmtYenConverted(card.buy_price_jpy)}</span></div>
+          <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span><span class="owned-indicator ${card.owned_copies>0?'owned':''}">${card.owned_copies>0?card.owned_copies+' owned':''}</span></div>
+          <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}${W.trendArrow(card.sell_trend)}</span><span>Buy ${W.fmtYenConverted(card.buy_price_jpy)}${W.trendArrow(card.buy_trend)}</span></div>
         </div>
       </div>`;
   }
@@ -394,7 +407,7 @@
       const card = byId[Number(tile.dataset.id)];
       tile.querySelector('[data-act="zoom"]').addEventListener('click', () => openZoom(card));
       tile.querySelector('[data-act="info"]').addEventListener('click', () => openInfo(card));
-      tile.querySelector('[data-act="add"]').addEventListener('click', (ev) => { ev.stopPropagation(); handleAddCopy(ev.currentTarget, card); });
+      tile.querySelector('[data-act="add"]').addEventListener('click', (ev) => { ev.stopPropagation(); handleAddCopy(ev.currentTarget, card, () => updateOwnedBadge(tile, card.owned_copies)); });
       tile.querySelector('[data-act="binder"]').addEventListener('click', (ev) => { ev.stopPropagation(); W.sendCardToBinder(ev.currentTarget, card); });
       tile.querySelector('[data-act="unwish"]').addEventListener('click', async (ev) => {
         ev.stopPropagation();

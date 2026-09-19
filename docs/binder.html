@@ -28,6 +28,27 @@
   .page-index-entry:hover .page-index-edit{opacity:1;}
   @media (max-width:900px){ .page-index{display:none;} }
 
+  .binder-zoom-overlay{
+    position:fixed;inset:2vh 2vw;z-index:150;background:var(--paper);
+    border:1px solid var(--ink);box-shadow:0 10px 50px rgba(0,0,0,0.5);
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+  .binder-zoom-overlay .zoom-body{
+    flex:1;display:flex;overflow:auto;min-height:0;
+  }
+  .binder-zoom-overlay .zoom-body main{
+    flex:1;padding:16px 20px;overflow-y:auto;min-width:0;
+  }
+  .binder-zoom-overlay .zoom-body .page-index{
+    display:block !important;position:static;max-height:none;
+  }
+  .zoom-close-btn{
+    align-self:flex-end;margin:10px 14px 0 0;font-family:var(--sans);font-size:12.5px;
+    padding:7px 14px;border:1px solid var(--ink);background:var(--card-bg);color:var(--ink);cursor:pointer;
+  }
+  .zoom-close-btn:hover{background:var(--ink);color:var(--paper);}
+  body.binder-zoomed{overflow:hidden;}
+
   .binder-meta{font-size:12.5px;color:var(--ink-soft);margin-bottom:16px;}
 
   .spread-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:20px;}
@@ -119,6 +140,7 @@
     <button type="button" id="delete-binder-btn">Delete</button>
     <button type="button" id="price-check-btn">Price check</button>
     <button type="button" id="price-update-btn">Price update</button>
+    <button type="button" id="refresh-binder-btn" title="Reload this binder's data without changing which page you're viewing">↻ Refresh</button>
     <label for="currency-select" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);margin-left:8px;">Currency:</label>
     <select id="currency-select">
       <option value="USD">USD ($)</option>
@@ -152,7 +174,9 @@
   (penny sleeve style) fits raw/sleeved only — slabs and toploaders in a thin-page binder don't physically
   fit, so those copies can't be assigned to one. Use the 📘 button on Browse, Wishlist, or Collection to send
   a card here — even one you don't own yet. Click a filled slot to pick it up (it outlines in red), then
-  click any other slot to move it there — swapping places if that slot was already filled.
+  click any other slot to move it there — swapping places if that slot was already filled. Right-click
+  anywhere on the binder to zoom it to fill most of the screen — the page index and moving cards both still
+  work while zoomed. Right-click again, press Escape, or use the Exit zoom button to leave.
 </footer>
 
 <script src="assets/api.js"></script>
@@ -316,10 +340,12 @@
   }
   function refreshBinderValue(){
     const el = document.getElementById('binder-value');
-    if (!currentBinder) { el.textContent = ''; return; }
+    if (!currentBinder) { el.innerHTML = ''; return; }
     W.get(`/binders/${currentBinder.id}/value`).then(v => {
-      el.textContent = `Value: ${W.fmtYenConverted(v.total_sell_value_jpy)} sell · ${W.fmtYenConverted(v.total_buy_value_jpy)} buylist (${v.counted_slots} of ${v.total_slots} slots — greyed ones don't count)`;
-    }).catch(() => { el.textContent = ''; });
+      el.innerHTML = `Owned (${v.counted_slots} of ${v.total_slots}): ${W.fmtYenConverted(v.owned_sell_value_jpy)} sell · ${W.fmtYenConverted(v.owned_buy_value_jpy)} buylist`
+        + `<br>Greyed: ${W.fmtYenConverted(v.greyed_sell_value_jpy)} sell · ${W.fmtYenConverted(v.greyed_buy_value_jpy)} buylist`
+        + `<br>Total: ${W.fmtYenConverted(v.total_sell_value_jpy)} sell · ${W.fmtYenConverted(v.total_buy_value_jpy)} buylist`;
+    }).catch(() => { el.innerHTML = ''; });
   }
 
   function updateFillableBanner(){
@@ -584,6 +610,70 @@
   currencySelect.addEventListener('change', () => { W.setCurrency(currencySelect.value); refreshBinderValue(); });
 
   W.loadRates().then(() => refreshBinderValue());
+  // ---------- right-click zoom mode ----------
+  // Relocates the SAME live elements (not copies) into a full-screen
+  // overlay, using a placeholder to remember each one's original spot so
+  // it can be moved back exactly on exit. Since nothing is rebuilt, every
+  // existing click handler (pick-up-and-move cards, page index, Prev/
+  // Next) keeps working completely unchanged inside the zoomed view.
+  const ZOOM_ELEMENT_IDS = ['binder-meta', 'binder-value', 'fillable-banner', 'spread-nav', 'binder-view', 'empty-state'];
+  let zoomed = false;
+  let zoomPlaceholders = {};
+  function enterZoomMode(){
+    if (zoomed || !currentBinder) return;
+    zoomed = true;
+    const overlay = document.getElementById('binder-zoom-overlay');
+    const body = document.getElementById('zoom-body');
+    body.innerHTML = '';
+    const mainWrap = document.createElement('main');
+    body.appendChild(mainWrap);
+    ZOOM_ELEMENT_IDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const placeholder = document.createComment('zoom-placeholder-' + id);
+      el.parentNode.insertBefore(placeholder, el);
+      zoomPlaceholders[id] = placeholder;
+      mainWrap.appendChild(el);
+    });
+    const pageIndexEl = document.getElementById('page-index');
+    const piPlaceholder = document.createComment('zoom-placeholder-page-index');
+    pageIndexEl.parentNode.insertBefore(piPlaceholder, pageIndexEl);
+    zoomPlaceholders['page-index'] = piPlaceholder;
+    body.appendChild(pageIndexEl);
+
+    overlay.hidden = false;
+    document.body.classList.add('binder-zoomed');
+  }
+  function exitZoomMode(){
+    if (!zoomed) return;
+    zoomed = false;
+    [...ZOOM_ELEMENT_IDS, 'page-index'].forEach(id => {
+      const el = document.getElementById(id);
+      const placeholder = zoomPlaceholders[id];
+      if (el && placeholder && placeholder.parentNode) placeholder.parentNode.replaceChild(el, placeholder);
+    });
+    zoomPlaceholders = {};
+    document.getElementById('binder-zoom-overlay').hidden = true;
+    document.body.classList.remove('binder-zoomed');
+  }
+  document.getElementById('binder-view').addEventListener('contextmenu', (ev) => {
+    ev.preventDefault();
+    if (zoomed) exitZoomMode(); else enterZoomMode();
+  });
+  document.getElementById('binder-zoom-overlay').addEventListener('contextmenu', (ev) => {
+    ev.preventDefault();
+    exitZoomMode();
+  });
+  document.getElementById('zoom-close-btn').addEventListener('click', exitZoomMode);
+  document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape' && zoomed) exitZoomMode(); });
+
+  document.getElementById('refresh-binder-btn').addEventListener('click', async () => {
+    if (!currentBinder) return;
+    const btn = document.getElementById('refresh-binder-btn');
+    btn.disabled = true;
+    try { await loadSlots(); } catch (e) { alert(e.message); } finally { btn.disabled = false; }
+  });
+
   loadBinders(W.getUrlId()).then(() => {
     statusPill.textContent = binders.length ? binders.length + ' binder(s)' : 'no binders yet';
   }).catch(err => {
@@ -592,6 +682,11 @@
   });
 })();
 </script>
+
+<div id="binder-zoom-overlay" class="binder-zoom-overlay" hidden>
+  <button type="button" id="zoom-close-btn" class="zoom-close-btn" title="Exit zoomed view (Esc, or right-click again)">✕ Exit zoom</button>
+  <div class="zoom-body" id="zoom-body"></div>
+</div>
 
 </body>
 </html>

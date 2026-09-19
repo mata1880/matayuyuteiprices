@@ -61,7 +61,7 @@
       <label>Rarity tier</label>
       <div class="mode-toggle" id="rarity-tier-toggle">
         <button data-tier="all" class="active">All</button>
-        <button data-tier="high" title="Hides C/U/R/RR/CX/CR">High only</button>
+        <button data-tier="high" title="Hides C/U/R/RR/CX/CR/TD/PR">High only</button>
       </div>
     </div>
     <div class="field">
@@ -129,7 +129,7 @@
   let selectedTitles = new Set();
   let ownedFilter = 'all'; // 'all' | 'owned' | 'not_owned'
   let rarityTier = 'all'; // 'all' | 'high'
-  const LOW_RARITIES = new Set(['C', 'U', 'R', 'RR', 'CX', 'CR']);
+  const LOW_RARITIES = new Set(['C', 'U', 'R', 'RR', 'CX', 'CR', 'TD', 'PR']);
   let page = 1;
   let perPage = 24;
 
