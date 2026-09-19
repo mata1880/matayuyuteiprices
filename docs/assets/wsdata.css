@@ -225,11 +225,12 @@ select:focus, input:focus{outline:2px solid var(--red);outline-offset:1px;}
 .ws-picker-empty, .ws-picker-error{padding:8px 12px;font-size:12.5px;color:var(--ink-soft);}
 .ws-picker-error{color:var(--red);}
 
-/* ---- owned indicator, inline next to the rarity badge ---- */
+/* ---- owned indicator, inline to the right of the card code ---- */
 .owned-indicator{
-  font-family:var(--mono);font-size:10.5px;color:transparent;
+  font-family:var(--mono);font-size:9.5px;color:transparent;border:1px solid transparent;
+  padding:1px 5px;border-radius:2px;
 }
-.owned-indicator.owned{color:var(--green);font-weight:600;}
+.owned-indicator.owned{color:var(--green);border-color:var(--green);font-weight:600;}
 .backup-note{font-size:11.5px;color:var(--ink-soft);}
 
 footer{padding:20px clamp(16px,4vw,48px) 40px;color:var(--ink-soft);font-size:12px;border-top:1px solid var(--line);}

@@ -337,7 +337,7 @@
         </div>
         <div class="tile-info">
           <div class="tile-name" data-act="info" style="cursor:pointer;" title="Card details">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>
-          <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="owned-indicator ${card.owned_copies>0?'owned':''}">${card.owned_copies>0?'✓ '+card.owned_copies+' owned':''}</span><span class="tile-number">${W.escapeHtml(card.card_number)}</span></div>
+          <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span><span class="owned-indicator ${card.owned_copies>0?'owned':''}">${card.owned_copies>0?card.owned_copies+' owned':''}</span></div>
           <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span><span>Buy ${W.fmtYenConverted(card.buy_price_jpy)}</span></div>
         </div>
       </div>`;
@@ -360,16 +360,17 @@
       });
       tile.querySelector('[data-act="wish"]').addEventListener('click', async (ev) => {
         ev.stopPropagation();
+        const wishBtn = ev.currentTarget; // captured now — ev.currentTarget goes null after any await
         if (card.wishlist_id) {
           try {
             await W.del(`/wishlists/${card.wishlist_id}/items/${card.id}`);
             card.wishlist_id = null;
-            updateWishButton(ev.currentTarget, false);
+            updateWishButton(wishBtn, false);
           } catch (e) { alert(e.message); }
         } else {
-          handleAddWish(ev.currentTarget, card, (wishlistId) => {
+          handleAddWish(wishBtn, card, (wishlistId) => {
             card.wishlist_id = wishlistId;
-            updateWishButton(ev.currentTarget, true);
+            updateWishButton(wishBtn, true);
           });
         }
       });
@@ -393,7 +394,7 @@
     const el = tile.querySelector('.owned-indicator');
     if (!el) return;
     el.classList.toggle('owned', count > 0);
-    el.textContent = count > 0 ? `✓ ${count} owned` : '';
+    el.textContent = count > 0 ? `${count} owned` : '';
   }
 
   function render(){

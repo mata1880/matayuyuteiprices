@@ -635,11 +635,12 @@
         tile.querySelector('[data-act="wish"]').addEventListener('click', (ev) => { ev.stopPropagation(); handleAddWish(ev.currentTarget, card); });
         tile.querySelector('[data-act="binder"]').addEventListener('click', async (ev) => {
           ev.stopPropagation();
-          const choice = await openCopyActionPicker(ev.currentTarget, group, 'Send which copy to a binder?');
+          const anchorEl = ev.currentTarget; // captured now — ev.currentTarget goes null after any await
+          const choice = await openCopyActionPicker(anchorEl, group, 'Send which copy to a binder?');
           if (!choice) return;
           if (choice.all) { alert('Sending a whole stack at once is coming soon — pick a single copy for now.'); return; }
           const copy = group.copies.find(c => c.id === choice.copyId);
-          if (copy) handleSendToBinder(ev.currentTarget, copy);
+          if (copy) handleSendToBinder(anchorEl, copy);
         });
         tile.querySelector('[data-act="add"]').addEventListener('click', async (ev) => {
           ev.stopPropagation();
