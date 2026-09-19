@@ -9,20 +9,22 @@
 <style>
   main{max-width:none;min-width:0;}
   .binder-frame{
-    display:inline-flex;align-items:flex-start;width:fit-content;max-width:100%;
+    display:flex;align-items:flex-start;width:fit-content;max-width:100%;margin:0 auto;
   }
   .page-index{
-    width:56px;flex-shrink:0;border-left:1px solid var(--line);
-    padding:0 8px 20px;background:var(--card-bg);max-height:100vh;overflow-y:auto;position:sticky;top:0;
+    width:150px;flex-shrink:0;border-left:1px solid var(--line);
+    padding:0 12px 20px;background:var(--card-bg);max-height:100vh;overflow-y:auto;position:sticky;top:0;
   }
   .page-index-entry{
-    display:flex;align-items:center;justify-content:center;gap:4px;padding:5px 0;cursor:pointer;font-size:12.5px;
+    display:flex;align-items:center;gap:6px;padding:5px 0;cursor:pointer;font-size:12.5px;
     border-left:2px solid transparent;
   }
   .page-index-entry:hover{background:var(--hover-bg);}
   .page-index-entry.current{border-left-color:var(--red);background:var(--hover-bg);}
-  .page-index-num{font-family:var(--mono);color:var(--ink-soft);flex:1;text-align:center;}
+  .page-index-num{font-family:var(--mono);color:var(--ink-soft);flex-shrink:0;width:20px;text-align:right;}
   .page-index-num.has-content{color:var(--ink);font-weight:700;}
+  .page-index-name{flex:1;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .page-index-name.unnamed{color:var(--ink-soft);font-style:italic;}
   .page-index-edit{background:none;border:none;cursor:pointer;color:var(--ink-soft);font-size:10px;flex-shrink:0;opacity:0;}
   .page-index-entry:hover .page-index-edit{opacity:1;}
   @media (max-width:900px){ .page-index{display:none;} }
@@ -79,6 +81,8 @@
   }
   .binder-page.layout-3x3{grid-template-columns:repeat(3, clamp(130px, 13vh, 190px));}
   .binder-page.layout-4x3{grid-template-columns:repeat(4, clamp(130px, 13vh, 190px));}
+  body.binder-zoomed .binder-page.layout-3x3{grid-template-columns:repeat(3, clamp(180px, 22vh, 340px));}
+  body.binder-zoomed .binder-page.layout-4x3{grid-template-columns:repeat(4, clamp(180px, 22vh, 340px));}
 
   .binder-slot{
     aspect-ratio:5/7;position:relative;background:var(--line-soft);border:1px solid var(--line);
@@ -173,20 +177,18 @@
     <button type="button" id="prev-spread">‹ Prev</button>
     <span class="spread-label" id="spread-label">Cover</span>
     <button type="button" id="next-spread">Next ›</button>
+    <button type="button" id="zoom-open-btn" title="Zoom the binder to fill most of the screen" style="margin-left:14px;width:28px;height:28px;padding:0;border:1px solid var(--ink);background:var(--card-bg);color:var(--ink);cursor:pointer;border-radius:4px;display:flex;align-items:center;justify-content:center;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="3" x2="9" y2="9"></line><polyline points="3 9 3 3 9 3"></polyline>
+        <line x1="21" y1="3" x2="15" y2="9"></line><polyline points="15 3 21 3 21 9"></polyline>
+        <line x1="3" y1="21" x2="9" y2="15"></line><polyline points="3 15 3 21 9 21"></polyline>
+        <line x1="21" y1="21" x2="15" y2="15"></line><polyline points="21 15 21 21 15 21"></polyline>
+      </svg>
+    </button>
   </div>
 
   <div class="binder-frame">
-    <div style="position:relative;">
-      <button type="button" id="zoom-open-btn" title="Zoom the binder to fill most of the screen" style="position:absolute;top:14px;right:14px;z-index:5;width:28px;height:28px;padding:0;border:1px solid var(--ink);background:var(--card-bg);color:var(--ink);cursor:pointer;border-radius:4px;display:flex;align-items:center;justify-content:center;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="3" y1="3" x2="9" y2="9"></line><polyline points="3 9 3 3 9 3"></polyline>
-          <line x1="21" y1="3" x2="15" y2="9"></line><polyline points="15 3 21 3 21 9"></polyline>
-          <line x1="3" y1="21" x2="9" y2="15"></line><polyline points="3 15 3 21 9 21"></polyline>
-          <line x1="21" y1="21" x2="15" y2="15"></line><polyline points="21 15 21 21 15 21"></polyline>
-        </svg>
-      </button>
-      <div id="binder-view"></div>
-    </div>
+    <div id="binder-view"></div>
     <aside class="page-index" id="page-index"></aside>
   </div>
   <div class="empty-state" id="empty-state" style="display:none;"></div>
@@ -441,19 +443,20 @@
       const name = pageLabelsByNumber[p] || '';
       const isCurrent = spreadIndexForPage(p) === spreadIndex;
       const hasContent = usedPageSet.has(p);
-      html += `<div class="page-index-entry ${isCurrent ? 'current' : ''}" data-page="${p}" title="${name ? W.escapeHtml(name) : ''}">
+      html += `<div class="page-index-entry ${isCurrent ? 'current' : ''}" data-page="${p}">
         <span class="page-index-num ${hasContent ? 'has-content' : ''}" data-act="jump">${p}</span>
+        <span class="page-index-name ${name ? '' : 'unnamed'}" data-act="jump">${W.escapeHtml(name || '—')}</span>
         <button type="button" class="page-index-edit" data-act="rename" title="Name this page">✎</button>
       </div>`;
     }
     el.innerHTML = html;
     el.querySelectorAll('.page-index-entry').forEach(entry => {
       const p = Number(entry.dataset.page);
-      entry.querySelector('[data-act="jump"]').addEventListener('click', () => {
+      entry.querySelectorAll('[data-act="jump"]').forEach(el => el.addEventListener('click', () => {
         spreadIndex = spreadIndexForPage(p);
         render();
         renderPageIndex();
-      });
+      }));
       entry.querySelector('[data-act="rename"]').addEventListener('click', async (ev) => {
         ev.stopPropagation();
         const current = pageLabelsByNumber[p] || '';
