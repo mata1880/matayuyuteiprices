@@ -21,6 +21,7 @@ window.WSAPI = (function(){
 
   const get = (path) => api(path);
   const post = (path, body) => api(path, {method: "POST", body: JSON.stringify(body || {})});
+  const put = (path, body) => api(path, {method: "PUT", body: JSON.stringify(body || {})});
   const patch = (path, body) => api(path, {method: "PATCH", body: JSON.stringify(body || {})});
   const del = (path) => api(path, {method: "DELETE"});
 
@@ -145,6 +146,15 @@ window.WSAPI = (function(){
     return m ? m[0].toUpperCase() : null;
   }
 
+  // The SPECIFIC expansion code — e.g. "SAO/S71" from "SAO/S71-001R" —
+  // not just the broad title ("SAO"). Used for price-update's search
+  // scoping: no reason to search every SAO expansion when you only own
+  // cards from one. Everything before the first "-", since card numbers
+  // are always "TITLE/SETCODE-cardnum".
+  function setCodePrefix(cardNumber){
+    return (cardNumber || '').split('-', 1)[0] || null;
+  }
+
   const PAGE_SIZE = {"3x3": 9, "4x3": 12};
   const LEGACY_LAYOUT_FALLBACK = {"4x5": "4x3", "5x5": "4x3"};
   function resolvedLayout(layout){ return LEGACY_LAYOUT_FALLBACK[layout] || layout; }
@@ -256,6 +266,15 @@ window.WSAPI = (function(){
       });
   }
 
+  // ▲ green (went up) / ▼ red (went down) / - neutral (unchanged) / nothing
+  // if there's no previous snapshot to compare against yet.
+  function trendArrow(trend){
+    if (trend === "up") return '<span class="trend-up">▲</span>';
+    if (trend === "down") return '<span class="trend-down">▼</span>';
+    if (trend === "same") return '<span class="trend-same">-</span>';
+    return '';
+  }
+
   // "In Stock" -> green, "Sold Out" -> red, anything else/unknown -> default color
   function stockClass(availability){
     const a = (availability || '').toLowerCase();
@@ -300,7 +319,21 @@ window.WSAPI = (function(){
     "PR+", "PR", "SR", "RR", "R", "U", "TD", "C", "CC", "CX", "N",
   ];
   function sortRarities(list){
-    const rank = (r) => { const i = RARITY_ORDER.indexOf((r||"").toUpperCase()); return i === -1 ? 999 : i; };
+    // Exact match first. If that fails, check whether it's a NUMBERED
+    // variant of a known rarity (e.g. "SR1"/"SR2"/"SR3" — a base name
+    // from RARITY_ORDER followed by digits) and rank it immediately
+    // next to that base, in numeric order, instead of falling all the
+    // way to the bottom just because "SR1" itself isn't in the list.
+    const rank = (r) => {
+      const upper = (r || "").toUpperCase();
+      const exact = RARITY_ORDER.indexOf(upper);
+      if (exact !== -1) return exact;
+      const m = upper.match(/^([A-Z+]+)(\d+)$/);
+      if (m && RARITY_ORDER.includes(m[1])) {
+        return RARITY_ORDER.indexOf(m[1]) + Number(m[2]) / 1000; // base rank + a small fraction so 1 < 2 < 3, still ahead of the next real entry
+      }
+      return 999;
+    };
     return list.slice().sort((a, b) => {
       const ra = rank(a), rb = rank(b);
       if (ra !== rb) return ra - rb;
@@ -400,12 +433,12 @@ window.WSAPI = (function(){
   }
 
   return {
-    API_BASE, get, post, patch, del,
+    API_BASE, get, post, put, patch, del,
     fmtYen, escapeHtml, normForMatch, sortRarities,
-    getCurrency, setCurrency, loadRates, fmtYenConverted, stockClass, yenToCurrency, currencyToYen,
+    getCurrency, setCurrency, loadRates, fmtYenConverted, stockClass, trendArrow, yenToCurrency, currencyToYen,
     loadSidebarData, sidebarHtml, getUrlId, sendCardToBinder,
     getTheme, setTheme, applyTheme, initTheme, themeToggleHtml, wireThemeToggle,
-    toast, titlePrefix, PAGE_SIZE, resolvedLayout, pageSlotLabel, showPriceChanges,
+    toast, titlePrefix, setCodePrefix, PAGE_SIZE, resolvedLayout, pageSlotLabel, showPriceChanges,
     paginate, renderPagination,
     openPicker, closePicker,
   };

@@ -58,6 +58,13 @@
       </div>
     </div>
     <div class="field">
+      <label>Rarity tier</label>
+      <div class="mode-toggle" id="rarity-tier-toggle">
+        <button data-tier="all" class="active">All</button>
+        <button data-tier="high" title="Hides C/U/R/RR/CX/CR">High only</button>
+      </div>
+    </div>
+    <div class="field">
       <label for="currency-select">Currency</label>
       <select id="currency-select">
         <option value="USD">USD ($)</option>
@@ -101,6 +108,7 @@
   const rarityPanel = document.getElementById('rarity-panel');
   const titleToggle = document.getElementById('title-toggle');
   const ownedToggle = document.getElementById('owned-toggle');
+  const rarityTierToggle = document.getElementById('rarity-tier-toggle');
   const titlePanel = document.getElementById('title-panel');
   const currencySelect = document.getElementById('currency-select');
   const perPageSelect = document.getElementById('perpage-select');
@@ -120,6 +128,8 @@
   let allTitles = [];
   let selectedTitles = new Set();
   let ownedFilter = 'all'; // 'all' | 'owned' | 'not_owned'
+  let rarityTier = 'all'; // 'all' | 'high'
+  const LOW_RARITIES = new Set(['C', 'U', 'R', 'RR', 'CX', 'CR']);
   let page = 1;
   let perPage = 24;
 
@@ -314,6 +324,12 @@
     [...ownedToggle.children].forEach(b => b.classList.toggle('active', b === btn));
     page = 1; render();
   });
+  rarityTierToggle.addEventListener('click', e => {
+    const btn = e.target.closest('button'); if (!btn) return;
+    rarityTier = btn.dataset.tier;
+    [...rarityTierToggle.children].forEach(b => b.classList.toggle('active', b === btn));
+    page = 1; render();
+  });
 
   function showEmpty(msg){
     grid.innerHTML = '';
@@ -338,7 +354,7 @@
         <div class="tile-info">
           <div class="tile-name" data-act="info" style="cursor:pointer;" title="Card details">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>
           <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span><span class="owned-indicator ${card.owned_copies>0?'owned':''}">${card.owned_copies>0?card.owned_copies+' owned':''}</span></div>
-          <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}</span><span>Buy ${W.fmtYenConverted(card.buy_price_jpy)}</span></div>
+          <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}${W.trendArrow(card.sell_trend)}</span><span>Buy ${W.fmtYenConverted(card.buy_price_jpy)}${W.trendArrow(card.buy_trend)}</span></div>
         </div>
       </div>`;
   }
@@ -405,6 +421,7 @@
     if (allTitles.length && selectedTitles.size > 0) cards = cards.filter(c => selectedTitles.has(W.titlePrefix(c.card_number)));
     if (ownedFilter === 'owned') cards = cards.filter(c => c.owned_copies > 0);
     if (ownedFilter === 'not_owned') cards = cards.filter(c => !c.owned_copies);
+    if (rarityTier === 'high') cards = cards.filter(c => !LOW_RARITIES.has((c.rarity||'').toUpperCase()));
     if (!cards.length) {
       showEmpty(q ? `No cards match "${q}".` : (allCards.length ? 'No cards for this filter.' : 'No cards yet — run a price scrape (see the API docs link below) to get started.'));
       return;
