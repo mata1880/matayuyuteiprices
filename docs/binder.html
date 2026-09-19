@@ -33,6 +33,7 @@
     border:1px solid var(--ink);box-shadow:0 10px 50px rgba(0,0,0,0.5);
     display:flex;flex-direction:column;overflow:hidden;
   }
+  .binder-zoom-overlay[hidden]{display:none;}
   .binder-zoom-overlay .zoom-body{
     flex:1;display:flex;overflow:auto;min-height:0;
   }
@@ -52,6 +53,7 @@
   .binder-meta{font-size:12.5px;color:var(--ink-soft);margin-bottom:16px;}
 
   .spread-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:20px;}
+  .spread-nav[hidden]{display:none;}
   .spread-nav button{
     font-family:var(--sans);font-size:13px;padding:8px 16px;border:1px solid var(--ink);
     background:var(--card-bg);color:var(--ink);cursor:pointer;
@@ -93,6 +95,12 @@
     background:rgba(255,255,255,0.9);color:var(--ink-soft);font-size:10px;cursor:pointer;line-height:1;
     display:flex;align-items:center;justify-content:center;
   }
+  .binder-slot .slot-wish{
+    position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;border:none;
+    background:rgba(255,255,255,0.9);color:var(--line);font-size:11px;cursor:pointer;line-height:1;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .binder-slot .slot-wish.active{color:var(--red);}
   .binder-slot .slot-copy-badge{
     position:absolute;bottom:2px;left:2px;background:rgba(60,107,74,0.9);color:#fff;
     font-family:var(--mono);font-size:8.5px;padding:1px 4px;border-radius:2px;
@@ -233,6 +241,19 @@
     </div>`;
     el.querySelector('.modal-close').addEventListener('click', () => el.hidden = true);
     el.hidden = false;
+  }
+
+  async function handleAddWish(anchorEl, cardId, onDone){
+    await W.openPicker(anchorEl, {
+      title: 'Add to wishlist',
+      emptyLabel: 'No wishlists yet',
+      listFn: () => W.get('/wishlists'),
+      createFn: (name) => W.post('/wishlists', {name}),
+      onPick: async (wishlistId) => {
+        await W.post(`/wishlists/${wishlistId}/items`, {card_id: cardId});
+        onDone(wishlistId);
+      },
+    });
   }
 
   // ---------- binder picker (top toolbar) ----------
@@ -482,12 +503,14 @@
     const statusNote = s.planned ? ' (not owned yet)' : (s.greyed_out ? ' (not in a collection)' : '');
     const badge = s.planned ? '' : `#${s.copy_number}${s.grade ? ' '+W.escapeHtml(s.grade) : ''}`;
     const canFill = s.planned && fillableBySlot[index] != null;
+    const wished = !!s.wishlist_id;
     const fillBtn = s.planned
-      ? `<button type="button" class="tile-add" data-act="fill" ${canFill ? '' : 'disabled'} style="position:absolute;top:4px;left:4px;width:22px;height:22px;font-size:13px;" title="${canFill ? 'Fill from collection' : 'No available copy in your collection yet'}">+</button>`
+      ? `<button type="button" class="tile-add" data-act="fill" ${canFill ? '' : 'disabled'} style="position:absolute;bottom:2px;left:2px;width:22px;height:22px;font-size:13px;" title="${canFill ? 'Fill from collection' : 'No available copy in your collection yet'}">+</button>`
       : '';
     return `<div class="binder-slot ${s.greyed_out ? 'greyed' : ''} ${isPicked ? 'picked' : ''}" data-slot="${index}">
       ${img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(s.card.name)}" title="${W.escapeHtml(s.card.name)}${statusNote}">` : ''}
       ${fillBtn}
+      <button type="button" class="slot-wish ${wished ? 'active' : ''}" data-act="wish" title="${wished ? 'Remove from wishlist' : 'Add to a wishlist'}">${wished ? '♥' : '♡'}</button>
       ${badge ? `<span class="slot-copy-badge">${badge}</span>` : ''}
       ${img ? `<button type="button" class="slot-zoom" data-act="zoom" title="View full size">🔍</button>` : ''}
       <button type="button" class="slot-remove" data-act="remove" title="Remove from this slot">✕</button>
@@ -571,6 +594,27 @@
           ev.stopPropagation();
           const s = slotsByIndex[index];
           if (s && s.card) openZoom(s.card.image_url, s.card.name);
+        });
+      }
+      const wishBtn = cell.querySelector('[data-act="wish"]');
+      if (wishBtn) {
+        wishBtn.addEventListener('click', async (ev) => {
+          ev.stopPropagation();
+          const btn = ev.currentTarget; // captured now — ev.currentTarget goes null after any await
+          const s = slotsByIndex[index];
+          if (!s || !s.card) return;
+          if (s.wishlist_id) {
+            try {
+              await W.del(`/wishlists/${s.wishlist_id}/items/${s.card.id}`);
+              s.wishlist_id = null;
+              btn.classList.remove('active'); btn.textContent = '♡'; btn.title = 'Add to a wishlist';
+            } catch (e) { alert(e.message); }
+          } else {
+            handleAddWish(btn, s.card.id, (wishlistId) => {
+              s.wishlist_id = wishlistId;
+              btn.classList.add('active'); btn.textContent = '♥'; btn.title = 'Remove from wishlist';
+            });
+          }
         });
       }
       const fillBtn = cell.querySelector('[data-act="fill"]');
