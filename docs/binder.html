@@ -29,36 +29,6 @@
   .page-index-entry:hover .page-index-edit{opacity:1;}
   @media (max-width:900px){ .page-index{display:none;} }
 
-  .binder-zoom-overlay{
-    position:fixed;inset:2vh 2vw;z-index:150;background:var(--paper);
-    border:1px solid var(--ink);box-shadow:0 10px 50px rgba(0,0,0,0.5);
-    display:flex;flex-direction:column;overflow:hidden;
-  }
-  .binder-zoom-overlay[hidden]{display:none;}
-  .binder-zoom-overlay .zoom-body{
-    flex:1;display:flex;justify-content:center;overflow:auto;min-height:0;
-  }
-  .binder-zoom-overlay .zoom-body .zoom-stack{
-    display:flex;flex-direction:column;align-items:center;min-width:0;padding:16px 20px;overflow-y:auto;
-  }
-  .binder-zoom-overlay .zoom-body .zoom-stack #spread-nav{
-    margin-bottom:14px;flex-shrink:0;
-  }
-  .binder-zoom-overlay .zoom-body .zoom-stack #binder-view{
-    min-height:0;
-  }
-  .binder-zoom-overlay .zoom-body .page-index{
-    display:block !important;position:static;max-height:none;flex-shrink:0;
-  }
-  .zoom-close-btn{
-    align-self:flex-end;margin:10px 14px 0 0;width:28px;height:28px;padding:0;
-    border:1px solid var(--ink);background:var(--card-bg);color:var(--ink);cursor:pointer;border-radius:4px;
-    display:flex;align-items:center;justify-content:center;flex-shrink:0;
-  }
-  .zoom-close-btn:hover{background:var(--ink);color:var(--paper);}
-  #zoom-open-btn.active{background:var(--ink);color:var(--paper);}
-  body.binder-zoomed{overflow:hidden;}
-
   .binder-meta{font-size:12.5px;color:var(--ink-soft);margin-bottom:16px;}
 
   .spread-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:20px;}
@@ -81,8 +51,6 @@
   }
   .binder-page.layout-3x3{grid-template-columns:repeat(3, clamp(130px, 13vh, 190px));}
   .binder-page.layout-4x3{grid-template-columns:repeat(4, clamp(130px, 13vh, 190px));}
-  body.binder-zoomed .binder-page.layout-3x3{grid-template-columns:repeat(3, clamp(180px, 22vh, 340px));}
-  body.binder-zoomed .binder-page.layout-4x3{grid-template-columns:repeat(4, clamp(180px, 22vh, 340px));}
 
   .binder-slot{
     aspect-ratio:5/7;position:relative;background:var(--line-soft);border:1px solid var(--line);
@@ -177,14 +145,6 @@
     <button type="button" id="prev-spread">‹ Prev</button>
     <span class="spread-label" id="spread-label">Cover</span>
     <button type="button" id="next-spread">Next ›</button>
-    <button type="button" id="zoom-open-btn" title="Zoom the binder to fill most of the screen" style="margin-left:14px;width:28px;height:28px;padding:0;border:1px solid var(--ink);background:var(--card-bg);color:var(--ink);cursor:pointer;border-radius:4px;display:flex;align-items:center;justify-content:center;">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="3" y1="3" x2="9" y2="9"></line><polyline points="3 9 3 3 9 3"></polyline>
-        <line x1="21" y1="3" x2="15" y2="9"></line><polyline points="15 3 21 3 21 9"></polyline>
-        <line x1="3" y1="21" x2="9" y2="15"></line><polyline points="3 15 3 21 9 21"></polyline>
-        <line x1="21" y1="21" x2="15" y2="15"></line><polyline points="21 15 21 21 15 21"></polyline>
-      </svg>
-    </button>
   </div>
 
   <div class="binder-frame">
@@ -195,16 +155,6 @@
 </main>
 </div>
 
-<div id="binder-zoom-overlay" class="binder-zoom-overlay" hidden>
-  <button type="button" id="zoom-close-btn" class="zoom-close-btn" title="Exit zoomed view (or press Escape)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="9 3 9 9 3 9"></polyline><polyline points="15 3 15 9 21 9"></polyline>
-      <polyline points="9 21 9 15 3 15"></polyline><polyline points="15 21 15 15 21 15"></polyline>
-    </svg>
-  </button>
-  <div class="zoom-body" id="zoom-body"></div>
-</div>
-
 <footer>
   Live data from your <a href="https://ws-backend-z28t.onrender.com/docs" target="_blank" rel="noopener">backend API</a>.
   A slot shows greyed-out art either because you don't own a copy of that card yet or because a copy exists
@@ -213,10 +163,8 @@
   (penny sleeve style) fits raw/sleeved only — slabs and toploaders in a thin-page binder don't physically
   fit, so those copies can't be assigned to one. Use the 📘 button on Browse, Wishlist, or Collection to send
   a card here — even one you don't own yet. Click a filled slot to pick it up (it outlines in red), then
-  click any other slot to move it there — swapping places if that slot was already filled. Use the 🔍 Zoom
-  button (top right) to fill most of the screen with just the card grid and the page index, attached side
-  by side — Prev/Next and moving cards both still work while zoomed. Click the button again, or press
-  Escape, to leave.
+  click any other slot to move it there — swapping places if that slot was already filled. Click the 🔍 icon
+  on a card to view it full-size.
 </footer>
 
 <script src="assets/api.js"></script>
@@ -598,19 +546,18 @@
   // was already in that slot if it was occupied. Click the same slot
   // again to cancel. Simpler and far more reliable than drag-and-drop,
   // especially on a phone.
-  function slotBody(slot){
-    return slot.copy_id ? {copy_id: slot.copy_id} : {card_id: slot.card.id};
-  }
   async function moveOrSwap(fromIndex, toIndex){
-    const fromSlot = slotsByIndex[fromIndex];
-    const toSlot = slotsByIndex[toIndex];
-    if (!fromSlot) return;
     try {
-      await W.del(`/binders/${currentBinder.id}/slots/${fromIndex}`);
-      if (toSlot) await W.del(`/binders/${currentBinder.id}/slots/${toIndex}`);
-      await W.post(`/binders/${currentBinder.id}/slots/${toIndex}`, slotBody(fromSlot));
-      if (toSlot) await W.post(`/binders/${currentBinder.id}/slots/${fromIndex}`, slotBody(toSlot));
-      await loadSlots();
+      const updated = await W.post(`/binders/${currentBinder.id}/slots/move`, {from_index: fromIndex, to_index: toIndex});
+      updated.forEach(s => slotsByIndex[s.slot_index] = s);
+      // A plain move (destination was empty) only returns one slot, now
+      // sitting at toIndex — fromIndex needs to be cleared out locally.
+      // A swap returns both slots at their new positions already, so
+      // there's nothing stale left to remove.
+      if (updated.length === 1) delete slotsByIndex[fromIndex];
+      render();
+      renderPageIndex();
+      refreshBinderValue();
     } catch (e) { alert(e.message); }
   }
 
@@ -691,65 +638,6 @@
   currencySelect.addEventListener('change', () => { W.setCurrency(currencySelect.value); refreshBinderValue(); });
 
   W.loadRates().then(() => refreshBinderValue());
-  // ---------- right-click zoom mode ----------
-  // Relocates the SAME live elements (not copies) into a full-screen
-  // overlay, using a placeholder to remember each one's original spot so
-  // it can be moved back exactly on exit. Since nothing is rebuilt, every
-  // existing click handler (pick-up-and-move cards, page index, Prev/
-  // Next) keeps working completely unchanged inside the zoomed view.
-  const ZOOM_ELEMENT_IDS = ['spread-nav', 'binder-view']; // nav + the card grid — the page index gets attached to it separately
-  let zoomed = false;
-  let zoomPlaceholders = {};
-  function enterZoomMode(){
-    if (zoomed || !currentBinder) return;
-    zoomed = true;
-    const overlay = document.getElementById('binder-zoom-overlay');
-    const body = document.getElementById('zoom-body');
-    body.innerHTML = '';
-    // spread-nav (Prev/Next) stacks above binder-view; that wrapper and
-    // the page index are the only two side-by-side flex children, so the
-    // index always ends up attached directly to the grid's right.
-    const stack = document.createElement('div');
-    stack.className = 'zoom-stack';
-    body.appendChild(stack);
-    ZOOM_ELEMENT_IDS.forEach(id => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const placeholder = document.createComment('zoom-placeholder-' + id);
-      el.parentNode.insertBefore(placeholder, el);
-      zoomPlaceholders[id] = placeholder;
-      stack.appendChild(el);
-    });
-    const pageIndexEl = document.getElementById('page-index');
-    const piPlaceholder = document.createComment('zoom-placeholder-page-index');
-    pageIndexEl.parentNode.insertBefore(piPlaceholder, pageIndexEl);
-    zoomPlaceholders['page-index'] = piPlaceholder;
-    body.appendChild(pageIndexEl);
-
-    overlay.hidden = false;
-    document.body.classList.add('binder-zoomed');
-    document.getElementById('zoom-open-btn').title = 'Exit zoomed view (or press Escape)';
-    document.getElementById('zoom-open-btn').classList.add('active');
-  }
-  function exitZoomMode(){
-    if (!zoomed) return;
-    zoomed = false;
-    [...ZOOM_ELEMENT_IDS, 'page-index'].forEach(id => {
-      const el = document.getElementById(id);
-      const placeholder = zoomPlaceholders[id];
-      if (el && placeholder && placeholder.parentNode) placeholder.parentNode.replaceChild(el, placeholder);
-    });
-    zoomPlaceholders = {};
-    document.getElementById('binder-zoom-overlay').hidden = true;
-    document.body.classList.remove('binder-zoomed');
-    document.getElementById('zoom-open-btn').title = 'Zoom the binder to fill most of the screen';
-    document.getElementById('zoom-open-btn').classList.remove('active');
-  }
-  document.getElementById('zoom-open-btn').addEventListener('click', () => {
-    if (zoomed) exitZoomMode(); else enterZoomMode();
-  });
-  document.getElementById('zoom-close-btn').addEventListener('click', exitZoomMode);
-  document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape' && zoomed) exitZoomMode(); });
 
   document.getElementById('refresh-binder-btn').addEventListener('click', async () => {
     if (!currentBinder) return;
