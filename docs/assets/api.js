@@ -44,17 +44,75 @@ window.WSAPI = (function(){
     return Promise.all([get("/collections"), get("/wishlists"), get("/binders")])
       .then(([collections, wishlists, binders]) => ({collections, wishlists, binders}));
   }
+  let sidebarPicked = null; // {type, id} — the item currently "picked up" for reordering, or null
   function sidebarHtml(data, activeType, activeId){
     function section(title, items, page, type){
       const rows = items.length ? items.map(it => {
         const isActive = activeType === type && Number(activeId) === it.id;
-        return `<a class="sidebar-link ${isActive ? 'active' : ''}" href="${page}.html?id=${it.id}">${escapeHtml(it.name)}</a>`;
+        const isPicked = sidebarPicked && sidebarPicked.type === type && sidebarPicked.id === it.id;
+        return `<div class="sidebar-row ${isPicked ? 'picked' : ''}" data-type="${type}" data-id="${it.id}">
+          <button type="button" class="sidebar-handle" title="${isPicked ? 'Click another item to move it here, or click again to cancel' : 'Click to pick up and reorder'}">⠿</button>
+          <a class="sidebar-link ${isActive ? 'active' : ''}" href="${page}.html?id=${it.id}">${escapeHtml(it.name)}</a>
+          <button type="button" class="sidebar-delete" title="Delete">🗑</button>
+        </div>`;
       }).join("") : '<div class="sidebar-empty">None yet</div>';
       return `<div class="sidebar-section"><h3>${title}</h3>${rows}</div>`;
     }
     return section("Collections", data.collections, "collection", "collection")
          + section("Wishlists", data.wishlists, "wishlist", "wishlist")
          + section("Binders", data.binders, "binder", "binder");
+  }
+  // Call once right after setting the sidebar's innerHTML. Handles both
+  // delete (with confirmation) and reorder (click an item's handle to
+  // pick it up, click another item's handle in the same section to move
+  // it there — same pick-up/place pattern as binder cards, since that's
+  // proven more reliable than native drag-and-drop). onChanged is called
+  // after any delete or successful reorder so the page can re-fetch.
+  function wireSidebar(container, onChanged){
+    const ENDPOINTS = {collection: '/collections', wishlist: '/wishlists', binder: '/binders'};
+    container.querySelectorAll('.sidebar-row').forEach(row => {
+      const type = row.dataset.type;
+      const id = Number(row.dataset.id);
+      const handle = row.querySelector('.sidebar-handle');
+      const delBtn = row.querySelector('.sidebar-delete');
+      const link = row.querySelector('.sidebar-link');
+
+      handle.addEventListener('click', async (ev) => {
+        ev.preventDefault(); ev.stopPropagation();
+        if (sidebarPicked && sidebarPicked.type === type && sidebarPicked.id === id) {
+          sidebarPicked = null;
+          if (onChanged) onChanged();
+          return;
+        }
+        if (sidebarPicked && sidebarPicked.type === type) {
+          const rowsOfType = [...container.querySelectorAll(`.sidebar-row[data-type="${type}"]`)];
+          const orderedIds = rowsOfType.map(r => Number(r.dataset.id));
+          const fromIdx = orderedIds.indexOf(sidebarPicked.id);
+          if (fromIdx === -1) { sidebarPicked = null; if (onChanged) onChanged(); return; }
+          orderedIds.splice(fromIdx, 1);
+          const toIdx = orderedIds.indexOf(id);
+          orderedIds.splice(toIdx, 0, sidebarPicked.id);
+          sidebarPicked = null;
+          try { await put(`${ENDPOINTS[type]}/reorder`, {ids: orderedIds}); }
+          catch (e) { alert(e.message); }
+          if (onChanged) onChanged();
+          return;
+        }
+        sidebarPicked = {type, id};
+        if (onChanged) onChanged();
+      });
+
+      if (delBtn) {
+        delBtn.addEventListener('click', async (ev) => {
+          ev.preventDefault(); ev.stopPropagation();
+          const name = link ? link.textContent : 'this';
+          if (!confirm(`Delete the ${type} "${name}"? This can't be undone — though nothing inside it gets deleted, items just become unassigned.`)) return;
+          try { await del(`${ENDPOINTS[type]}/${id}`); }
+          catch (e) { alert(e.message); return; }
+          if (onChanged) onChanged();
+        });
+      }
+    });
   }
   function showPriceChanges(result){
     const el = document.createElement('div');
@@ -436,7 +494,7 @@ window.WSAPI = (function(){
     API_BASE, get, post, put, patch, del,
     fmtYen, escapeHtml, normForMatch, sortRarities,
     getCurrency, setCurrency, loadRates, fmtYenConverted, stockClass, trendArrow, yenToCurrency, currencyToYen,
-    loadSidebarData, sidebarHtml, getUrlId, sendCardToBinder,
+    loadSidebarData, sidebarHtml, wireSidebar, getUrlId, sendCardToBinder,
     getTheme, setTheme, applyTheme, initTheme, themeToggleHtml, wireThemeToggle,
     toast, titlePrefix, setCodePrefix, PAGE_SIZE, resolvedLayout, pageSlotLabel, showPriceChanges,
     paginate, renderPagination,

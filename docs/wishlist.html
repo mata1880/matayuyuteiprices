@@ -182,7 +182,9 @@
   }
   function refreshSidebar(){
     W.loadSidebarData().then(data => {
-      document.getElementById('sidebar').innerHTML = W.sidebarHtml(data, 'wishlist', currentWishlistId);
+      const el = document.getElementById('sidebar');
+      el.innerHTML = W.sidebarHtml(data, 'wishlist', currentWishlistId);
+      W.wireSidebar(el, () => loadWishlists(currentWishlistId));
     });
   }
   wishlistSelect.addEventListener('change', () => {

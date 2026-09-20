@@ -268,7 +268,9 @@
   }
   function refreshSidebar(){
     W.loadSidebarData().then(data => {
-      document.getElementById('sidebar').innerHTML = W.sidebarHtml(data, 'binder', currentBinder ? currentBinder.id : null);
+      const el = document.getElementById('sidebar');
+      el.innerHTML = W.sidebarHtml(data, 'binder', currentBinder ? currentBinder.id : null);
+      W.wireSidebar(el, () => loadBinders(currentBinder ? currentBinder.id : null));
     });
   }
   binderSelect.addEventListener('change', () => {

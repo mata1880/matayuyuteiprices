@@ -221,7 +221,9 @@
   }
   function refreshSidebar(){
     W.loadSidebarData().then(data => {
-      document.getElementById('sidebar').innerHTML = W.sidebarHtml(data, 'collection', currentCollectionId);
+      const el = document.getElementById('sidebar');
+      el.innerHTML = W.sidebarHtml(data, 'collection', currentCollectionId);
+      W.wireSidebar(el, () => loadCollections(currentCollectionId));
     });
   }
   collectionSelect.addEventListener('change', () => {
