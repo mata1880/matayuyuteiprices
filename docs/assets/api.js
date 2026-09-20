@@ -480,8 +480,8 @@ window.WSAPI = (function(){
       const listEl = el.querySelector('.ws-picker-list');
       listEl.innerHTML = rows.map(r => `
         <div class="ws-stepper-item" data-collection-id="${r.collection_id}">
-          <button type="button" class="ws-stepper-mini" data-act="dec" ${r.count <= 0 ? 'disabled' : ''}>−</button>
           <span class="ws-stepper-item-name">${escapeHtml(r.name)}</span>
+          <button type="button" class="ws-stepper-mini" data-act="dec" ${r.count <= 0 ? 'disabled' : ''}>−</button>
           <span class="ws-stepper-item-count">${r.count}</span>
           <button type="button" class="ws-stepper-mini" data-act="inc">+</button>
         </div>`).join('')
