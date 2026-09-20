@@ -89,8 +89,14 @@ window.WSAPI = (function(){
           const orderedIds = rowsOfType.map(r => Number(r.dataset.id));
           const fromIdx = orderedIds.indexOf(sidebarPicked.id);
           if (fromIdx === -1) { sidebarPicked = null; if (onChanged) onChanged(); return; }
-          orderedIds.splice(fromIdx, 1);
+          // Target's position must be captured BEFORE removing the picked
+          // item — removing an earlier item shifts every later index back
+          // by one, so computing toIdx afterward silently pointed at the
+          // wrong slot (and specifically made "move item 1 to item 2"
+          // collapse into a no-op, since it landed right back where it started).
           const toIdx = orderedIds.indexOf(id);
+          if (toIdx === -1) { sidebarPicked = null; if (onChanged) onChanged(); return; }
+          orderedIds.splice(fromIdx, 1);
           orderedIds.splice(toIdx, 0, sidebarPicked.id);
           sidebarPicked = null;
           try { await put(`${ENDPOINTS[type]}/reorder`, {ids: orderedIds}); }
