@@ -237,22 +237,7 @@
 
   // ---------- + / ♥ pickers ----------
   async function handleAddCopy(anchorEl, card, onDone){
-    let collectionsList = [];
-    await W.openPicker(anchorEl, {
-      title: 'Add to collection',
-      emptyLabel: 'No collections yet',
-      listFn: async () => { collectionsList = await W.get('/collections'); return collectionsList; },
-      createFn: (name) => W.post('/collections', {name}),
-      onPick: async (collectionId) => {
-        const chosen = collectionsList.find(c => c.id === collectionId);
-        let lastCount = 0;
-        await W.openQuantityStepper(anchorEl, collectionId, chosen ? chosen.name : 'Collection', card.id, (newCount) => {
-          card.owned_copies = Math.max(0, (card.owned_copies || 0) + (newCount - lastCount));
-          lastCount = newCount;
-          onDone();
-        });
-      },
-    });
+    await W.openCollectionQuantityPicker(anchorEl, card, onDone);
   }
   async function handleAddWish(anchorEl, card, onDone){
     await W.openPicker(anchorEl, {

@@ -456,45 +456,75 @@ window.WSAPI = (function(){
     const el = document.getElementById('ws-picker');
     if (el) el.hidden = true;
   }
-  // A small floating "- N +" stepper for how many copies of one card sit
-  // in one collection — replaces the old one-shot "pick a collection,
-  // add one copy, done" flow so you don't have to reopen the picker for
-  // every additional copy. Reuses the picker's positioning/backdrop.
-  async function openQuantityStepper(anchorEl, collectionId, collectionName, cardId, onCountChanged){
+  // "Add to collection" as ONE list: every collection shown at once, with
+  // its own -/+ right on the row, so adjusting quantity across multiple
+  // collections never needs more than this one picker. Stays open across
+  // clicks (closes only via outside-click/Escape, same as any picker) —
+  // click + or - as many times, on as many rows, as you want.
+  async function openCollectionQuantityPicker(anchorEl, card, onDone){
     const el = ensurePicker();
-    el.innerHTML = `<div class="ws-picker-title">${escapeHtml(collectionName)}</div>
-      <div class="ws-stepper-row">
-        <button type="button" class="ws-stepper-btn" data-act="dec">−</button>
-        <span class="ws-stepper-count" id="ws-stepper-count">…</span>
-        <button type="button" class="ws-stepper-btn" data-act="inc">+</button>
-      </div>
-      <button type="button" class="ws-picker-item" data-act="done" style="text-align:center;margin-top:4px;">Done</button>`;
+    el.innerHTML = `<div class="ws-picker-title">Add to collection</div><div class="ws-picker-list">Loading…</div>`;
     const rect = anchorEl.getBoundingClientRect();
     el.style.top = (window.scrollY + rect.bottom + 6) + "px";
     el.style.left = (window.scrollX + Math.max(8, rect.left - 100)) + "px";
     el.hidden = false;
 
-    const countEl = () => el.querySelector('#ws-stepper-count');
-    let copies = [];
-    async function refresh(){
-      try { copies = await get(`/collections/${collectionId}/copies-of-card/${cardId}`); }
-      catch (e) { countEl().textContent = '?'; return; }
-      countEl().textContent = copies.length;
-      if (onCountChanged) onCountChanged(copies.length);
+    let rows;
+    try { rows = await get(`/copies/counts-for-card/${card.id}`); }
+    catch (e) {
+      el.querySelector('.ws-picker-list').innerHTML = `<div class="ws-picker-error">Couldn't load: ${escapeHtml(e.message)}</div>`;
+      return;
     }
-    await refresh();
 
-    el.querySelector('[data-act="inc"]').addEventListener('click', async () => {
-      try { await post('/copies', {card_id: cardId, collection_id: collectionId}); await refresh(); }
-      catch (e) { alert(e.message); }
-    });
-    el.querySelector('[data-act="dec"]').addEventListener('click', async () => {
-      if (!copies.length) return;
-      const last = copies[copies.length - 1];
-      try { await del(`/copies/${last.id}`); await refresh(); }
-      catch (e) { alert(e.message); }
-    });
-    el.querySelector('[data-act="done"]').addEventListener('click', closePicker);
+    function renderRows(){
+      const listEl = el.querySelector('.ws-picker-list');
+      listEl.innerHTML = rows.map(r => `
+        <div class="ws-stepper-item" data-collection-id="${r.collection_id}">
+          <button type="button" class="ws-stepper-mini" data-act="dec" ${r.count <= 0 ? 'disabled' : ''}>−</button>
+          <span class="ws-stepper-item-name">${escapeHtml(r.name)}</span>
+          <span class="ws-stepper-item-count">${r.count}</span>
+          <button type="button" class="ws-stepper-mini" data-act="inc">+</button>
+        </div>`).join('')
+        + `<button type="button" class="ws-picker-item ws-picker-new" data-act="new">+ New…</button>`;
+
+      listEl.querySelectorAll('.ws-stepper-item').forEach(rowEl => {
+        const cid = Number(rowEl.dataset.collectionId);
+        const row = rows.find(r => r.collection_id === cid);
+        rowEl.querySelector('[data-act="inc"]').addEventListener('click', async () => {
+          try {
+            await post('/copies', {card_id: card.id, collection_id: cid});
+            row.count++;
+            card.owned_copies = (card.owned_copies || 0) + 1;
+            renderRows();
+            if (onDone) onDone();
+          } catch (e) { alert(e.message); }
+        });
+        const decBtn = rowEl.querySelector('[data-act="dec"]');
+        decBtn.addEventListener('click', async () => {
+          if (row.count <= 0) return;
+          try {
+            const copiesHere = await get(`/collections/${cid}/copies-of-card/${card.id}`);
+            const last = copiesHere[copiesHere.length - 1];
+            if (!last) return;
+            await del(`/copies/${last.id}`);
+            row.count--;
+            card.owned_copies = Math.max(0, (card.owned_copies || 0) - 1);
+            renderRows();
+            if (onDone) onDone();
+          } catch (e) { alert(e.message); }
+        });
+      });
+      listEl.querySelector('[data-act="new"]').addEventListener('click', async () => {
+        const name = prompt('Name for the new collection:');
+        if (!name) return;
+        try {
+          const created = await post('/collections', {name});
+          rows.push({collection_id: created.id, name: created.name, count: 0});
+          renderRows();
+        } catch (e) { alert(e.message); }
+      });
+    }
+    renderRows();
   }
 
   async function openPicker(anchorEl, {listFn, createFn, onPick, title, emptyLabel}){
@@ -545,6 +575,6 @@ window.WSAPI = (function(){
     getTheme, setTheme, applyTheme, initTheme, themeToggleHtml, wireThemeToggle,
     toast, titlePrefix, setCodePrefix, PAGE_SIZE, resolvedLayout, pageSlotLabel, showPriceChanges,
     paginate, renderPagination,
-    openPicker, closePicker, openQuantityStepper,
+    openPicker, closePicker, openCollectionQuantityPicker,
   };
 })();
