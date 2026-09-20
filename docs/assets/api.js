@@ -259,6 +259,39 @@ window.WSAPI = (function(){
   // don't own yet — either way, reuses an existing planned slot for this
   // exact card in the chosen binder if there is one, rather than making a
   // second slot for the same card.
+  // Finds where a card should go in a given binder (reuse an existing
+  // planned slot for it, or the next free one) and places it — the core
+  // placement logic shared by the binder-picker flow and quick-add.
+  async function addCardToBinder(binderId, card){
+    let copyId = null;
+    const avail = await get(`/binders/${binderId}/available-copies?card_id=${card.id}`);
+    if (avail.length === 1) {
+      copyId = avail[0].id;
+    } else if (avail.length > 1) {
+      const label = avail.map(c => `#${c.copy_number}${c.grade ? ' ('+c.grade+')' : ''}`).join(', ');
+      const choice = prompt(`Multiple copies available: ${label}\nType which copy number to place (or leave blank to place as a planned/not-yet-owned card):`, String(avail[0].copy_number));
+      const picked = avail.find(c => String(c.copy_number) === (choice || '').trim());
+      if (picked) copyId = picked.id;
+    }
+
+    let targetSlot = null;
+    try {
+      const planned = await get(`/binders/${binderId}/planned-slot?card_id=${card.id}`);
+      targetSlot = planned.slot_index;
+    } catch (e) { /* none — fine, fall through to next free slot */ }
+
+    if (targetSlot === null) {
+      const slots = await get(`/binders/${binderId}/slots`);
+      const occupied = new Set(slots.map(s => s.slot_index));
+      targetSlot = 0;
+      while (occupied.has(targetSlot)) targetSlot++;
+    }
+
+    const body = copyId ? {copy_id: copyId} : {card_id: card.id};
+    await post(`/binders/${binderId}/slots/${targetSlot}`, body);
+    return {slotIndex: targetSlot, copyId};
+  }
+
   async function sendCardToBinder(anchorEl, card){
     let binders;
     try { binders = await get('/binders'); } catch (e) { alert(e.message); return; }
@@ -273,34 +306,9 @@ window.WSAPI = (function(){
       onPick: async (binderId) => {
         try {
           const binder = binders.find(b => b.id === binderId) || await get(`/binders/${binderId}`).catch(() => null);
-          let copyId = null;
-          const avail = await get(`/binders/${binderId}/available-copies?card_id=${card.id}`);
-          if (avail.length === 1) {
-            copyId = avail[0].id;
-          } else if (avail.length > 1) {
-            const label = avail.map(c => `#${c.copy_number}${c.grade ? ' ('+c.grade+')' : ''}`).join(', ');
-            const choice = prompt(`Multiple copies available: ${label}\nType which copy number to place (or leave blank to place as a planned/not-yet-owned card):`, String(avail[0].copy_number));
-            const picked = avail.find(c => String(c.copy_number) === (choice || '').trim());
-            if (picked) copyId = picked.id;
-          }
-
-          let targetSlot = null;
-          try {
-            const planned = await get(`/binders/${binderId}/planned-slot?card_id=${card.id}`);
-            targetSlot = planned.slot_index;
-          } catch (e) { /* none — fine, fall through to next free slot */ }
-
-          if (targetSlot === null) {
-            const slots = await get(`/binders/${binderId}/slots`);
-            const occupied = new Set(slots.map(s => s.slot_index));
-            targetSlot = 0;
-            while (occupied.has(targetSlot)) targetSlot++;
-          }
-
-          const body = copyId ? {copy_id: copyId} : {card_id: card.id};
-          await post(`/binders/${binderId}/slots/${targetSlot}`, body);
+          const {slotIndex, copyId} = await addCardToBinder(binderId, card);
           const layout = binder ? binder.layout : '3x3';
-          toast((copyId ? 'Added to ' : 'Added as planned — ') + pageSlotLabel(layout, targetSlot) + '.');
+          toast((copyId ? 'Added to ' : 'Added as planned — ') + pageSlotLabel(layout, slotIndex) + '.');
         } catch (e) { alert(e.message); }
       },
     });
@@ -405,22 +413,25 @@ window.WSAPI = (function(){
     "AGR", "SEC+", "SEC", "SSP", "SP", "RRR+", "OFR", "RRR", "CR",
     "PR+", "PR", "SR", "RR", "R", "U", "TD", "C", "CC", "CX", "N",
   ];
+  // Standalone rank function (lower = rarer/more important), reused by
+  // both sortRarities() and the quick-add search results ranking.
+  function rarityRank(r){
+    const upper = (r || "").toUpperCase();
+    const exact = RARITY_ORDER.indexOf(upper);
+    if (exact !== -1) return exact;
+    const m = upper.match(/^([A-Z+]+)(\d+)$/);
+    if (m && RARITY_ORDER.includes(m[1])) {
+      return RARITY_ORDER.indexOf(m[1]) + Number(m[2]) / 1000;
+    }
+    return 999;
+  }
   function sortRarities(list){
     // Exact match first. If that fails, check whether it's a NUMBERED
     // variant of a known rarity (e.g. "SR1"/"SR2"/"SR3" — a base name
     // from RARITY_ORDER followed by digits) and rank it immediately
     // next to that base, in numeric order, instead of falling all the
     // way to the bottom just because "SR1" itself isn't in the list.
-    const rank = (r) => {
-      const upper = (r || "").toUpperCase();
-      const exact = RARITY_ORDER.indexOf(upper);
-      if (exact !== -1) return exact;
-      const m = upper.match(/^([A-Z+]+)(\d+)$/);
-      if (m && RARITY_ORDER.includes(m[1])) {
-        return RARITY_ORDER.indexOf(m[1]) + Number(m[2]) / 1000; // base rank + a small fraction so 1 < 2 < 3, still ahead of the next real entry
-      }
-      return 999;
-    };
+    const rank = rarityRank;
     return list.slice().sort((a, b) => {
       const ra = rank(a), rb = rank(b);
       if (ra !== rb) return ra - rb;
@@ -550,6 +561,54 @@ window.WSAPI = (function(){
     renderRows();
   }
 
+  // Search-as-you-type against the whole card database (not just what's
+  // already in the current collection/wishlist/binder), showing up to 4
+  // results as a 2x2 grid of thumbnails, rarest first. Each page decides
+  // what "picking" a result means via onPick — add a copy, wishlist it,
+  // send it to the binder, whatever that page is for.
+  function initQuickAdd(inputEl, resultsEl, onPick){
+    let debounceTimer = null;
+    inputEl.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      const q = inputEl.value.trim();
+      if (!q) { resultsEl.style.display = 'none'; resultsEl.innerHTML = ''; return; }
+      debounceTimer = setTimeout(async () => {
+        let cards;
+        try { cards = await get(`/cards?search=${encodeURIComponent(q)}`); }
+        catch (e) { return; }
+        const sorted = cards.slice().sort((a, b) => rarityRank(a.rarity) - rarityRank(b.rarity)).slice(0, 4);
+        renderQuickAddResults(resultsEl, sorted, onPick, () => { inputEl.value = ''; });
+      }, 250);
+    });
+    document.addEventListener('click', (ev) => {
+      if (!inputEl.contains(ev.target) && !resultsEl.contains(ev.target)) resultsEl.style.display = 'none';
+    });
+  }
+  function renderQuickAddResults(resultsEl, cards, onPick, onPicked){
+    if (!cards.length) {
+      resultsEl.innerHTML = '<div class="quickadd-empty">No matches.</div>';
+      resultsEl.style.display = 'block';
+      return;
+    }
+    resultsEl.innerHTML = `<div class="quickadd-grid">` + cards.map(c => `
+      <div class="quickadd-card" data-id="${c.id}">
+        ${c.image_url ? `<img src="${escapeHtml(c.image_url)}" alt="">` : '<div class="quickadd-card-noimg"></div>'}
+        <div class="quickadd-card-info">
+          <span class="quickadd-card-rarity">${escapeHtml(c.rarity || '')}</span>
+          <span class="quickadd-card-name">${escapeHtml(c.name)}</span>
+        </div>
+      </div>`).join('') + `</div>`;
+    resultsEl.style.display = 'block';
+    resultsEl.querySelectorAll('.quickadd-card').forEach(el => {
+      const card = cards.find(c => c.id === Number(el.dataset.id));
+      el.addEventListener('click', () => {
+        onPick(card);
+        resultsEl.style.display = 'none';
+        if (onPicked) onPicked();
+      });
+    });
+  }
+
   async function openPicker(anchorEl, {listFn, createFn, onPick, title, emptyLabel}){
     const el = ensurePicker();
     el.innerHTML = `<div class="ws-picker-title">${escapeHtml(title)}</div><div class="ws-picker-list">Loading…</div>`;
@@ -594,10 +653,10 @@ window.WSAPI = (function(){
     API_BASE, get, post, put, patch, del,
     fmtYen, escapeHtml, normForMatch, sortRarities,
     getCurrency, setCurrency, loadRates, fmtYenConverted, stockClass, trendArrow, yenToCurrency, currencyToYen,
-    loadSidebarData, sidebarHtml, wireSidebar, getUrlId, sendCardToBinder,
+    loadSidebarData, sidebarHtml, wireSidebar, getUrlId, sendCardToBinder, addCardToBinder,
     getTheme, setTheme, applyTheme, initTheme, themeToggleHtml, wireThemeToggle,
     toast, titlePrefix, setCodePrefix, PAGE_SIZE, resolvedLayout, pageSlotLabel, showPriceChanges,
     paginate, renderPagination,
-    openPicker, closePicker, openCollectionQuantityPicker,
+    openPicker, closePicker, openCollectionQuantityPicker, initQuickAdd,
   };
 })();

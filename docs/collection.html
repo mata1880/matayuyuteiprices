@@ -74,6 +74,10 @@
     <button type="button" id="price-check-btn">Price check</button>
     <button type="button" id="price-update-btn">Price update</button>
     <span id="price-check-status" style="font-size:12px;color:var(--ink-soft);"></span>
+    <div style="position:relative;margin-left:auto;">
+      <input type="text" id="quickadd-input" placeholder="Quick add a card…" style="font-family:var(--sans);font-size:13.5px;padding:7px 10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);width:180px;">
+      <div id="quickadd-results" class="quickadd-results"></div>
+    </div>
   </div>
 
   <div class="wl-toolbar" style="margin-top:-6px;">
@@ -420,6 +424,14 @@
   currencySelect.value = W.getCurrency();
   currencySelect.addEventListener('change', () => { W.setCurrency(currencySelect.value); refreshCollectionValue(); render(); });
   searchInput.addEventListener('input', () => { page = 1; render(); });
+  W.initQuickAdd(document.getElementById('quickadd-input'), document.getElementById('quickadd-results'), async (card) => {
+    if (!currentCollectionId) { alert('Pick a collection first.'); return; }
+    try {
+      await W.post('/copies', {card_id: card.id, collection_id: currentCollectionId});
+      W.toast(`Added ${card.name} to this collection.`);
+      await refreshCopies();
+    } catch (e) { alert(e.message); }
+  });
   binderFilterToggle.addEventListener('click', e => {
     const btn = e.target.closest('button'); if (!btn) return;
     binderFilter = btn.dataset.binder;

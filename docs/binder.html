@@ -137,6 +137,10 @@
       <input type="text" id="binder-search-input" placeholder="Find a card…" style="font-family:var(--sans);font-size:12.5px;padding:6px 8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);width:160px;">
       <div id="binder-search-results" style="display:none;position:absolute;top:100%;left:0;margin-top:2px;background:var(--card-bg);border:1px solid var(--ink);z-index:40;min-width:220px;max-height:300px;overflow-y:auto;"></div>
     </div>
+    <div style="position:relative;margin-left:8px;">
+      <input type="text" id="quickadd-input" placeholder="Quick add a card…" title="Search the whole database to add a new card to this binder" style="font-family:var(--sans);font-size:12.5px;padding:6px 8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);width:160px;">
+      <div id="quickadd-results" class="quickadd-results"></div>
+    </div>
     <label for="currency-select" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);margin-left:8px;">Currency:</label>
     <select id="currency-select">
       <option value="USD">USD ($)</option>
@@ -731,6 +735,15 @@
   });
   document.addEventListener('click', (ev) => {
     if (!binderSearchInput.contains(ev.target) && !binderSearchResults.contains(ev.target)) binderSearchResults.style.display = 'none';
+  });
+
+  W.initQuickAdd(document.getElementById('quickadd-input'), document.getElementById('quickadd-results'), async (card) => {
+    if (!currentBinder) { alert('Pick a binder first.'); return; }
+    try {
+      const {slotIndex, copyId} = await W.addCardToBinder(currentBinder.id, card);
+      W.toast((copyId ? 'Added to ' : 'Added as planned — ') + W.pageSlotLabel(currentBinder.layout, slotIndex) + '.');
+      await loadSlots();
+    } catch (e) { alert(e.message); }
   });
 
   loadBinders(W.getUrlId()).then(() => {

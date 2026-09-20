@@ -272,6 +272,27 @@ footer a{color:var(--ink-soft);}
   width:16px;height:16px;border-radius:3px;font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;
 }
 .sidebar-new:hover{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+.quickadd-grid{
+  display:grid;grid-template-columns:repeat(2, 130px);gap:2px;padding:6px;
+}
+.quickadd-card{
+  cursor:pointer;background:var(--paper);border:1px solid var(--line-soft);overflow:hidden;
+}
+.quickadd-card:hover{border-color:var(--red);}
+.quickadd-card img{width:100%;aspect-ratio:5/7;object-fit:cover;display:block;}
+.quickadd-card-noimg{width:100%;aspect-ratio:5/7;background:var(--line-soft);}
+.quickadd-card-info{padding:4px 5px;}
+.quickadd-card-rarity{
+  font-family:var(--mono);font-size:9px;color:var(--gold);display:block;
+}
+.quickadd-card-name{
+  font-size:11px;color:var(--ink);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.quickadd-empty{padding:10px 12px;font-size:12.5px;color:var(--ink-soft);}
+.quickadd-results{
+  display:none;position:absolute;top:100%;left:0;margin-top:2px;background:var(--card-bg);
+  border:1px solid var(--ink);z-index:40;box-shadow:0 4px 16px rgba(0,0,0,0.2);
+}
 .sidebar-link{
   display:block;padding:6px 8px;margin:0 -8px;font-size:13.5px;color:var(--ink);
   text-decoration:none;border-left:2px solid transparent;
