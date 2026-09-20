@@ -388,14 +388,19 @@
   }
 
   async function handleAddCopy(anchorEl, card, onDone){
+    let collectionsList = [];
     await W.openPicker(anchorEl, {
       title: 'Add to collection', emptyLabel: 'No collections yet',
-      listFn: () => W.get('/collections'),
+      listFn: async () => { collectionsList = await W.get('/collections'); return collectionsList; },
       createFn: (name) => W.post('/collections', {name}),
       onPick: async (collectionId) => {
-        await W.post('/copies', {card_id: card.id, collection_id: collectionId});
-        card.owned_copies = (card.owned_copies || 0) + 1;
-        if (onDone) onDone();
+        const chosen = collectionsList.find(c => c.id === collectionId);
+        let lastCount = 0;
+        await W.openQuantityStepper(anchorEl, collectionId, chosen ? chosen.name : 'Collection', card.id, (newCount) => {
+          card.owned_copies = Math.max(0, (card.owned_copies || 0) + (newCount - lastCount));
+          lastCount = newCount;
+          if (onDone) onDone();
+        });
       },
     });
   }

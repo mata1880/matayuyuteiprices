@@ -230,6 +230,15 @@ select:focus, input:focus{outline:2px solid var(--red);outline-offset:1px;}
 }
 .ws-picker-item:hover{background:var(--hover-bg);}
 .ws-picker-new{color:var(--red);border-top:1px solid var(--line-soft);margin-top:2px;}
+.ws-stepper-row{
+  display:flex;align-items:center;justify-content:center;gap:16px;padding:10px 16px;
+}
+.ws-stepper-btn{
+  width:32px;height:32px;border-radius:50%;border:1px solid var(--ink);background:var(--card-bg);
+  color:var(--ink);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;
+}
+.ws-stepper-btn:hover{background:var(--ink);color:var(--paper);}
+.ws-stepper-count{font-family:var(--mono);font-size:18px;min-width:24px;text-align:center;}
 .ws-picker-empty, .ws-picker-error{padding:8px 12px;font-size:12.5px;color:var(--ink-soft);}
 .ws-picker-error{color:var(--red);}
 

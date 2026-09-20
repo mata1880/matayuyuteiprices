@@ -450,6 +450,47 @@ window.WSAPI = (function(){
     const el = document.getElementById('ws-picker');
     if (el) el.hidden = true;
   }
+  // A small floating "- N +" stepper for how many copies of one card sit
+  // in one collection — replaces the old one-shot "pick a collection,
+  // add one copy, done" flow so you don't have to reopen the picker for
+  // every additional copy. Reuses the picker's positioning/backdrop.
+  async function openQuantityStepper(anchorEl, collectionId, collectionName, cardId, onCountChanged){
+    const el = ensurePicker();
+    el.innerHTML = `<div class="ws-picker-title">${escapeHtml(collectionName)}</div>
+      <div class="ws-stepper-row">
+        <button type="button" class="ws-stepper-btn" data-act="dec">−</button>
+        <span class="ws-stepper-count" id="ws-stepper-count">…</span>
+        <button type="button" class="ws-stepper-btn" data-act="inc">+</button>
+      </div>
+      <button type="button" class="ws-picker-item" data-act="done" style="text-align:center;margin-top:4px;">Done</button>`;
+    const rect = anchorEl.getBoundingClientRect();
+    el.style.top = (window.scrollY + rect.bottom + 6) + "px";
+    el.style.left = (window.scrollX + Math.max(8, rect.left - 100)) + "px";
+    el.hidden = false;
+
+    const countEl = () => el.querySelector('#ws-stepper-count');
+    let copies = [];
+    async function refresh(){
+      try { copies = await get(`/collections/${collectionId}/copies-of-card/${cardId}`); }
+      catch (e) { countEl().textContent = '?'; return; }
+      countEl().textContent = copies.length;
+      if (onCountChanged) onCountChanged(copies.length);
+    }
+    await refresh();
+
+    el.querySelector('[data-act="inc"]').addEventListener('click', async () => {
+      try { await post('/copies', {card_id: cardId, collection_id: collectionId}); await refresh(); }
+      catch (e) { alert(e.message); }
+    });
+    el.querySelector('[data-act="dec"]').addEventListener('click', async () => {
+      if (!copies.length) return;
+      const last = copies[copies.length - 1];
+      try { await del(`/copies/${last.id}`); await refresh(); }
+      catch (e) { alert(e.message); }
+    });
+    el.querySelector('[data-act="done"]').addEventListener('click', closePicker);
+  }
+
   async function openPicker(anchorEl, {listFn, createFn, onPick, title, emptyLabel}){
     const el = ensurePicker();
     el.innerHTML = `<div class="ws-picker-title">${escapeHtml(title)}</div><div class="ws-picker-list">Loading…</div>`;
@@ -498,6 +539,6 @@ window.WSAPI = (function(){
     getTheme, setTheme, applyTheme, initTheme, themeToggleHtml, wireThemeToggle,
     toast, titlePrefix, setCodePrefix, PAGE_SIZE, resolvedLayout, pageSlotLabel, showPriceChanges,
     paginate, renderPagination,
-    openPicker, closePicker,
+    openPicker, closePicker, openQuantityStepper,
   };
 })();
