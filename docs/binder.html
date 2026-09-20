@@ -494,13 +494,13 @@
     const statusNote = s.planned ? ' (not owned yet)' : (s.greyed_out ? ' (not in a collection)' : '');
     const badge = s.planned ? '' : `#${s.copy_number}${s.grade ? ' '+W.escapeHtml(s.grade) : ''}`;
     const canFill = s.planned && fillableBySlot[index] != null;
-    const needsFiling = !s.planned && s.greyed_out; // a real copy exists, it's just not filed into any collection
+    const needsFiling = s.greyed_out; // planned (no copy yet) or a copy exists but isn't filed — either way, pick a collection and it stops being greyed
     const wished = !!s.wishlist_id;
     const fillBtn = s.planned
       ? `<button type="button" class="tile-add" data-act="fill" ${canFill ? '' : 'disabled'} style="position:absolute;bottom:2px;left:2px;width:22px;height:22px;font-size:13px;" title="${canFill ? 'Fill from collection' : 'No available copy in your collection yet'}">+</button>`
       : '';
     const fileBtn = needsFiling
-      ? `<button type="button" class="slot-file" data-act="file" title="Send this copy to a collection">→</button>`
+      ? `<button type="button" class="slot-file" data-act="file" title="Send this card to a collection">→</button>`
       : '';
     return `<div class="binder-slot ${s.greyed_out ? 'greyed' : ''} ${isPicked ? 'picked' : ''}" data-slot="${index}">
       ${img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(s.card.name)}" title="${W.escapeHtml(s.card.name)}${statusNote}">` : ''}
@@ -591,18 +591,28 @@
         fileBtn.addEventListener('click', async (ev) => {
           ev.stopPropagation();
           const s = slotsByIndex[index];
-          if (!s || !s.copy_id) return;
+          if (!s || !s.card) return;
           let collections;
           try { collections = await W.get('/collections'); } catch (e) { alert(e.message); return; }
           await W.openPicker(fileBtn, {
-            title: 'Send this copy to a collection',
+            title: 'Send this card to a collection',
             emptyLabel: 'No collections yet',
             listFn: () => Promise.resolve(collections),
             createFn: (name) => W.post('/collections', {name}),
             onPick: async (collectionId) => {
               try {
-                await W.patch(`/copies/${s.copy_id}`, {collection_id: collectionId});
-                W.toast('Filed — no longer greyed out.');
+                if (s.copy_id) {
+                  // A copy already exists (e.g. its old collection got
+                  // deleted) — just file it, don't create a duplicate.
+                  await W.patch(`/copies/${s.copy_id}`, {collection_id: collectionId});
+                } else {
+                  // Planned slot, no copy at all yet — create one, filed
+                  // straight into the chosen collection, and link it to
+                  // this exact slot rather than leaving it unplaced.
+                  const newCopy = await W.post('/copies', {card_id: s.card.id, collection_id: collectionId});
+                  await W.post(`/binders/${currentBinder.id}/slots/${index}`, {copy_id: newCopy.id});
+                }
+                W.toast('Added to that collection — no longer greyed out.');
                 await loadSlots();
               } catch (e) { alert(e.message); }
             },
