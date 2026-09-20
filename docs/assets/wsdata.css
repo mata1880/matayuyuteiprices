@@ -94,6 +94,10 @@ select:focus, input:focus{outline:2px solid var(--red);outline-offset:1px;}
 }
 .panel-actions button{font-size:11px;color:var(--red);background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;}
 .panel-search{padding:8px 10px;border-bottom:1px solid var(--line-soft);}
+.panel-search-input{
+  display:block;width:calc(100% - 20px);margin:8px 10px;padding:6px 8px;
+  border:1px solid var(--line);font-family:var(--sans);font-size:12.5px;background:var(--paper);color:var(--ink);
+}
 .panel-search input{width:100%;font-size:13px;padding:6px 8px;border:1px solid var(--line);background:var(--paper);}
 .panel .set-meta{display:flex;flex-direction:column;gap:1px;}
 .panel .set-meta .code{font-family:var(--mono);font-size:10.5px;color:var(--ink-soft);}

@@ -355,11 +355,20 @@
     renderStackPanel();
     updateStackToggleLabel();
   }
+  let raritySearchText = '';
   function renderRarityPanel(){
     if (!allRarities.length) { rarityPanel.innerHTML = '<div class="none">No rarity data.</div>'; return; }
+    const q = raritySearchText.trim().toLowerCase();
+    const visible = q ? allRarities.filter(r => r.toLowerCase().includes(q)) : allRarities;
     const actions = `<div class="panel-actions"><button type="button" data-act="all">Select all</button><button type="button" data-act="none">Clear</button></div>`;
-    const boxes = allRarities.map(r => `<label><input type="checkbox" value="${W.escapeHtml(r)}" ${selectedRarities.has(r)?'checked':''}> ${W.escapeHtml(r)}</label>`).join('');
-    rarityPanel.innerHTML = actions + boxes;
+    const search = `<input type="text" class="panel-search-input" placeholder="Type to filter…" value="${W.escapeHtml(raritySearchText)}">`;
+    const boxes = visible.map(r => `<label><input type="checkbox" value="${W.escapeHtml(r)}" ${selectedRarities.has(r)?'checked':''}> ${W.escapeHtml(r)}</label>`).join('') || '<div class="none">No matches.</div>';
+    rarityPanel.innerHTML = search + actions + boxes;
+    const searchInput2 = rarityPanel.querySelector('.panel-search-input');
+    searchInput2.addEventListener('click', e => e.stopPropagation());
+    searchInput2.addEventListener('input', () => { raritySearchText = searchInput2.value; renderRarityPanel(); });
+    searchInput2.focus();
+    searchInput2.setSelectionRange(searchInput2.value.length, searchInput2.value.length);
     rarityPanel.querySelector('[data-act="all"]').addEventListener('click', () => { selectedRarities = new Set(allRarities); renderRarityPanel(); updateRarityToggleLabel(); page=1; render(); });
     rarityPanel.querySelector('[data-act="none"]').addEventListener('click', () => { selectedRarities = new Set(); renderRarityPanel(); updateRarityToggleLabel(); page=1; render(); });
     rarityPanel.querySelectorAll('input[type="checkbox"]').forEach(cb => {
@@ -375,11 +384,20 @@
     else rarityToggle.textContent = [...selectedRarities].join(', ');
   }
 
+  let stackSearchText = '';
   function renderStackPanel(){
     if (!allRarities.length) { stackPanel.innerHTML = '<div class="none">No rarity data.</div>'; return; }
+    const q = stackSearchText.trim().toLowerCase();
+    const visible = q ? allRarities.filter(r => r.toLowerCase().includes(q)) : allRarities;
     const actions = `<div class="panel-actions"><button type="button" data-act="all">Stack all</button><button type="button" data-act="none">Stack none</button></div>`;
-    const boxes = allRarities.map(r => `<label><input type="checkbox" value="${W.escapeHtml(r)}" ${stackedRarities.has(r)?'checked':''}> ${W.escapeHtml(r)}</label>`).join('');
-    stackPanel.innerHTML = actions + boxes;
+    const search = `<input type="text" class="panel-search-input" placeholder="Type to filter…" value="${W.escapeHtml(stackSearchText)}">`;
+    const boxes = visible.map(r => `<label><input type="checkbox" value="${W.escapeHtml(r)}" ${stackedRarities.has(r)?'checked':''}> ${W.escapeHtml(r)}</label>`).join('') || '<div class="none">No matches.</div>';
+    stackPanel.innerHTML = search + actions + boxes;
+    const searchInput4 = stackPanel.querySelector('.panel-search-input');
+    searchInput4.addEventListener('click', e => e.stopPropagation());
+    searchInput4.addEventListener('input', () => { stackSearchText = searchInput4.value; renderStackPanel(); });
+    searchInput4.focus();
+    searchInput4.setSelectionRange(searchInput4.value.length, searchInput4.value.length);
     stackPanel.querySelector('[data-act="all"]').addEventListener('click', () => { stackedRarities = new Set(allRarities); renderStackPanel(); updateStackToggleLabel(); render(); });
     stackPanel.querySelector('[data-act="none"]').addEventListener('click', () => { stackedRarities = new Set(); renderStackPanel(); updateStackToggleLabel(); render(); });
     stackPanel.querySelectorAll('input[type="checkbox"]').forEach(cb => {

@@ -273,11 +273,20 @@
     renderRarityPanel();
     updateRarityToggleLabel();
   }
+  let raritySearchText = '';
   function renderRarityPanel(){
     if (!allRarities.length) { rarityPanel.innerHTML = '<div class="none">No rarity data.</div>'; return; }
+    const q = raritySearchText.trim().toLowerCase();
+    const visible = q ? allRarities.filter(r => r.toLowerCase().includes(q)) : allRarities;
     const actions = `<div class="panel-actions"><button type="button" data-act="all">Select all</button><button type="button" data-act="none">Clear</button></div>`;
-    const boxes = allRarities.map(r => `<label><input type="checkbox" value="${W.escapeHtml(r)}" ${selectedRarities.has(r)?'checked':''}> ${W.escapeHtml(r)}</label>`).join('');
-    rarityPanel.innerHTML = actions + boxes;
+    const search = `<input type="text" class="panel-search-input" placeholder="Type to filter…" value="${W.escapeHtml(raritySearchText)}">`;
+    const boxes = visible.map(r => `<label><input type="checkbox" value="${W.escapeHtml(r)}" ${selectedRarities.has(r)?'checked':''}> ${W.escapeHtml(r)}</label>`).join('') || '<div class="none">No matches.</div>';
+    rarityPanel.innerHTML = search + actions + boxes;
+    const searchInput2 = rarityPanel.querySelector('.panel-search-input');
+    searchInput2.addEventListener('click', e => e.stopPropagation());
+    searchInput2.addEventListener('input', () => { raritySearchText = searchInput2.value; renderRarityPanel(); });
+    searchInput2.focus();
+    searchInput2.setSelectionRange(searchInput2.value.length, searchInput2.value.length);
     rarityPanel.querySelector('[data-act="all"]').addEventListener('click', () => { selectedRarities = new Set(allRarities); renderRarityPanel(); updateRarityToggleLabel(); page=1; render(); });
     rarityPanel.querySelector('[data-act="none"]').addEventListener('click', () => { selectedRarities = new Set(); renderRarityPanel(); updateRarityToggleLabel(); page=1; render(); });
     rarityPanel.querySelectorAll('input[type="checkbox"]').forEach(cb => {
@@ -304,11 +313,20 @@
     renderTitlePanel();
     updateTitleToggleLabel();
   }
+  let titleSearchText = '';
   function renderTitlePanel(){
     if (!allTitles.length) { titlePanel.innerHTML = '<div class="none">No titles yet.</div>'; return; }
+    const q = titleSearchText.trim().toLowerCase();
+    const visible = q ? allTitles.filter(t => t.toLowerCase().includes(q)) : allTitles;
     const actions = `<div class="panel-actions"><button type="button" data-act="all">Select all</button><button type="button" data-act="none">Clear</button></div>`;
-    const boxes = allTitles.map(t => `<label><input type="checkbox" value="${W.escapeHtml(t)}" ${selectedTitles.has(t)?'checked':''}> ${W.escapeHtml(t)}</label>`).join('');
-    titlePanel.innerHTML = actions + boxes;
+    const search = `<input type="text" class="panel-search-input" placeholder="Type to filter…" value="${W.escapeHtml(titleSearchText)}">`;
+    const boxes = visible.map(t => `<label><input type="checkbox" value="${W.escapeHtml(t)}" ${selectedTitles.has(t)?'checked':''}> ${W.escapeHtml(t)}</label>`).join('') || '<div class="none">No matches.</div>';
+    titlePanel.innerHTML = search + actions + boxes;
+    const searchInput3 = titlePanel.querySelector('.panel-search-input');
+    searchInput3.addEventListener('click', e => e.stopPropagation());
+    searchInput3.addEventListener('input', () => { titleSearchText = searchInput3.value; renderTitlePanel(); });
+    searchInput3.focus();
+    searchInput3.setSelectionRange(searchInput3.value.length, searchInput3.value.length);
     titlePanel.querySelector('[data-act="all"]').addEventListener('click', () => { selectedTitles = new Set(allTitles); renderTitlePanel(); updateTitleToggleLabel(); populateRarities(); page=1; render(); });
     titlePanel.querySelector('[data-act="none"]').addEventListener('click', () => { selectedTitles = new Set(); renderTitlePanel(); updateTitleToggleLabel(); populateRarities(); page=1; render(); });
     titlePanel.querySelectorAll('input[type="checkbox"]').forEach(cb => {
