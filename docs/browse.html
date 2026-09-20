@@ -26,6 +26,8 @@
   </nav>
 </header>
 
+<div class="page-layout">
+<aside class="sidebar" id="sidebar"></aside>
 <main>
   <div class="wl-toolbar">
     <label for="scrape-input" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);">Add a title:</label>
@@ -99,6 +101,7 @@
   <div class="empty-state" id="empty-state" style="display:none;"></div>
   <div class="pagination" id="pagination"></div>
 </main>
+</div>
 
 <footer>
   Live data from your <a href="https://ws-backend-z28t.onrender.com/docs" target="_blank" rel="noopener">backend API</a>
@@ -112,6 +115,14 @@
   const W = window.WSAPI;
   document.getElementById('ws-theme-toggle-slot').innerHTML = W.themeToggleHtml();
   W.wireThemeToggle();
+  function refreshSidebar(){
+    W.loadSidebarData().then(data => {
+      const el = document.getElementById('sidebar');
+      el.innerHTML = W.sidebarHtml(data, null, null); // Browse isn't "inside" any one of these, so nothing shows as active
+      W.wireSidebar(el, refreshSidebar);
+    });
+  }
+  refreshSidebar();
   const rarityToggle = document.getElementById('rarity-toggle');
   const rarityPanel = document.getElementById('rarity-panel');
   const titleToggle = document.getElementById('title-toggle');
