@@ -305,12 +305,13 @@ footer a{color:var(--ink-soft);}
 .sidebar-row.picked{border-left-color:var(--gold);background:var(--hover-bg);}
 .sidebar-row .sidebar-link{flex:1;margin:0;border-left:none;padding:6px 4px;}
 .sidebar-row.picked .sidebar-link{border-left:none;}
-.sidebar-handle, .sidebar-delete{
+.sidebar-handle, .sidebar-delete, .sidebar-edit{
   background:none;border:none;cursor:pointer;color:var(--ink-soft);font-size:12px;
   padding:4px;flex-shrink:0;opacity:0;
 }
-.sidebar-row:hover .sidebar-handle, .sidebar-row:hover .sidebar-delete, .sidebar-row.picked .sidebar-handle{opacity:1;}
+.sidebar-row:hover .sidebar-handle, .sidebar-row:hover .sidebar-delete, .sidebar-row:hover .sidebar-edit, .sidebar-row.picked .sidebar-handle{opacity:1;}
 .sidebar-row.picked .sidebar-handle{color:var(--gold);}
+.sidebar-edit:hover{color:var(--ink);}
 .sidebar-delete:hover{color:var(--red);}
 .sidebar-empty{font-size:12px;color:var(--ink-soft);padding:4px 0;}
 .page-layout > main{flex:1;min-width:0;}

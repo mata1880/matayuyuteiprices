@@ -53,6 +53,7 @@ window.WSAPI = (function(){
         return `<div class="sidebar-row ${isPicked ? 'picked' : ''}" data-type="${type}" data-id="${it.id}">
           <button type="button" class="sidebar-handle" title="${isPicked ? 'Click another item to move it here, or click again to cancel' : 'Click to pick up and reorder'}">⠿</button>
           <a class="sidebar-link ${isActive ? 'active' : ''}" href="${page}.html?id=${it.id}">${escapeHtml(it.name)}</a>
+          <button type="button" class="sidebar-edit" title="Rename">✎</button>
           <button type="button" class="sidebar-delete" title="Delete">🗑</button>
         </div>`;
       }).join("") : '<div class="sidebar-empty">None yet</div>';
@@ -80,7 +81,20 @@ window.WSAPI = (function(){
       const id = Number(row.dataset.id);
       const handle = row.querySelector('.sidebar-handle');
       const delBtn = row.querySelector('.sidebar-delete');
+      const editBtn = row.querySelector('.sidebar-edit');
       const link = row.querySelector('.sidebar-link');
+
+      if (editBtn) {
+        editBtn.addEventListener('click', async (ev) => {
+          ev.preventDefault(); ev.stopPropagation();
+          const current = link ? link.textContent : '';
+          const name = prompt(`Rename this ${type}:`, current);
+          if (!name || name === current) return;
+          try { await patch(`${ENDPOINTS[type]}/${id}`, {name}); }
+          catch (e) { alert(e.message); return; }
+          if (onChanged) onChanged();
+        });
+      }
 
       handle.addEventListener('click', async (ev) => {
         ev.preventDefault(); ev.stopPropagation();
