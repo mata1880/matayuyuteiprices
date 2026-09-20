@@ -16,11 +16,11 @@
     padding:0 12px 20px;background:var(--card-bg);max-height:100vh;overflow-y:auto;position:sticky;top:0;
   }
   .page-index-entry{
-    display:flex;align-items:center;gap:6px;padding:5px 0;cursor:pointer;font-size:12.5px;
-    border-left:2px solid transparent;
+    display:flex;align-items:center;gap:6px;padding:5px 6px;margin:2px 0;cursor:pointer;font-size:12.5px;
+    border:1px solid var(--line-soft);border-radius:3px;
   }
   .page-index-entry:hover{background:var(--hover-bg);}
-  .page-index-entry.current{border-left-color:var(--red);background:var(--hover-bg);}
+  .page-index-entry.current{border-color:var(--red);background:var(--hover-bg);}
   .page-index-num{font-family:var(--mono);color:var(--ink-soft);flex-shrink:0;width:20px;text-align:right;}
   .page-index-num.has-content{color:var(--ink);font-weight:700;}
   .page-index-name{flex:1;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -67,6 +67,11 @@
   .binder-slot .slot-remove{
     position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;border:none;
     background:rgba(255,255,255,0.9);color:var(--red);font-size:11px;cursor:pointer;line-height:1;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .binder-slot .slot-file{
+    position:absolute;top:2px;right:22px;width:18px;height:18px;border-radius:50%;border:none;
+    background:rgba(255,255,255,0.9);color:var(--green);font-size:12px;cursor:pointer;line-height:1;
     display:flex;align-items:center;justify-content:center;
   }
   .binder-slot .slot-zoom{
@@ -128,6 +133,10 @@
     <button type="button" id="price-check-btn">Price check</button>
     <button type="button" id="price-update-btn">Price update</button>
     <button type="button" id="refresh-binder-btn" title="Reload this binder's data without changing which page you're viewing">↻ Refresh</button>
+    <div style="position:relative;margin-left:8px;">
+      <input type="text" id="binder-search-input" placeholder="Find a card…" style="font-family:var(--sans);font-size:12.5px;padding:6px 8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);width:160px;">
+      <div id="binder-search-results" style="display:none;position:absolute;top:100%;left:0;margin-top:2px;background:var(--card-bg);border:1px solid var(--ink);z-index:40;min-width:220px;max-height:300px;overflow-y:auto;"></div>
+    </div>
     <label for="currency-select" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);margin-left:8px;">Currency:</label>
     <select id="currency-select">
       <option value="USD">USD ($)</option>
@@ -485,9 +494,13 @@
     const statusNote = s.planned ? ' (not owned yet)' : (s.greyed_out ? ' (not in a collection)' : '');
     const badge = s.planned ? '' : `#${s.copy_number}${s.grade ? ' '+W.escapeHtml(s.grade) : ''}`;
     const canFill = s.planned && fillableBySlot[index] != null;
+    const needsFiling = !s.planned && s.greyed_out; // a real copy exists, it's just not filed into any collection
     const wished = !!s.wishlist_id;
     const fillBtn = s.planned
       ? `<button type="button" class="tile-add" data-act="fill" ${canFill ? '' : 'disabled'} style="position:absolute;bottom:2px;left:2px;width:22px;height:22px;font-size:13px;" title="${canFill ? 'Fill from collection' : 'No available copy in your collection yet'}">+</button>`
+      : '';
+    const fileBtn = needsFiling
+      ? `<button type="button" class="slot-file" data-act="file" title="Send this copy to a collection">→</button>`
       : '';
     return `<div class="binder-slot ${s.greyed_out ? 'greyed' : ''} ${isPicked ? 'picked' : ''}" data-slot="${index}">
       ${img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(s.card.name)}" title="${W.escapeHtml(s.card.name)}${statusNote}">` : ''}
@@ -495,6 +508,7 @@
       <button type="button" class="slot-wish ${wished ? 'active' : ''}" data-act="wish" title="${wished ? 'Remove from wishlist' : 'Add to a wishlist'}">${wished ? '♥' : '♡'}</button>
       ${badge ? `<span class="slot-copy-badge">${badge}</span>` : ''}
       ${img ? `<button type="button" class="slot-zoom" data-act="zoom" title="View full size">🔍</button>` : ''}
+      ${fileBtn}
       <button type="button" class="slot-remove" data-act="remove" title="Remove from this slot">✕</button>
     </div>`;
   }
@@ -572,6 +586,29 @@
           catch (e) { alert(e.message); }
         });
       }
+      const fileBtn = cell.querySelector('[data-act="file"]');
+      if (fileBtn) {
+        fileBtn.addEventListener('click', async (ev) => {
+          ev.stopPropagation();
+          const s = slotsByIndex[index];
+          if (!s || !s.copy_id) return;
+          let collections;
+          try { collections = await W.get('/collections'); } catch (e) { alert(e.message); return; }
+          await W.openPicker(fileBtn, {
+            title: 'Send this copy to a collection',
+            emptyLabel: 'No collections yet',
+            listFn: () => Promise.resolve(collections),
+            createFn: (name) => W.post('/collections', {name}),
+            onPick: async (collectionId) => {
+              try {
+                await W.patch(`/copies/${s.copy_id}`, {collection_id: collectionId});
+                W.toast('Filed — no longer greyed out.');
+                await loadSlots();
+              } catch (e) { alert(e.message); }
+            },
+          });
+        });
+      }
       const zoomBtn = cell.querySelector('[data-act="zoom"]');
       if (zoomBtn) {
         zoomBtn.addEventListener('click', (ev) => {
@@ -644,6 +681,44 @@
     const btn = document.getElementById('refresh-binder-btn');
     btn.disabled = true;
     try { await loadSlots(); } catch (e) { alert(e.message); } finally { btn.disabled = false; }
+  });
+
+  const binderSearchInput = document.getElementById('binder-search-input');
+  const binderSearchResults = document.getElementById('binder-search-results');
+  binderSearchInput.addEventListener('input', () => {
+    const q = binderSearchInput.value.trim().toLowerCase();
+    if (!q) { binderSearchResults.style.display = 'none'; return; }
+    const matches = Object.entries(slotsByIndex)
+      .filter(([, s]) => s.card && ((s.card.name||'').toLowerCase().includes(q) || (s.card.card_number||'').toLowerCase().includes(q)))
+      .slice(0, 20);
+    if (!matches.length) {
+      binderSearchResults.innerHTML = '<div style="padding:8px 10px;font-size:12.5px;color:var(--ink-soft);">No matches.</div>';
+      binderSearchResults.style.display = 'block';
+      return;
+    }
+    binderSearchResults.innerHTML = matches.map(([slotIndex, s]) => {
+      const p = pageNumberFromSlot(Number(slotIndex));
+      return `<div class="binder-search-hit" data-page="${p}" style="padding:7px 10px;cursor:pointer;font-size:12.5px;border-bottom:1px solid var(--line-soft);">
+        <strong>${W.escapeHtml(s.card.name)}</strong><br>
+        <span style="color:var(--ink-soft);font-family:var(--mono);font-size:11px;">${W.escapeHtml(s.card.card_number)} — page ${p}</span>
+      </div>`;
+    }).join('');
+    binderSearchResults.style.display = 'block';
+    binderSearchResults.querySelectorAll('.binder-search-hit').forEach(hit => {
+      hit.addEventListener('click', () => {
+        const p = Number(hit.dataset.page);
+        spreadIndex = spreadIndexForPage(p);
+        render();
+        renderPageIndex();
+        binderSearchResults.style.display = 'none';
+        binderSearchInput.value = '';
+      });
+      hit.addEventListener('mouseenter', () => hit.style.background = 'var(--hover-bg)');
+      hit.addEventListener('mouseleave', () => hit.style.background = '');
+    });
+  });
+  document.addEventListener('click', (ev) => {
+    if (!binderSearchInput.contains(ev.target) && !binderSearchResults.contains(ev.target)) binderSearchResults.style.display = 'none';
   });
 
   loadBinders(W.getUrlId()).then(() => {
