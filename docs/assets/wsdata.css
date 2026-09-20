@@ -262,10 +262,16 @@ footer a{color:var(--ink-soft);}
   padding:20px 16px;background:var(--card-bg);
 }
 .sidebar-section{margin-bottom:20px;}
+.sidebar-section-head{display:flex;align-items:center;justify-content:space-between;margin:0 0 8px;}
 .sidebar-section h3{
   font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);
-  margin:0 0 8px;
+  margin:0;
 }
+.sidebar-new{
+  background:none;border:1px solid var(--line);color:var(--ink-soft);cursor:pointer;
+  width:16px;height:16px;border-radius:3px;font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;
+}
+.sidebar-new:hover{background:var(--ink);color:var(--paper);border-color:var(--ink);}
 .sidebar-link{
   display:block;padding:6px 8px;margin:0 -8px;font-size:13.5px;color:var(--ink);
   text-decoration:none;border-left:2px solid transparent;

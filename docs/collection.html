@@ -689,8 +689,7 @@
         tile.querySelector('[data-act="binder"]').addEventListener('click', (ev) => { ev.stopPropagation(); handleSendToBinder(ev.currentTarget, copy); });
         tile.querySelector('[data-act="add"]').addEventListener('click', async (ev) => {
           ev.stopPropagation();
-          try { await W.post('/copies', {card_id: card.id, collection_id: currentCollectionId}); await refreshCopies(); }
-          catch (e) { alert(e.message); }
+          await W.openCollectionQuantityPicker(ev.currentTarget, card, () => refreshCopies());
         });
         tile.querySelector('[data-act="del"]').addEventListener('click', async (ev) => {
           ev.stopPropagation();
@@ -714,8 +713,7 @@
         });
         tile.querySelector('[data-act="add"]').addEventListener('click', async (ev) => {
           ev.stopPropagation();
-          try { await W.post('/copies', {card_id: card.id, collection_id: currentCollectionId}); await refreshCopies(); }
-          catch (e) { alert(e.message); }
+          await W.openCollectionQuantityPicker(ev.currentTarget, card, () => refreshCopies());
         });
         tile.querySelector('[data-act="edit"]').addEventListener('click', async (ev) => {
           ev.stopPropagation();

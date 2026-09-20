@@ -56,7 +56,12 @@ window.WSAPI = (function(){
           <button type="button" class="sidebar-delete" title="Delete">🗑</button>
         </div>`;
       }).join("") : '<div class="sidebar-empty">None yet</div>';
-      return `<div class="sidebar-section"><h3>${title}</h3>${rows}</div>`;
+      return `<div class="sidebar-section">
+        <div class="sidebar-section-head">
+          <h3>${title}</h3>
+          <button type="button" class="sidebar-new" data-new-type="${type}" data-new-page="${page}" title="Create a new ${title.toLowerCase().replace(/s$/, '')}">+</button>
+        </div>
+        ${rows}</div>`;
     }
     return section("Collections", data.collections, "collection", "collection")
          + section("Wishlists", data.wishlists, "wishlist", "wishlist")
@@ -118,6 +123,24 @@ window.WSAPI = (function(){
           if (onChanged) onChanged();
         });
       }
+    });
+    container.querySelectorAll('.sidebar-new').forEach(btn => {
+      const type = btn.dataset.newType;
+      const page = btn.dataset.newPage;
+      btn.addEventListener('click', async (ev) => {
+        ev.preventDefault(); ev.stopPropagation();
+        const name = prompt(`Name for the new ${type}:`);
+        if (!name) return;
+        const body = {name};
+        if (type === 'binder') {
+          const layoutInput = prompt('Layout — type 3x3 (fits toploaders) or 4x3 (sleeved/raw only):', '3x3');
+          body.layout = (layoutInput || '').trim() === '4x3' ? '4x3' : '3x3';
+        }
+        let created;
+        try { created = await post(ENDPOINTS[type], body); }
+        catch (e) { alert(e.message); return; }
+        window.location.href = `${page}.html?id=${created.id}`;
+      });
     });
   }
   function showPriceChanges(result){
