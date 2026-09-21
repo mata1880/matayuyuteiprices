@@ -18,7 +18,7 @@
       <h1>My <span>Wishlist</span></h1>
       <p>Cards you want — tracked for real, across as many named wishlists as you like.</p>
     </div>
-<div style="display:flex;align-items:center;gap:8px;"><div id="status-pill">connecting…</div><span id="ws-theme-toggle-slot"></span></div>
+<div style="display:flex;align-items:center;gap:8px;"><div id="status-pill">connecting…</div><span id="ws-theme-toggle-slot"></span><span id="ws-logout-slot"></span></div>
   </div>
   <nav class="pagenav">
     <a href="index.html">Prices</a>
@@ -110,7 +110,10 @@
 <script>
 (function(){
   const W = window.WSAPI;
+  W.requireLogin();
   document.getElementById('ws-theme-toggle-slot').innerHTML = W.themeToggleHtml();
+  document.getElementById('ws-logout-slot').innerHTML = W.logoutButtonHtml();
+  W.wireLogoutButton();
   W.wireThemeToggle();
   const wishlistSelect = document.getElementById('wishlist-select');
   const newWishlistBtn = document.getElementById('new-wishlist-btn');

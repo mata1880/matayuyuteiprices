@@ -15,7 +15,7 @@
       <h1>Browse <span>Weiss Schwarz</span> Cards</h1>
       <p>Live from your collection database.</p>
     </div>
-<div style="display:flex;align-items:center;gap:8px;"><div id="status-pill">connecting…</div><span id="ws-theme-toggle-slot"></span></div>
+<div style="display:flex;align-items:center;gap:8px;"><div id="status-pill">connecting…</div><span id="ws-theme-toggle-slot"></span><span id="ws-logout-slot"></span></div>
   </div>
   <nav class="pagenav">
     <a href="index.html">Prices</a>
@@ -113,7 +113,10 @@
 <script>
 (function(){
   const W = window.WSAPI;
+  W.requireLogin();
   document.getElementById('ws-theme-toggle-slot').innerHTML = W.themeToggleHtml();
+  document.getElementById('ws-logout-slot').innerHTML = W.logoutButtonHtml();
+  W.wireLogoutButton();
   W.wireThemeToggle();
   function refreshSidebar(){
     W.loadSidebarData().then(data => {

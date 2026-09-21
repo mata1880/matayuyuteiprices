@@ -110,7 +110,7 @@
       <h1>My <span>Binders</span></h1>
       <p>Where your cards physically live — page 1 is the cover, everything after is a two-page spread.</p>
     </div>
-<div style="display:flex;align-items:center;gap:8px;"><div id="status-pill">connecting…</div><span id="ws-theme-toggle-slot"></span></div>
+<div style="display:flex;align-items:center;gap:8px;"><div id="status-pill">connecting…</div><span id="ws-theme-toggle-slot"></span><span id="ws-logout-slot"></span></div>
   </div>
   <nav class="pagenav">
     <a href="index.html">Prices</a>
@@ -184,7 +184,10 @@
 <script>
 (function(){
   const W = window.WSAPI;
+  W.requireLogin();
   document.getElementById('ws-theme-toggle-slot').innerHTML = W.themeToggleHtml();
+  document.getElementById('ws-logout-slot').innerHTML = W.logoutButtonHtml();
+  W.wireLogoutButton();
   W.wireThemeToggle();
   const binderSelect = document.getElementById('binder-select');
   const newBinderBtn = document.getElementById('new-binder-btn');

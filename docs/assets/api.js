@@ -4,12 +4,57 @@ window.WSAPI = (function(){
   // ⚠️ Your live backend URL. Update this if you ever redeploy to a new
   // Render URL, or move hosts.
   const API_BASE = "https://ws-backend-z28t.onrender.com";
+  const TOKEN_KEY = "ws-auth-token";
+
+  function getToken(){ return localStorage.getItem(TOKEN_KEY); }
+  function setToken(t){ localStorage.setItem(TOKEN_KEY, t); }
+  function clearToken(){ localStorage.removeItem(TOKEN_KEY); }
+  function isLoggedIn(){ return !!getToken(); }
+
+  // Every page (except login.html itself) should call this at the very
+  // top of its init — if there's no token at all, it sends you straight
+  // to the login screen before anything tries to load. Doesn't validate
+  // the token is still GOOD (the backend does that per-request and 401
+  // handling below covers a token going stale mid-session) — just that
+  // one exists to try.
+  function requireLogin(){
+    if (!isLoggedIn()) {
+      window.location.href = "login.html";
+      return false;
+    }
+    return true;
+  }
+
+  async function login(username, pin){
+    const result = await api("/auth/login", {method: "POST", body: JSON.stringify({username, pin})});
+    setToken(result.token);
+    return result;
+  }
+
+  async function logout(){
+    try { await api("/auth/logout", {method: "POST"}); } catch (e) { /* token already invalid — fine, we're clearing it anyway */ }
+    clearToken();
+    window.location.href = "login.html";
+  }
 
   async function api(path, options = {}) {
+    const token = getToken();
+    const headers = {"Content-Type": "application/json"};
+    if (token) headers["Authorization"] = "Bearer " + token;
     const res = await fetch(API_BASE + path, {
-      headers: {"Content-Type": "application/json"},
+      headers,
       ...options,
     });
+    if (res.status === 401) {
+      // Token's gone stale (or never existed and the backend actually
+      // requires one now — phase 5). Clear whatever we had and send them
+      // back to log in again, rather than surfacing a confusing error.
+      clearToken();
+      if (!window.location.pathname.endsWith("login.html")) {
+        window.location.href = "login.html";
+      }
+      throw new Error("Session expired — please log in again.");
+    }
     if (!res.ok) {
       let detail = res.statusText;
       try { const body = await res.json(); detail = body.detail || detail; } catch(e) {}
@@ -211,6 +256,17 @@ window.WSAPI = (function(){
       const next = getTheme() === "dark" ? "light" : "dark";
       setTheme(next);
       btn.textContent = next === "dark" ? '☀ Light' : '☾ Dark';
+    });
+  }
+
+  function logoutButtonHtml(){
+    return `<button type="button" id="ws-logout-btn" title="Log out" style="font-family:var(--sans);font-size:12px;padding:6px 10px;border:1px solid var(--line);background:var(--card-bg);color:var(--ink);cursor:pointer;border-radius:999px;">Log out</button>`;
+  }
+  function wireLogoutButton(){
+    const btn = document.getElementById('ws-logout-btn');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      if (confirm('Log out?')) logout();
     });
   }
 
@@ -665,10 +721,12 @@ window.WSAPI = (function(){
 
   return {
     API_BASE, get, post, put, patch, del,
+    getToken, isLoggedIn, requireLogin, login, logout,
     fmtYen, escapeHtml, normForMatch, sortRarities,
     getCurrency, setCurrency, loadRates, fmtYenConverted, stockClass, trendArrow, yenToCurrency, currencyToYen,
     loadSidebarData, sidebarHtml, wireSidebar, getUrlId, sendCardToBinder, addCardToBinder,
     getTheme, setTheme, applyTheme, initTheme, themeToggleHtml, wireThemeToggle,
+    logoutButtonHtml, wireLogoutButton,
     toast, titlePrefix, setCodePrefix, PAGE_SIZE, resolvedLayout, pageSlotLabel, showPriceChanges,
     paginate, renderPagination,
     openPicker, closePicker, openCollectionQuantityPicker, initQuickAdd,
