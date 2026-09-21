@@ -35,7 +35,7 @@
 
 <div class="login-box">
   <h1>Weiss<span>Schwarz</span></h1>
-  <p>Log in to see your collection.</p>
+  <p id="mode-subtitle">Log in to see your collection.</p>
 
   <form id="login-form">
     <div class="login-field">
@@ -50,7 +50,25 @@
     <div class="login-error" id="login-error"></div>
   </form>
 
+  <form id="create-profile-form" hidden>
+    <div class="login-field">
+      <label for="admin-username-input">Your (admin) username</label>
+      <input type="text" id="admin-username-input" autocomplete="username">
+    </div>
+    <div class="login-field">
+      <label for="admin-pin-input">Your (admin) PIN</label>
+      <input type="password" id="admin-pin-input" inputmode="numeric" pattern="\d{6}" maxlength="6" autocomplete="current-password">
+    </div>
+    <div class="login-field" style="border-top:1px solid var(--line-soft);padding-top:16px;">
+      <label for="new-username-input">New profile's username</label>
+      <input type="text" id="new-username-input" autocomplete="off">
+    </div>
+    <button type="submit" class="login-submit" id="create-submit-btn">Create profile</button>
+    <div class="login-error" id="create-error"></div>
+  </form>
+
   <p class="login-note" id="first-time-note">First time logging in with this username? Whatever PIN you enter here becomes your PIN from now on — there's no separate sign-up step.</p>
+  <button type="button" id="toggle-mode-btn" style="background:none;border:none;color:var(--ink-soft);font-size:11.5px;text-decoration:underline;cursor:pointer;padding:0;margin-top:8px;">Create a profile instead</button>
 </div>
 
 <script src="assets/api.js"></script>
@@ -62,13 +80,13 @@
     window.location.href = "browse.html";
   }
 
-  const form = document.getElementById('login-form');
+  const loginForm = document.getElementById('login-form');
   const usernameInput = document.getElementById('username-input');
   const pinInput = document.getElementById('pin-input');
   const submitBtn = document.getElementById('login-submit-btn');
   const errorEl = document.getElementById('login-error');
 
-  form.addEventListener('submit', async (ev) => {
+  loginForm.addEventListener('submit', async (ev) => {
     ev.preventDefault();
     errorEl.textContent = '';
     const username = usernameInput.value.trim();
@@ -86,6 +104,62 @@
       errorEl.textContent = e.message;
       submitBtn.disabled = false;
       submitBtn.textContent = 'Log in';
+    }
+  });
+
+  // --- Create profile (admin only) ---
+  const createForm = document.getElementById('create-profile-form');
+  const toggleBtn = document.getElementById('toggle-mode-btn');
+  const modeSubtitle = document.getElementById('mode-subtitle');
+  const firstTimeNote = document.getElementById('first-time-note');
+  const adminUsernameInput = document.getElementById('admin-username-input');
+  const adminPinInput = document.getElementById('admin-pin-input');
+  const newUsernameInput = document.getElementById('new-username-input');
+  const createSubmitBtn = document.getElementById('create-submit-btn');
+  const createErrorEl = document.getElementById('create-error');
+
+  let inCreateMode = false;
+  toggleBtn.addEventListener('click', () => {
+    inCreateMode = !inCreateMode;
+    loginForm.hidden = inCreateMode;
+    createForm.hidden = !inCreateMode;
+    firstTimeNote.hidden = inCreateMode;
+    toggleBtn.textContent = inCreateMode ? 'Back to log in' : 'Create a profile instead';
+    modeSubtitle.textContent = inCreateMode
+      ? "Admin only — prove it's you, then name the new profile."
+      : 'Log in to see your collection.';
+    errorEl.textContent = '';
+    createErrorEl.textContent = '';
+  });
+
+  createForm.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    createErrorEl.textContent = '';
+    const adminUsername = adminUsernameInput.value.trim();
+    const adminPin = adminPinInput.value.trim();
+    const newUsername = newUsernameInput.value.trim();
+    if (!/^\d{6}$/.test(adminPin)) {
+      createErrorEl.textContent = 'Your PIN must be exactly 6 digits.';
+      return;
+    }
+    if (!newUsername) {
+      createErrorEl.textContent = 'Enter a username for the new profile.';
+      return;
+    }
+    createSubmitBtn.disabled = true;
+    createSubmitBtn.textContent = 'Creating…';
+    try {
+      // Logging in here proves it's really the admin AND leaves this
+      // browser logged in as them afterward — same as a normal login,
+      // since completing this successfully means they really are the admin.
+      await W.login(adminUsername, adminPin);
+      const created = await W.post('/auth/profiles', {username: newUsername});
+      alert(`Created "${created.username}". They can log in themselves now, choosing their own PIN the first time.`);
+      window.location.href = "browse.html";
+    } catch (e) {
+      createErrorEl.textContent = e.message;
+      createSubmitBtn.disabled = false;
+      createSubmitBtn.textContent = 'Create profile';
     }
   });
 </script>
