@@ -25,6 +25,47 @@ window.WSAPI = (function(){
     return true;
   }
 
+  // Cached per page load — /auth/me is called at most once even if
+  // multiple things on the page ask whether this profile is an admin.
+  let _meCache = null;
+  async function currentProfile(){
+    if (!_meCache) _meCache = api("/auth/me");
+    return _meCache;
+  }
+
+  // For pages that should flatly not be reachable by a non-admin at all
+  // (e.g. Prices) — redirects away immediately if the logged-in profile
+  // isn't an admin. Call requireLogin() first; this assumes a token
+  // already exists.
+  async function requireAdmin(redirectTo){
+    try {
+      const me = await currentProfile();
+      if (!me.is_admin) {
+        window.location.href = redirectTo || "browse.html";
+        return false;
+      }
+      return true;
+    } catch (e) {
+      window.location.href = "login.html";
+      return false;
+    }
+  }
+
+  // For anything marked data-admin-only in the HTML (nav links, buttons,
+  // whole sections) — these should start hidden in the HTML itself
+  // (style="display:none"), and this reveals them ONLY once confirmed
+  // the logged-in profile is an admin. Fails closed on purpose: if the
+  // check errors out for any reason, it just stays hidden rather than
+  // risk showing something it shouldn't.
+  async function revealAdminOnly(){
+    try {
+      const me = await currentProfile();
+      if (me.is_admin) {
+        document.querySelectorAll('[data-admin-only]').forEach(el => el.style.display = '');
+      }
+    } catch (e) { /* not logged in / me failed — stays hidden, which is correct */ }
+  }
+
   async function login(username, pin){
     const result = await api("/auth/login", {method: "POST", body: JSON.stringify({username, pin})});
     setToken(result.token);
@@ -721,7 +762,7 @@ window.WSAPI = (function(){
 
   return {
     API_BASE, get, post, put, patch, del,
-    getToken, isLoggedIn, requireLogin, login, logout,
+    getToken, isLoggedIn, requireLogin, login, logout, currentProfile, requireAdmin, revealAdminOnly,
     fmtYen, escapeHtml, normForMatch, sortRarities,
     getCurrency, setCurrency, loadRates, fmtYenConverted, stockClass, trendArrow, yenToCurrency, currencyToYen,
     loadSidebarData, sidebarHtml, wireSidebar, getUrlId, sendCardToBinder, addCardToBinder,

@@ -54,11 +54,11 @@
 <div style="display:flex;align-items:center;gap:8px;"><div id="status-pill">connecting…</div><span id="ws-theme-toggle-slot"></span><span id="ws-logout-slot"></span></div>
   </div>
   <nav class="pagenav">
-    <a href="index.html">Prices</a>
-    <a href="browse.html">Browse</a>
+        <a href="browse.html">Browse</a>
     <a href="wishlist.html">Wishlist</a>
     <a href="collection.html" class="active">Collection</a>
     <a href="binder.html">Binders</a>
+    <a href="index.html" data-admin-only style="display:none;">Prices</a>
   </nav>
 </header>
 
@@ -147,6 +147,7 @@
 (function(){
   const W = window.WSAPI;
   W.requireLogin();
+  W.revealAdminOnly();
   document.getElementById('ws-theme-toggle-slot').innerHTML = W.themeToggleHtml();
   document.getElementById('ws-logout-slot').innerHTML = W.logoutButtonHtml();
   W.wireLogoutButton();

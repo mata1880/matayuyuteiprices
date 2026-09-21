@@ -356,13 +356,21 @@
   </div>
 </header>
 <nav style="display:flex;gap:2px;padding:0 clamp(16px,4vw,48px);border-bottom:1px solid var(--line);background:var(--paper);">
-  <a href="index.html" style="font-size:13.5px;padding:9px 16px;color:var(--ink);text-decoration:none;border-bottom:2px solid var(--red);margin-bottom:-1px;font-weight:600;">Prices</a>
   <a href="browse.html" style="font-size:13.5px;padding:9px 16px;color:var(--ink-soft);text-decoration:none;">Browse</a>
   <a href="wishlist.html" style="font-size:13.5px;padding:9px 16px;color:var(--ink-soft);text-decoration:none;">Wishlist</a>
   <a href="collection.html" style="font-size:13.5px;padding:9px 16px;color:var(--ink-soft);text-decoration:none;">Collection</a>
   <a href="binder.html" style="font-size:13.5px;padding:9px 16px;color:var(--ink-soft);text-decoration:none;">Binders</a>
+  <a href="index.html" style="font-size:13.5px;padding:9px 16px;color:var(--ink);text-decoration:none;border-bottom:2px solid var(--red);margin-bottom:-1px;font-weight:600;">Prices</a>
 </nav>
 
+<script src="assets/api.js"></script>
+<script>
+  (function(){
+    const W = window.WSAPI;
+    W.requireLogin();
+    W.requireAdmin("browse.html");
+  })();
+</script>
 <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:14px clamp(16px,4vw,48px);background:#fdfaf2;border-bottom:1px solid var(--line);">
   <label for="set-scrape-input" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);">Scrape prices for a whole title:</label>
   <input type="text" id="set-scrape-input" placeholder="e.g. OSK" style="min-width:140px;font-family:inherit;font-size:13.5px;padding:7px 10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);">
