@@ -717,8 +717,8 @@
         <span class="slab-code">${W.escapeHtml(card.card_number || '')}</span>
       </div>
       <div class="slab-label-right">
-        <span class="slab-grade">${W.escapeHtml(g.cond)}</span>
-        <span class="slab-descriptor">${CONDITION_WORDS[g.cond] || ''}</span>
+        <span class="slab-grade">${W.escapeHtml(CONDITIONS.includes(g.cond) ? g.cond : g.cond === 'Graded' ? g.score : g.cond === '__legacy' ? g.legacy : '')}</span>
+        <span class="slab-descriptor">${CONDITIONS.includes(g.cond) ? CONDITION_WORDS[g.cond] : g.cond === 'Graded' ? g.company : ''}</span>
       </div>
     </div>`;
   }
@@ -741,6 +741,15 @@
           <select id="ef-cond" style="flex:1;"></select>
           <select id="ef-company" style="flex:1;display:none;"></select>
           <select id="ef-score" style="flex:1;display:none;"></select>
+        </div>
+        <div id="ef-holder-row">
+          <label for="ef-holder">Slab</label>
+          <select id="ef-holder">
+            <option value="auto">Auto (by rarity)</option>
+            <option value="force_toploader">Toploader</option>
+            <option value="force_onetouch">Magnetic one-touch</option>
+            <option value="force_none">None</option>
+          </select>
         </div>
         <label for="ef-price">Purchase price</label>
         <div style="display:flex;gap:6px;">
@@ -766,6 +775,18 @@
     el.querySelector('[data-act="cancel"]').addEventListener('click', () => el.hidden = true);
 
     wireGradeSelects(el, copy.grade);
+    const holderSel = el.querySelector('#ef-holder');
+    holderSel.value = ['force_toploader','force_onetouch','force_none'].includes(copy.frame_type) ? copy.frame_type : 'auto';
+    // PSA/BGS copies always show their own slab, so the setting only matters otherwise.
+    const holderRow = el.querySelector('#ef-holder-row');
+    const syncHolderRow = () => {
+      const graded = el.querySelector('#ef-cond').value === 'Graded';
+      const co = el.querySelector('#ef-company').value;
+      holderRow.style.display = graded && (co === 'PSA' || co === 'BGS') ? 'none' : '';
+    };
+    el.querySelector('#ef-cond').addEventListener('change', syncHolderRow);
+    el.querySelector('#ef-company').addEventListener('change', syncHolderRow);
+    syncHolderRow();
 
     const priceInput = el.querySelector('#ef-price');
     const priceCurrency = el.querySelector('#ef-price-currency');
@@ -789,6 +810,7 @@
       }
       const body = {
         grade: readGradeSelects(el),
+        frame_type: holderSel.value,
         note: el.querySelector('#ef-note').value || null,
         purchase_price_jpy: purchasePriceJpy,
         date_acquired: el.querySelector('#ef-date').value || null,
@@ -853,8 +875,13 @@
     const g = parseGrade(copy.grade);
     // "psa" now means "render as a slab" — PSA or BGS; label style picked below.
     const gradedSlab = g.cond === 'Graded' && (g.company === 'PSA' || g.company === 'BGS');
-    const conditionHolder = CONDITIONS.includes(g.cond);
-    const toploader = conditionHolder && LOW_RARITIES.includes((card.rarity || '').toUpperCase());
+    // Slab setting (stored in frame_type): force_* = explicit choice, anything else = auto by rarity.
+    const pref = copy.frame_type;
+    const forced = pref === 'force_toploader' || pref === 'force_onetouch';
+    const otherGraded = g.cond === 'Graded' && !gradedSlab;   // CGC/TAG: plain badge unless forced into a holder
+    const conditionHolder = !gradedSlab && pref !== 'force_none' && (!otherGraded || forced);
+    const toploader = conditionHolder && (pref === 'force_toploader'
+      || (pref !== 'force_onetouch' && LOW_RARITIES.includes((card.rarity || '').toUpperCase())));
     const oneTouch = conditionHolder && !toploader;
     const psa = gradedSlab || conditionHolder;   // "psa" = render inside a holder (slab, one-touch or toploader)
     const slabLabel = conditionHolder ? oneTouchLabelHtml(card, g, toploader)
