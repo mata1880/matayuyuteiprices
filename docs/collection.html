@@ -47,12 +47,9 @@
   .slab-code{margin-top:auto;font-family:var(--mono);font-size:7.5px;letter-spacing:0.02em;}
   .slab-label-right{display:flex;flex-direction:column;align-items:flex-end;text-align:right;white-space:nowrap;}
   .slab-grade{font-size:12px;font-weight:700;line-height:1.1;}
-  .slab-seal{
-    position:absolute;left:62%;bottom:4px;transform:translateX(-50%);
-    width:15px;height:15px;border-radius:50%;
-    background:radial-gradient(circle at 35% 30%,#3c5fb8,#1b2f6b);
-    box-shadow:0 0 0 1.5px #fff, 0 0 0 2.5px #c8102e;
-    display:flex;align-items:center;justify-content:center;color:#fff;font-size:8px;line-height:1;
+  .slab-label .slab-logo{
+    position:absolute;left:50%;bottom:-3px;transform:translateX(-50%);
+    height:18px;width:auto;display:block;pointer-events:none;border-radius:2px;
   }
   .slab-well{
     margin-top:7px;aspect-ratio:5/7;position:relative;overflow:hidden;border-radius:4px;
@@ -619,7 +616,7 @@
         <span>${PSA_DESCRIPTORS[g.score] || ''}</span>
         <span class="slab-grade">${W.escapeHtml(g.score)}</span>
       </div>
-      <span class="slab-seal">★</span>
+      <img class="slab-logo" src="assets/psa-logo.png" alt="PSA">
     </div>`;
   }
 
