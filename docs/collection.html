@@ -43,16 +43,16 @@
   .slab-label-left{flex:1;min-width:0;display:flex;flex-direction:column;}
   .slab-label-left span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .slab-label-name{font-weight:700;}
-  .slab-barcode{
-    margin-top:auto;height:8px;width:40%;
-    background:repeating-linear-gradient(90deg,#111 0 1px,transparent 1px 2px,#111 2px 4px,transparent 4px 5px,#111 5px 6px,transparent 6px 8px);
-  }
+  .slab-label{cursor:pointer;}
+  .slab-code{margin-top:auto;font-family:var(--mono);font-size:7.5px;letter-spacing:0.02em;}
   .slab-label-right{display:flex;flex-direction:column;align-items:flex-end;text-align:right;white-space:nowrap;}
   .slab-grade{font-size:12px;font-weight:700;line-height:1.1;}
-  .slab-logo{
-    position:absolute;left:50%;bottom:2px;transform:translateX(-50%);
-    font-weight:900;font-style:italic;font-size:8px;letter-spacing:0.02em;color:#c8102e;
-    background:#fff;padding:0 3px;border:1px solid #1f3f8f;border-radius:2px;line-height:1.2;
+  .slab-seal{
+    position:absolute;left:62%;bottom:4px;transform:translateX(-50%);
+    width:15px;height:15px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#3c5fb8,#1b2f6b);
+    box-shadow:0 0 0 1.5px #fff, 0 0 0 2.5px #c8102e;
+    display:flex;align-items:center;justify-content:center;color:#fff;font-size:8px;line-height:1;
   }
   .slab-well{
     margin-top:7px;aspect-ratio:5/7;position:relative;overflow:hidden;border-radius:4px;
@@ -64,7 +64,7 @@
   .tile-media.slab .tile-binder{left:46px;}
   .tile-media.slab .tile-wish, .tile-media.slab .tile-gear{right:14px;}
   .tile-media.slab .tile-del{right:46px;}
-  .tile-info.slabbed .tile-prices{margin-top:0;}
+  .tile-info.slabbed .tile-prices{margin-top:0;border-top:none;padding-top:0;}
   .tile-info.slabbed{gap:6px;}
   .frame-badge{
     font-family:var(--mono);font-size:9.5px;color:var(--ink-soft);text-transform:uppercase;
@@ -607,19 +607,19 @@
   function psaLabelHtml(card, g){
     const num = (card.card_number || '').split('-').pop();
     const setLine = card.expansion_name || (card.card_number || '').split('-')[0];
-    return `<div class="slab-label">
+    return `<div class="slab-label" data-act="info" title="Card details">
       <div class="slab-label-left">
         <span>${W.escapeHtml(setLine)}</span>
         <span class="slab-label-name">${W.escapeHtml(card.name || '')}</span>
         <span>${W.escapeHtml(card.rarity || '')}</span>
-        <div class="slab-barcode"></div>
+        <span class="slab-code">${W.escapeHtml(card.card_number || '')}</span>
       </div>
       <div class="slab-label-right">
         <span>#${W.escapeHtml(num)}</span>
         <span>${PSA_DESCRIPTORS[g.score] || ''}</span>
         <span class="slab-grade">${W.escapeHtml(g.score)}</span>
       </div>
-      <span class="slab-logo">PSA</span>
+      <span class="slab-seal">★</span>
     </div>`;
   }
 
@@ -767,7 +767,7 @@
         </div>
         <div class="tile-info${psa ? ' slabbed' : ''}">
           ${psa ? '' : `<div class="tile-name" data-act="info" style="cursor:pointer;" title="Card details">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>`}
-          <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span>${psa ? '<button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button>' : ''}</div>
+          ${psa ? '' : `<div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span></div>`}
           <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}${W.trendArrow(card.sell_trend)}</span><span>Buy ${W.fmtYenConverted(card.buy_price_jpy)}${W.trendArrow(card.buy_trend)}</span></div>
           ${copy.purchase_price_jpy != null ? `<div class="tile-prices" style="margin-top:2px;"><span style="color:var(--ink-soft);">Paid ${W.fmtYenConverted(copy.purchase_price_jpy)}</span></div>` : ''}
         </div>
@@ -838,7 +838,7 @@
         const copy = pageItems.singlesById[Number(tile.dataset.copyId)];
         const card = copy.card;
         tile.querySelector('[data-act="zoom"]').addEventListener('click', () => openZoom(card));
-        tile.querySelector('[data-act="info"]').addEventListener('click', () => openInfo(card));
+        tile.querySelector('[data-act="info"]').addEventListener('click', (ev) => { ev.stopPropagation(); openInfo(card); });
         tile.querySelector('[data-act="edit"]').addEventListener('click', (ev) => { ev.stopPropagation(); openEditModal(copy); });
         tile.querySelector('[data-act="wish"]').addEventListener('click', (ev) => { ev.stopPropagation(); handleAddWish(ev.currentTarget, card); });
         tile.querySelector('[data-act="binder"]').addEventListener('click', (ev) => { ev.stopPropagation(); handleSendToBinder(ev.currentTarget, copy); });
