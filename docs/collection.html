@@ -61,6 +61,25 @@
   .slab-label.bgs .slab-label-right{justify-content:center;}
   .slab-label.bgs .slab-grade{font-size:17px;line-height:1;}
   .slab-label.bgs .slab-descriptor{font-size:6.5px;font-weight:700;letter-spacing:0.03em;margin-top:2px;}
+  /* Magnetic one-touch holder (NM/LP/MP/HP copies): frosted clear case,
+     gold magnet at top center, same-size info strip with condition on the right. */
+  .tile-media.slab.onetouch{
+    padding:15px 8px 8px;border-radius:12px;
+    background:linear-gradient(150deg,rgba(255,255,255,0.75),rgba(205,211,219,0.5) 50%,rgba(255,255,255,0.7));
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,0.95), inset 0 0 0 7px rgba(255,255,255,0.3), 0 1px 4px rgba(0,0,0,0.35);
+  }
+  .tile-media.onetouch::before{
+    content:'';position:absolute;top:3px;left:50%;transform:translateX(-50%);
+    width:9px;height:9px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#fff4b8,#d6a82c 55%,#8a6512);
+    box-shadow:0 0 0 1px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.3);
+  }
+  .slab-label.ot{border:none;border-radius:3px;background:rgba(255,255,255,0.94);box-shadow:inset 0 0 0 1px #b9bdc2;}
+  .slab-label.ot .slab-label-right{justify-content:center;max-width:48px;}
+  .slab-label.ot .slab-grade{font-size:17px;line-height:1;}
+  .slab-label.ot .slab-descriptor{font-size:6px;font-weight:700;letter-spacing:0.02em;margin-top:2px;white-space:normal;line-height:1.15;}
+  .tile-media.onetouch .slab-well{border:1px solid rgba(255,255,255,0.85);border-radius:3px;margin-top:6px;box-shadow:0 0 0 1px rgba(0,0,0,0.12);}
+  .tile-media.onetouch .tile-add, .tile-media.onetouch .tile-wish, .tile-media.onetouch .tile-binder{top:81px;}
   .slab-well{
     margin-top:7px;aspect-ratio:5/7;position:relative;overflow:hidden;border-radius:4px;
     background:#2a2b2d;border:2px solid #8e9195;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.35);
@@ -654,6 +673,23 @@
     </div>`;
   }
 
+  const CONDITION_WORDS = {NM:'NEAR MINT', LP:'LIGHTLY PLAYED', MP:'MODERATELY PLAYED', HP:'HEAVILY PLAYED'};
+  function oneTouchLabelHtml(card, g){
+    const setLine = card.expansion_name || (card.card_number || '').split('-')[0];
+    return `<div class="slab-label ot" data-act="info" title="Card details">
+      <div class="slab-label-left">
+        <span>${W.escapeHtml(setLine)}</span>
+        <span class="slab-label-name">${W.escapeHtml(card.name || '')}</span>
+        <span>${W.escapeHtml(card.rarity || '')}</span>
+        <span class="slab-code">${W.escapeHtml(card.card_number || '')}</span>
+      </div>
+      <div class="slab-label-right">
+        <span class="slab-grade">${W.escapeHtml(g.cond)}</span>
+        <span class="slab-descriptor">${CONDITION_WORDS[g.cond] || ''}</span>
+      </div>
+    </div>`;
+  }
+
   function gradeBadgeHtml(grade){
     if (!grade) return '';
     const p = parseGrade(grade);
@@ -783,12 +819,17 @@
     const img = card.image_url;
     const g = parseGrade(copy.grade);
     // "psa" now means "render as a slab" — PSA or BGS; label style picked below.
-    const psa = g.cond === 'Graded' && (g.company === 'PSA' || g.company === 'BGS');
-    const slabLabel = !psa ? '' : (g.company === 'BGS' ? bgsLabelHtml(card, g) : psaLabelHtml(card, g));
+    const gradedSlab = g.cond === 'Graded' && (g.company === 'PSA' || g.company === 'BGS');
+    const oneTouch = CONDITIONS.includes(g.cond);
+    const psa = gradedSlab || oneTouch;   // "psa" = render inside a holder (slab or one-touch)
+    const slabLabel = oneTouch ? oneTouchLabelHtml(card, g)
+      : !gradedSlab ? ''
+      : (g.company === 'BGS' ? bgsLabelHtml(card, g) : psaLabelHtml(card, g));
+    const holderClass = oneTouch ? ' slab onetouch' : gradedSlab ? ' slab slab-' + g.company.toLowerCase() : '';
     const imgHtml = img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(card.name)}" loading="lazy">` : '<div class="tile-noimg">No image</div>';
     return `
       <div class="card-tile${psa ? ' slab-tile' : ''}" data-item-type="single" data-copy-id="${copy.id}">
-        <div class="tile-media${psa ? ' slab slab-' + g.company.toLowerCase() : ''}" data-act="zoom">
+        <div class="tile-media${holderClass}" data-act="zoom">
           ${psa ? slabLabel + `<div class="slab-well">${imgHtml}</div>` : imgHtml}
           ${psa ? '' : `<span class="copy-badge">#${copy.copy_number}</span>`}
           ${psa ? '' : gradeBadgeHtml(copy.grade)}
