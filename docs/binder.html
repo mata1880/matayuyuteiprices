@@ -172,9 +172,8 @@
   Live data from your <a href="https://ws-backend-z28t.onrender.com/docs" target="_blank" rel="noopener">backend API</a>.
   A slot shows greyed-out art either because you don't own a copy of that card yet or because a copy exists
   but isn't filed into a collection. A greyed slot's own + button fills it from your collection once a
-  matching copy is available — it's disabled until then. 3×3 binders fit raw/sleeved/toploader copies; 4×3
-  (penny sleeve style) fits raw/sleeved only — slabs and toploaders in a thin-page binder don't physically
-  fit, so those copies can't be assigned to one. Use the 📘 button on Browse, Wishlist, or Collection to send
+  matching copy is available — it's disabled until then. Layout just sets how many cards fit per page
+  (9 or 12) — any copy can go in any binder. Use the 📘 button on Browse, Wishlist, or Collection to send
   a card here — even one you don't own yet. Click a filled slot to pick it up (it outlines in red), then
   click any other slot to move it there — swapping places if that slot was already filled. Click the 🔍 icon
   on a card to view it full-size.
@@ -297,8 +296,8 @@
         <input type="text" id="bf-name" value="${existing ? W.escapeHtml(existing.name) : ''}" placeholder="e.g. Main SR binder">
         <label for="bf-layout">Layout</label>
         <select id="bf-layout">
-          <option value="3x3" ${existing && resolvedLayout(existing.layout)==='3x3' ? 'selected':''}>3×3 — toploaders</option>
-          <option value="4x3" ${existing && resolvedLayout(existing.layout)==='4x3' ? 'selected':''}>4×3 — penny sleeves</option>
+          <option value="3x3" ${existing && resolvedLayout(existing.layout)==='3x3' ? 'selected':''}>3×3 (9 per page)</option>
+          <option value="4x3" ${existing && resolvedLayout(existing.layout)==='4x3' ? 'selected':''}>4×3 (12 per page)</option>
         </select>
         <div class="edit-form-actions">
           <button type="button" class="cancel-btn" data-act="cancel">Cancel</button>

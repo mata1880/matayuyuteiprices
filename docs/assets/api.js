@@ -251,7 +251,7 @@ window.WSAPI = (function(){
         if (!name) return;
         const body = {name};
         if (type === 'binder') {
-          const layoutInput = prompt('Layout — type 3x3 (fits toploaders) or 4x3 (sleeved/raw only):', '3x3');
+          const layoutInput = prompt('Layout — type 3x3 (9 per page) or 4x3 (12 per page):', '3x3');
           body.layout = (layoutInput || '').trim() === '4x3' ? '4x3' : '3x3';
         }
         let created;
@@ -428,7 +428,7 @@ window.WSAPI = (function(){
       title: 'Send to binder', emptyLabel: 'No binders yet',
       listFn: () => Promise.resolve(binders),
       createFn: async (name) => {
-        const layoutInput = prompt('Layout — type 3x3 (fits toploaders) or 4x3 (sleeved/raw only):', '3x3');
+        const layoutInput = prompt('Layout — type 3x3 (9 per page) or 4x3 (12 per page):', '3x3');
         const layout = (layoutInput || '').trim() === '4x3' ? '4x3' : '3x3';
         return await post('/binders', {name, layout});
       },
