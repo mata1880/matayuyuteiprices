@@ -121,6 +121,10 @@
       </select>
     </div>
     <div class="field">
+      <label for="sort-select">Sort</label>
+      <select id="sort-select"></select>
+    </div>
+    <div class="field">
       <label for="perpage-select">Per page</label>
       <select id="perpage-select">
         <option value="24" selected>24</option>
@@ -430,6 +434,10 @@
   }
 
   perPageSelect.addEventListener('change', () => { perPage = Number(perPageSelect.value); page = 1; render(); });
+  const sortSelect = document.getElementById('sort-select');
+  let sortMode = W.getSortPref('collection');
+  sortSelect.innerHTML = W.sortSelectOptionsHtml(sortMode);
+  sortSelect.addEventListener('change', () => { sortMode = sortSelect.value; W.setSortPref('collection', sortMode); page = 1; render(); });
   currencySelect.value = W.getCurrency();
   currencySelect.addEventListener('change', () => { W.setCurrency(currencySelect.value); refreshCollectionValue(); render(); });
   searchInput.addEventListener('input', () => { page = 1; render(); });
@@ -868,10 +876,11 @@
       ...singles.map(c => ({type: 'single', copy: c, sortKey: c.card.name})),
       ...groups.map(g => ({type: 'stack', group: g, sortKey: g.card.name})),
     ].sort((a, b) => a.sortKey.localeCompare(b.sortKey));
+    const sortedItems = W.sortCards(displayItems, sortMode, it => it.type === 'single' ? it.copy.card : it.group.card);
 
-    const totalPages = Math.max(1, Math.ceil(displayItems.length / perPage));
+    const totalPages = Math.max(1, Math.ceil(sortedItems.length / perPage));
     if (page > totalPages) page = totalPages;
-    const pageItemsRaw = W.paginate(displayItems, page, perPage);
+    const pageItemsRaw = W.paginate(sortedItems, page, perPage);
 
     const totalCopies = list.length;
     summary.innerHTML = `<strong>${displayItems.length}</strong> tile${displayItems.length===1?'':'s'} (<strong>${totalCopies}</strong> total cop${totalCopies===1?'y':'ies'}) · page <strong>${page}</strong> of ${totalPages}`;

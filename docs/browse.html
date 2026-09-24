@@ -83,6 +83,10 @@
       </select>
     </div>
     <div class="field">
+      <label for="sort-select">Sort</label>
+      <select id="sort-select"></select>
+    </div>
+    <div class="field">
       <label for="perpage-select">Per page</label>
       <select id="perpage-select">
         <option value="24" selected>24</option>
@@ -348,6 +352,10 @@
   }
 
   perPageSelect.addEventListener('change', () => { perPage = Number(perPageSelect.value); page = 1; render(); });
+  const sortSelect = document.getElementById('sort-select');
+  let sortMode = W.getSortPref('browse');
+  sortSelect.innerHTML = W.sortSelectOptionsHtml(sortMode);
+  sortSelect.addEventListener('change', () => { sortMode = sortSelect.value; W.setSortPref('browse', sortMode); page = 1; render(); });
   currencySelect.value = W.getCurrency();
   currencySelect.addEventListener('change', () => { W.setCurrency(currencySelect.value); render(); });
   searchInput.addEventListener('input', () => { populateRarities(); page = 1; render(); });
@@ -469,6 +477,7 @@
     }
     emptyState.style.display = 'none';
 
+    cards = W.sortCards(cards, sortMode);
     const totalPages = Math.max(1, Math.ceil(cards.length / perPage));
     if (page > totalPages) page = totalPages;
     const pageCards = W.paginate(cards, page, perPage);

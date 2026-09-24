@@ -720,6 +720,44 @@ window.WSAPI = (function(){
     });
   }
 
+  // Shared sort for Browse/Wishlist/Collection. getCard pulls the card
+  // object out of whatever each page's list item is (a card, a copy, a
+  // stack…). Cards with no price yet always sink to the end, whichever
+  // direction you sort by price. "Set" sorts by card number with natural
+  // ordering, which groups by set code (SAO/S71 before SAO/S80) and then
+  // runs in printed order within each set (…-009 before …-010).
+  const SORT_OPTIONS = [
+    ['default', 'Default'],
+    ['price_desc', 'Price: high → low'],
+    ['price_asc', 'Price: low → high'],
+    ['set_asc', 'Set: A → Z'],
+    ['set_desc', 'Set: Z → A'],
+  ];
+  function sortSelectOptionsHtml(selected){
+    return SORT_OPTIONS.map(([v, l]) => `<option value="${v}" ${v === selected ? 'selected' : ''}>${l}</option>`).join('');
+  }
+  function sortCards(list, mode, getCard){
+    getCard = getCard || (x => x);
+    if (!mode || mode === 'default') return list;
+    const out = list.slice();
+    if (mode === 'price_desc' || mode === 'price_asc') {
+      const dir = mode === 'price_desc' ? -1 : 1;
+      out.sort((a, b) => {
+        const pa = getCard(a).sell_price_jpy, pb = getCard(b).sell_price_jpy;
+        const na = pa == null, nb = pb == null;
+        if (na !== nb) return na ? 1 : -1;
+        if (na) return 0;
+        return (pa - pb) * dir;
+      });
+    } else if (mode === 'set_asc' || mode === 'set_desc') {
+      const dir = mode === 'set_desc' ? -1 : 1;
+      out.sort((a, b) => (getCard(a).card_number || '').localeCompare(getCard(b).card_number || '', undefined, {numeric: true, sensitivity: 'base'}) * dir);
+    }
+    return out;
+  }
+  function getSortPref(pageKey){ try { return localStorage.getItem('ws-sort-' + pageKey) || 'default'; } catch (e) { return 'default'; } }
+  function setSortPref(pageKey, v){ try { localStorage.setItem('ws-sort-' + pageKey, v); } catch (e) {} }
+
   async function openPicker(anchorEl, {listFn, createFn, onPick, title, emptyLabel}){
     const el = ensurePicker();
     el.innerHTML = `<div class="ws-picker-title">${escapeHtml(title)}</div><div class="ws-picker-list">Loading…</div>`;
@@ -771,5 +809,6 @@ window.WSAPI = (function(){
     toast, titlePrefix, setCodePrefix, PAGE_SIZE, resolvedLayout, pageSlotLabel, showPriceChanges,
     paginate, renderPagination,
     openPicker, closePicker, openCollectionQuantityPicker, initQuickAdd,
+    sortCards, sortSelectOptionsHtml, getSortPref, setSortPref,
   };
 })();
