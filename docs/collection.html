@@ -29,6 +29,43 @@
   .grade-badge.grade-bl{background:#000;color:#d4af37;border:1px solid #d4af37;font-weight:700;}
   .grade-badge.grade-cgc{background:#0b4f8a;color:#fff;}
   .grade-badge.grade-tag{background:#111;color:#fff;border:1px solid #fff;}
+  /* ---- PSA slab frame (graded copies) ---- */
+  .tile-media.slab{
+    aspect-ratio:auto;cursor:pointer;padding:7px;border-radius:10px;
+    background:linear-gradient(160deg,#eceef0 0%,#b9bcc0 45%,#dfe1e3 100%);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,0.8), inset 0 0 0 3px #a3a6aa;
+  }
+  .slab-label{
+    height:52px;box-sizing:border-box;background:#fff;border:3px solid #c8102e;border-radius:3px;
+    padding:3px 5px;display:flex;gap:6px;position:relative;color:#111;
+    font-family:Arial,Helvetica,sans-serif;font-size:7.5px;line-height:1.25;text-transform:uppercase;
+  }
+  .slab-label-left{flex:1;min-width:0;display:flex;flex-direction:column;}
+  .slab-label-left span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .slab-label-name{font-weight:700;}
+  .slab-barcode{
+    margin-top:auto;height:8px;width:40%;
+    background:repeating-linear-gradient(90deg,#111 0 1px,transparent 1px 2px,#111 2px 4px,transparent 4px 5px,#111 5px 6px,transparent 6px 8px);
+  }
+  .slab-label-right{display:flex;flex-direction:column;align-items:flex-end;text-align:right;white-space:nowrap;}
+  .slab-grade{font-size:12px;font-weight:700;line-height:1.1;}
+  .slab-logo{
+    position:absolute;left:50%;bottom:2px;transform:translateX(-50%);
+    font-weight:900;font-style:italic;font-size:8px;letter-spacing:0.02em;color:#c8102e;
+    background:#fff;padding:0 3px;border:1px solid #1f3f8f;border-radius:2px;line-height:1.2;
+  }
+  .slab-well{
+    margin-top:7px;aspect-ratio:5/7;position:relative;overflow:hidden;border-radius:4px;
+    background:#2a2b2d;border:2px solid #8e9195;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.35);
+  }
+  .tile-media.slab .tile-add, .tile-media.slab .tile-wish, .tile-media.slab .tile-binder{top:74px;}
+  .tile-media.slab .tile-gear, .tile-media.slab .tile-del, .tile-media.slab .copy-badge{bottom:14px;}
+  .tile-media.slab .tile-add, .tile-media.slab .copy-badge{left:14px;}
+  .tile-media.slab .tile-binder{left:46px;}
+  .tile-media.slab .tile-wish, .tile-media.slab .tile-gear{right:14px;}
+  .tile-media.slab .tile-del{right:46px;}
+  .tile-info.slabbed .tile-prices{margin-top:0;}
+  .tile-info.slabbed{gap:6px;}
   .frame-badge{
     font-family:var(--mono);font-size:9.5px;color:var(--ink-soft);text-transform:uppercase;
     letter-spacing:0.03em;
@@ -566,6 +603,26 @@
     if (cond !== 'Graded') return cond;
     return `${root.querySelector('#ef-company').value} ${root.querySelector('#ef-score').value}`;
   }
+  const PSA_DESCRIPTORS = {'10':'GEM MT','9':'MINT','8':'NM-MT','7':'NM','6':'EX-MT','5':'EX','4':'VG-EX','3':'VG','2':'GOOD','1':'PR'};
+  function psaLabelHtml(card, g){
+    const num = (card.card_number || '').split('-').pop();
+    const setLine = card.expansion_name || (card.card_number || '').split('-')[0];
+    return `<div class="slab-label">
+      <div class="slab-label-left">
+        <span>${W.escapeHtml(setLine)}</span>
+        <span class="slab-label-name">${W.escapeHtml(card.name || '')}</span>
+        <span>${W.escapeHtml(card.rarity || '')}</span>
+        <div class="slab-barcode"></div>
+      </div>
+      <div class="slab-label-right">
+        <span>#${W.escapeHtml(num)}</span>
+        <span>${PSA_DESCRIPTORS[g.score] || ''}</span>
+        <span class="slab-grade">${W.escapeHtml(g.score)}</span>
+      </div>
+      <span class="slab-logo">PSA</span>
+    </div>`;
+  }
+
   function gradeBadgeHtml(grade){
     if (!grade) return '';
     const p = parseGrade(grade);
@@ -693,21 +750,24 @@
   function tileHtml(copy){
     const card = copy.card;
     const img = card.image_url;
+    const g = parseGrade(copy.grade);
+    const psa = g.cond === 'Graded' && g.company === 'PSA';
+    const imgHtml = img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(card.name)}" loading="lazy">` : '<div class="tile-noimg">No image</div>';
     return `
       <div class="card-tile" data-item-type="single" data-copy-id="${copy.id}">
-        <div class="tile-media" data-act="zoom">
-          ${img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(card.name)}" loading="lazy">` : '<div class="tile-noimg">No image</div>'}
+        <div class="tile-media${psa ? ' slab slab-psa' : ''}" data-act="zoom">
+          ${psa ? psaLabelHtml(card, g) + `<div class="slab-well">${imgHtml}</div>` : imgHtml}
           <span class="copy-badge">#${copy.copy_number}</span>
-          ${gradeBadgeHtml(copy.grade)}
+          ${psa ? '' : gradeBadgeHtml(copy.grade)}
           <button type="button" class="tile-add" data-act="add" title="Add another copy to this collection">+</button>
           <button type="button" class="tile-binder ${card.in_binder?'active':''}" data-act="binder" data-picker-trigger title="Send to a binder">📘</button>
           <button type="button" class="tile-wish" data-act="wish" data-picker-trigger title="Add to a wishlist">♡</button>
           <button type="button" class="tile-del" data-act="del" title="Remove this copy (e.g. sold)">🗑</button>
           <button type="button" class="tile-gear" data-act="edit" title="Edit grade / note">⚙</button>
         </div>
-        <div class="tile-info">
-          <div class="tile-name" data-act="info" style="cursor:pointer;" title="Card details">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>
-          <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span></div>
+        <div class="tile-info${psa ? ' slabbed' : ''}">
+          ${psa ? '' : `<div class="tile-name" data-act="info" style="cursor:pointer;" title="Card details">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>`}
+          <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span>${psa ? '<button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button>' : ''}</div>
           <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}${W.trendArrow(card.sell_trend)}</span><span>Buy ${W.fmtYenConverted(card.buy_price_jpy)}${W.trendArrow(card.buy_trend)}</span></div>
           ${copy.purchase_price_jpy != null ? `<div class="tile-prices" style="margin-top:2px;"><span style="color:var(--ink-soft);">Paid ${W.fmtYenConverted(copy.purchase_price_jpy)}</span></div>` : ''}
         </div>
