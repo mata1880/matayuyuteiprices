@@ -45,7 +45,12 @@
   .slab-label-left span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .slab-label-name{font-weight:700;}
   .slab-label{cursor:pointer;}
-  .slab-code{margin-top:auto;font-family:var(--mono);font-size:8.5px;letter-spacing:0.02em;}
+  .slab-code{margin-top:auto;font-family:var(--mono);font-size:8.5px;letter-spacing:0.02em;font-weight:700;color:inherit;text-decoration:none;align-self:flex-start;}
+  a.slab-code:hover{text-decoration:underline;}
+  .slab-code{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+  .slab-label{container-type:inline-size;}
+  .slab-label:not(.ot):not(.bgs) .slab-code{font-size:7.5px;max-width:calc(50cqw - 20px);}   /* PSA: always stop before the centered logo */
+  .slab-label.bgs .slab-code{font-size:7px;}                      /* Beckett: narrower label, keep on one line */
   .slab-label-right{display:flex;flex-direction:column;align-items:flex-end;text-align:right;white-space:nowrap;}
   .slab-grade{font-size:13px;font-weight:700;line-height:1.1;}
   .slab-label .slab-logo{
@@ -84,7 +89,7 @@
   }
   .slab-label.ot{background:transparent;border:none;box-shadow:none;padding:2px 4px 1px;color:#1b1b1b;overflow:visible;}
   .slab-label.ot::before{                    /* flat magnet disc inside a clear plastic ring */
-    content:'';position:absolute;top:58%;left:50%;transform:translate(-50%,-50%);
+    content:'';position:absolute;top:63%;left:50%;transform:translate(-50%,-50%);
     width:12px;height:12px;border-radius:50%;background:#c9a54c;
     box-shadow:0 0 0 1px #a8852f, 0 0 0 3.5px #e6e8eb, 0 0 0 4.5px #a9acb0;
   }
@@ -660,6 +665,14 @@
     if (cond !== 'Graded') return cond;
     return `${root.querySelector('#ef-company').value} ${root.querySelector('#ef-score').value}`;
   }
+  // yuyu-tei's own card pages use internal IDs we don't store, so this opens
+  // their search for the exact card code, which lands on that card's listing.
+  function slabCodeLink(card){
+    const code = card.card_number || '';
+    if (!code) return '';
+    const url = 'https://yuyu-tei.jp/sell/ws/s/search?search_word=' + encodeURIComponent(code);
+    return `<a class="slab-code" href="${url}" target="_blank" rel="noopener" title="Open on yuyu-tei" onclick="event.stopPropagation()">${W.escapeHtml(code)}</a>`;
+  }
   const PSA_DESCRIPTORS = {'10':'GEM MT','9':'MINT','8':'NM-MT','7':'NM','6':'EX-MT','5':'EX','4':'VG-EX','3':'VG','2':'GOOD','1':'PR'};
   function psaLabelHtml(card, g){
     const num = (card.card_number || '').split('-').pop();
@@ -669,7 +682,7 @@
         <span>${W.escapeHtml(setLine)}</span>
         <span class="slab-label-name">${W.escapeHtml(card.name || '')}</span>
         <span>${W.escapeHtml(card.rarity || '')}</span>
-        <span class="slab-code">${W.escapeHtml(card.card_number || '')}</span>
+        ${slabCodeLink(card)}
       </div>
       <div class="slab-label-right">
         <span>#${W.escapeHtml(num)}</span>
@@ -694,7 +707,7 @@
           <span>${W.escapeHtml(setLine)}</span>
           <span class="slab-label-name">${W.escapeHtml(card.name || '')}</span>
           <span>${W.escapeHtml(card.rarity || '')}</span>
-          <span class="slab-code">${W.escapeHtml(card.card_number || '')}</span>
+          ${slabCodeLink(card)}
         </div>
         <div class="slab-label-right">
           <span class="slab-grade">${W.escapeHtml(shown)}</span>
@@ -714,7 +727,7 @@
         <span>${W.escapeHtml(setLine)}</span>
         <span class="slab-label-name">${W.escapeHtml(card.name || '')}</span>
         <span>${W.escapeHtml(card.rarity || '')}</span>
-        <span class="slab-code">${W.escapeHtml(card.card_number || '')}</span>
+        ${slabCodeLink(card)}
       </div>
       <div class="slab-label-right">
         <span class="slab-grade">${W.escapeHtml(CONDITIONS.includes(g.cond) ? g.cond : g.cond === 'Graded' ? g.score : g.cond === '__legacy' ? g.legacy : '')}</span>
