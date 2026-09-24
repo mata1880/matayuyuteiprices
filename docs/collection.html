@@ -147,7 +147,7 @@
 
 <footer>
   Live data from your <a href="https://ws-backend-z28t.onrender.com/docs" target="_blank" rel="noopener">backend API</a>.
-  Each tile is one physical copy — ⚙ edits its grade/frame/note/purchase price, 🗑 removes it entirely (e.g. sold),
+  Each tile is one physical copy — ⚙ edits its grade/note/purchase price, 🗑 removes it entirely (e.g. sold),
   + adds another copy of that same card to this collection, ♥ adds it to a wishlist too.
 </footer>
 
@@ -189,7 +189,6 @@
   let page = 1;
   let perPage = 24;
 
-  const FRAME_LABELS = {raw:'Raw', sleeve:'Sleeve', toploader:'Toploader', one_touch:'One-touch', slab:'Slab'};
 
   function createDropdown(toggleBtn, panelEl){
     const backdropId = 'ws-dropdown-backdrop';
@@ -556,12 +555,7 @@
     if (parsed.company) coSel.value = parsed.company;
     fillScores(parsed.score);
     sync();
-    condSel.addEventListener('change', () => {
-      sync();
-      // A graded card lives in a slab — nudge the frame to match.
-      const frameSel = root.querySelector('#ef-frame');
-      if (condSel.value === 'Graded' && frameSel && frameSel.querySelector('option[value="slab"]')) frameSel.value = 'slab';
-    });
+    condSel.addEventListener('change', sync);
     coSel.addEventListener('change', () => fillScores(scoreSel.value));
     root._legacyGrade = parsed.legacy || null;
   }
@@ -591,10 +585,6 @@
           <select id="ef-company" style="flex:1;display:none;"></select>
           <select id="ef-score" style="flex:1;display:none;"></select>
         </div>
-        <label for="ef-frame">Frame</label>
-        <select id="ef-frame">
-          ${Object.entries(FRAME_LABELS).map(([v,l]) => `<option value="${v}" ${copy.frame_type===v?'selected':''}>${l}</option>`).join('')}
-        </select>
         <label for="ef-price">Purchase price</label>
         <div style="display:flex;gap:6px;">
           <input type="number" id="ef-price" value="${copy.purchase_price_jpy != null ? (W.getCurrency() !== 'JPY' && W.yenToCurrency(copy.purchase_price_jpy, W.getCurrency()) != null ? Math.round(W.yenToCurrency(copy.purchase_price_jpy, W.getCurrency()) * 100) / 100 : copy.purchase_price_jpy) : ''}" min="0" style="flex:1;">
@@ -642,7 +632,6 @@
       }
       const body = {
         grade: readGradeSelects(el),
-        frame_type: el.querySelector('#ef-frame').value,
         note: el.querySelector('#ef-note').value || null,
         purchase_price_jpy: purchasePriceJpy,
         date_acquired: el.querySelector('#ef-date').value || null,
@@ -714,11 +703,11 @@
           <button type="button" class="tile-binder ${card.in_binder?'active':''}" data-act="binder" data-picker-trigger title="Send to a binder">📘</button>
           <button type="button" class="tile-wish" data-act="wish" data-picker-trigger title="Add to a wishlist">♡</button>
           <button type="button" class="tile-del" data-act="del" title="Remove this copy (e.g. sold)">🗑</button>
-          <button type="button" class="tile-gear" data-act="edit" title="Edit grade / frame / note">⚙</button>
+          <button type="button" class="tile-gear" data-act="edit" title="Edit grade / note">⚙</button>
         </div>
         <div class="tile-info">
           <div class="tile-name" data-act="info" style="cursor:pointer;" title="Card details">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>
-          <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span><span class="frame-badge">${FRAME_LABELS[copy.frame_type]||copy.frame_type}</span></div>
+          <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span></div>
           <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}${W.trendArrow(card.sell_trend)}</span><span>Buy ${W.fmtYenConverted(card.buy_price_jpy)}${W.trendArrow(card.buy_trend)}</span></div>
           ${copy.purchase_price_jpy != null ? `<div class="tile-prices" style="margin-top:2px;"><span style="color:var(--ink-soft);">Paid ${W.fmtYenConverted(copy.purchase_price_jpy)}</span></div>` : ''}
         </div>
