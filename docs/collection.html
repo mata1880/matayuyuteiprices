@@ -73,9 +73,8 @@
      top of the frosted band, flat magnet in a clear ring at the band's center. */
   .tile-media.slab.onetouch{
     border-radius:6px;
-    background:linear-gradient(150deg,rgba(255,255,255,0.78),rgba(210,215,222,0.55) 50%,rgba(255,255,255,0.74));
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,0.95), inset 0 0 0 6px rgba(255,255,255,0.28),
-               inset 0 0 0 7px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.35);
+    background:linear-gradient(160deg,#eceef0 0%,#b9bcc0 45%,#dfe1e3 100%);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,0.8), inset 0 0 0 3px #a3a6aa, 0 1px 4px rgba(0,0,0,0.35);
   }
   .tile-media.slab.onetouch::after{          /* the raised tab along the top edge */
     content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
@@ -86,11 +85,21 @@
   .slab-label.ot::before{                    /* flat magnet disc inside a clear plastic ring */
     content:'';position:absolute;top:58%;left:50%;transform:translate(-50%,-50%);
     width:12px;height:12px;border-radius:50%;background:#c9a54c;
-    box-shadow:0 0 0 1px #a8852f, 0 0 0 3px rgba(255,255,255,0.9), 0 0 0 4px rgba(0,0,0,0.14);
+    box-shadow:0 0 0 1px #a8852f, 0 0 0 3.5px #e6e8eb, 0 0 0 4.5px #a9acb0;
   }
   .slab-label.ot .slab-label-right{justify-content:center;max-width:48px;}
   .slab-label.ot .slab-grade{font-size:17px;line-height:1;}
   .slab-label.ot .slab-descriptor{font-size:6px;font-weight:700;letter-spacing:0.02em;margin-top:2px;white-space:normal;line-height:1.15;}
+  .tile-media.onetouch .slab-well::after{
+    content:'';position:absolute;inset:0;pointer-events:none;
+    --c:#dfe1e3; --e:#a9acb0;
+    background:
+      linear-gradient(135deg, var(--c) 0 7px, var(--e) 7px 8px, transparent 8px) top left,
+      linear-gradient(225deg, var(--c) 0 7px, var(--e) 7px 8px, transparent 8px) top right,
+      linear-gradient(45deg,  var(--c) 0 7px, var(--e) 7px 8px, transparent 8px) bottom left,
+      linear-gradient(315deg, var(--c) 0 7px, var(--e) 7px 8px, transparent 8px) bottom right;
+    background-size:14px 14px;background-repeat:no-repeat;
+  }
   .tile-media.onetouch .slab-well{              /* card window: a stepped recess, squarer corners */
     border:1px solid rgba(255,255,255,0.95);border-radius:2px;
     box-shadow:0 0 0 2px rgba(255,255,255,0.35), 0 0 0 3px rgba(0,0,0,0.13), inset 0 0 0 1px rgba(0,0,0,0.08);
