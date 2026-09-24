@@ -82,11 +82,29 @@ window.WSAPI = (function(){
     const token = getToken();
     const headers = {"Content-Type": "application/json"};
     if (token) headers["Authorization"] = "Bearer " + token;
-    const res = await fetch(API_BASE + path, {
-      headers,
-      ...options,
-    });
-    if (res.status === 401) {
+    // Retry ONCE after a short pause if the first attempt fails at the
+    // network level or with a server error. Only for reads and login —
+    // never for other writes, so a hiccup can't e.g. add the same copy twice.
+    const method = (options.method || "GET").toUpperCase();
+    const retryable = method === "GET" || path === "/auth/login";
+    let res;
+    for (let attempt = 0; ; attempt++) {
+      try {
+        res = await fetch(API_BASE + path, {headers, ...options});
+        if (res.status >= 500 && retryable && attempt === 0) throw new Error("server " + res.status);
+        break;
+      } catch (e) {
+        if (!retryable || attempt > 0) {
+          if (res) break; // got a real (5xx) response on the retry — let normal error handling report it
+          throw new Error("Couldn't reach the server — check your connection and try again.");
+        }
+        res = null;
+        await new Promise(r => setTimeout(r, 1500));
+      }
+    }
+    // A 401 from the login call itself just means a wrong PIN — show that
+    // message, don't treat it as an expired session.
+    if (res.status === 401 && path !== "/auth/login") {
       // Token's gone stale (or never existed and the backend actually
       // requires one now — phase 5). Clear whatever we had and send them
       // back to log in again, rather than surfacing a confusing error.
