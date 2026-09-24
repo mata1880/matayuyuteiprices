@@ -56,13 +56,15 @@
     background:#2a2b2d;border:2px solid #8e9195;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.35);
   }
   .tile-media.slab .tile-add, .tile-media.slab .tile-wish, .tile-media.slab .tile-binder{top:74px;}
-  .tile-media.slab .tile-gear, .tile-media.slab .tile-del, .tile-media.slab .copy-badge{bottom:14px;}
-  .tile-media.slab .tile-add, .tile-media.slab .copy-badge{left:14px;}
+  .tile-media.slab .tile-add{left:14px;}
   .tile-media.slab .tile-binder{left:46px;}
-  .tile-media.slab .tile-wish, .tile-media.slab .tile-gear{right:14px;}
-  .tile-media.slab .tile-del{right:46px;}
+  .tile-media.slab .tile-wish{right:14px;}
+  .card-tile.slab-tile{align-self:start;}          /* hug content instead of stretching to the row's tallest tile */
+  .tile-info.slabbed{gap:6px;padding:8px 10px;flex:none;}
   .tile-info.slabbed .tile-prices{margin-top:0;border-top:none;padding-top:0;}
-  .tile-info.slabbed{gap:6px;}
+  .slab-actions{display:flex;align-items:center;gap:6px;padding-top:6px;border-top:1px solid var(--line-soft);}
+  .slab-actions .copy-badge, .slab-actions .tile-del, .slab-actions .tile-gear{position:static;}
+  .slab-actions .copy-badge{margin-right:auto;}
   .frame-badge{
     font-family:var(--mono);font-size:9.5px;color:var(--ink-soft);text-transform:uppercase;
     letter-spacing:0.03em;
@@ -751,22 +753,27 @@
     const psa = g.cond === 'Graded' && g.company === 'PSA';
     const imgHtml = img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(card.name)}" loading="lazy">` : '<div class="tile-noimg">No image</div>';
     return `
-      <div class="card-tile" data-item-type="single" data-copy-id="${copy.id}">
+      <div class="card-tile${psa ? ' slab-tile' : ''}" data-item-type="single" data-copy-id="${copy.id}">
         <div class="tile-media${psa ? ' slab slab-psa' : ''}" data-act="zoom">
           ${psa ? psaLabelHtml(card, g) + `<div class="slab-well">${imgHtml}</div>` : imgHtml}
-          <span class="copy-badge">#${copy.copy_number}</span>
+          ${psa ? '' : `<span class="copy-badge">#${copy.copy_number}</span>`}
           ${psa ? '' : gradeBadgeHtml(copy.grade)}
           <button type="button" class="tile-add" data-act="add" title="Add another copy to this collection">+</button>
           <button type="button" class="tile-binder ${card.in_binder?'active':''}" data-act="binder" data-picker-trigger title="Send to a binder">📘</button>
           <button type="button" class="tile-wish" data-act="wish" data-picker-trigger title="Add to a wishlist">♡</button>
-          <button type="button" class="tile-del" data-act="del" title="Remove this copy (e.g. sold)">🗑</button>
-          <button type="button" class="tile-gear" data-act="edit" title="Edit grade / note">⚙</button>
+          ${psa ? '' : `<button type="button" class="tile-del" data-act="del" title="Remove this copy (e.g. sold)">🗑</button>
+          <button type="button" class="tile-gear" data-act="edit" title="Edit grade / note">⚙</button>`}
         </div>
         <div class="tile-info${psa ? ' slabbed' : ''}">
           ${psa ? '' : `<div class="tile-name" data-act="info" style="cursor:pointer;" title="Card details">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>`}
           ${psa ? '' : `<div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span></div>`}
           <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}${W.trendArrow(card.sell_trend)}</span><span>Buy ${W.fmtYenConverted(card.buy_price_jpy)}${W.trendArrow(card.buy_trend)}</span></div>
           ${copy.purchase_price_jpy != null ? `<div class="tile-prices" style="margin-top:2px;"><span style="color:var(--ink-soft);">Paid ${W.fmtYenConverted(copy.purchase_price_jpy)}</span></div>` : ''}
+          ${psa ? `<div class="slab-actions">
+            <span class="copy-badge">#${copy.copy_number}</span>
+            <button type="button" class="tile-del" data-act="del" title="Remove this copy (e.g. sold)">🗑</button>
+            <button type="button" class="tile-gear" data-act="edit" title="Edit grade / note">⚙</button>
+          </div>` : ''}
         </div>
       </div>`;
   }
