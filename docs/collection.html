@@ -51,6 +51,16 @@
     position:absolute;left:50%;bottom:-3px;transform:translateX(-50%);
     height:18px;width:auto;display:block;pointer-events:none;border-radius:2px;
   }
+  /* Beckett: logo left, info middle, big grade right. Label color by grade. */
+  .slab-label.bgs{border:none;border-radius:2px;padding:3px 6px 3px 3px;gap:6px;align-items:stretch;}
+  .slab-label.bgs-silver{background:linear-gradient(180deg,#eceef0,#c4c7cb 55%,#dcdee1);color:#111;box-shadow:inset 0 0 0 1px #8f9296;}
+  .slab-label.bgs-gold{background:linear-gradient(180deg,#ecd584,#c9a441 55%,#e2c46a);color:#111;box-shadow:inset 0 0 0 1px #8f6d1c;}
+  .slab-label.bgs-black{background:linear-gradient(180deg,#1a1a1a,#050505);color:#d4af37;box-shadow:inset 0 0 0 1px #d4af37;}
+  .slab-label .bgs-logo{height:100%;width:auto;flex:none;display:block;border-radius:2px;pointer-events:none;}
+  .slab-label.bgs-black .bgs-logo{box-shadow:0 0 0 1px rgba(212,175,55,0.5);}
+  .slab-label.bgs .slab-label-right{justify-content:center;}
+  .slab-label.bgs .slab-grade{font-size:17px;line-height:1;}
+  .slab-label.bgs .slab-descriptor{font-size:6.5px;font-weight:700;letter-spacing:0.03em;margin-top:2px;}
   .slab-well{
     margin-top:7px;aspect-ratio:5/7;position:relative;overflow:hidden;border-radius:4px;
     background:#2a2b2d;border:2px solid #8e9195;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.35);
@@ -622,6 +632,28 @@
     </div>`;
   }
 
+  const BGS_DESCRIPTORS = {'10':'PRISTINE','9.5':'GEM MINT','9':'MINT','8.5':'NM-MT+','8':'NM-MT','7.5':'NM+','7':'NM',
+    '6.5':'EX-NM+','6':'EX-NM','5.5':'EX+','5':'EX','4.5':'VG-EX+','4':'VG-EX','3.5':'VG+','3':'VG','2.5':'G+','2':'G','1.5':'FR','1':'P'};
+  function bgsLabelHtml(card, g){
+    const isBL = g.score === 'BL';
+    const variant = isBL ? 'bgs-black' : (g.score === '10' ? 'bgs-gold' : 'bgs-silver');
+    const shown = isBL ? '10' : g.score;
+    const setLine = card.expansion_name || (card.card_number || '').split('-')[0];
+    return `<div class="slab-label bgs ${variant}" data-act="info" title="Card details">
+      <img class="bgs-logo" src="assets/bgs-logo.png" alt="BGS">
+      <div class="slab-label-left">
+        <span>${W.escapeHtml(setLine)}</span>
+        <span class="slab-label-name">${W.escapeHtml(card.name || '')}</span>
+        <span>${W.escapeHtml(card.rarity || '')}</span>
+        <span class="slab-code">${W.escapeHtml(card.card_number || '')}</span>
+      </div>
+      <div class="slab-label-right">
+        <span class="slab-grade">${W.escapeHtml(shown)}</span>
+        <span class="slab-descriptor">${isBL ? 'BLACK LABEL' : (BGS_DESCRIPTORS[g.score] || '')}</span>
+      </div>
+    </div>`;
+  }
+
   function gradeBadgeHtml(grade){
     if (!grade) return '';
     const p = parseGrade(grade);
@@ -750,12 +782,14 @@
     const card = copy.card;
     const img = card.image_url;
     const g = parseGrade(copy.grade);
-    const psa = g.cond === 'Graded' && g.company === 'PSA';
+    // "psa" now means "render as a slab" — PSA or BGS; label style picked below.
+    const psa = g.cond === 'Graded' && (g.company === 'PSA' || g.company === 'BGS');
+    const slabLabel = !psa ? '' : (g.company === 'BGS' ? bgsLabelHtml(card, g) : psaLabelHtml(card, g));
     const imgHtml = img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(card.name)}" loading="lazy">` : '<div class="tile-noimg">No image</div>';
     return `
       <div class="card-tile${psa ? ' slab-tile' : ''}" data-item-type="single" data-copy-id="${copy.id}">
-        <div class="tile-media${psa ? ' slab slab-psa' : ''}" data-act="zoom">
-          ${psa ? psaLabelHtml(card, g) + `<div class="slab-well">${imgHtml}</div>` : imgHtml}
+        <div class="tile-media${psa ? ' slab slab-' + g.company.toLowerCase() : ''}" data-act="zoom">
+          ${psa ? slabLabel + `<div class="slab-well">${imgHtml}</div>` : imgHtml}
           ${psa ? '' : `<span class="copy-badge">#${copy.copy_number}</span>`}
           ${psa ? '' : gradeBadgeHtml(copy.grade)}
           <button type="button" class="tile-add" data-act="add" title="Add another copy to this collection">+</button>
