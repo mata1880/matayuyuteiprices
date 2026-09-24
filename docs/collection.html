@@ -24,6 +24,11 @@
     font-family:var(--mono);font-size:10.5px;padding:2px 6px;border-radius:3px;max-width:90px;
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   }
+  .grade-badge.grade-psa{background:#c8102e;color:#fff;}
+  .grade-badge.grade-bgs{background:#2b2b2b;color:#e8e8e8;border:1px solid #9a9a9a;}
+  .grade-badge.grade-bl{background:#000;color:#d4af37;border:1px solid #d4af37;font-weight:700;}
+  .grade-badge.grade-cgc{background:#0b4f8a;color:#fff;}
+  .grade-badge.grade-tag{background:#111;color:#fff;border:1px solid #fff;}
   .frame-badge{
     font-family:var(--mono);font-size:9.5px;color:var(--ink-soft);text-transform:uppercase;
     letter-spacing:0.03em;
@@ -496,13 +501,88 @@
     el.hidden = false;
   }
 
+  // ---- Grade: condition (NM/LP/MP/HP) or Graded → company → score ----
+  // Stored as one plain string in copy.grade ("NM", "PSA 10", "BGS 9.5",
+  // "BGS BL"), so no backend/schema change was needed.
+  const CONDITIONS = ['NM', 'LP', 'MP', 'HP'];
+  const COMPANIES = ['PSA', 'BGS', 'CGC', 'TAG'];
+  function scoresFor(company){
+    if (company === 'BGS') {
+      const out = ['BL'];
+      for (let s = 10; s >= 1; s -= 0.5) out.push(String(s));
+      return out;
+    }
+    const out = [];
+    for (let s = 10; s >= 1; s--) out.push(String(s));
+    return out;
+  }
+  function parseGrade(g){
+    if (!g) return {cond: ''};
+    const s = g.trim();
+    if (CONDITIONS.includes(s.toUpperCase())) return {cond: s.toUpperCase()};
+    const m = s.match(/^(PSA|BGS|CGC|TAG)\s+(BL|\d+(?:\.5)?)$/i);
+    if (m) return {cond: 'Graded', company: m[1].toUpperCase(), score: m[2].toUpperCase()};
+    return {cond: '__legacy', legacy: s}; // an old free-text value — kept, not silently lost
+  }
+  function wireGradeSelects(root, currentGrade){
+    const condSel = root.querySelector('#ef-cond');
+    const coSel = root.querySelector('#ef-company');
+    const scoreSel = root.querySelector('#ef-score');
+    const parsed = parseGrade(currentGrade);
+    condSel.innerHTML = '<option value="">—</option>'
+      + '<option value="Graded">Graded</option>'
+      + CONDITIONS.map(c => `<option value="${c}">${c}</option>`).join('')
+      + (parsed.cond === '__legacy' ? `<option value="__legacy">${W.escapeHtml(parsed.legacy)} (old)</option>` : '');
+    coSel.innerHTML = COMPANIES.map(c => `<option value="${c}">${c}</option>`).join('');
+    function fillScores(keep){
+      const list = scoresFor(coSel.value);
+      scoreSel.innerHTML = list.map(s => `<option value="${s}">${s === 'BL' ? 'BL (Black Label)' : s}</option>`).join('');
+      scoreSel.value = list.includes(keep) ? keep : '10';
+    }
+    function sync(){
+      const graded = condSel.value === 'Graded';
+      coSel.style.display = graded ? '' : 'none';
+      scoreSel.style.display = graded ? '' : 'none';
+    }
+    condSel.value = parsed.cond;
+    if (parsed.company) coSel.value = parsed.company;
+    fillScores(parsed.score);
+    sync();
+    condSel.addEventListener('change', () => {
+      sync();
+      // A graded card lives in a slab — nudge the frame to match.
+      const frameSel = root.querySelector('#ef-frame');
+      if (condSel.value === 'Graded' && frameSel && frameSel.querySelector('option[value="slab"]')) frameSel.value = 'slab';
+    });
+    coSel.addEventListener('change', () => fillScores(scoreSel.value));
+    root._legacyGrade = parsed.legacy || null;
+  }
+  function readGradeSelects(root){
+    const cond = root.querySelector('#ef-cond').value;
+    if (!cond) return null;
+    if (cond === '__legacy') return root._legacyGrade;
+    if (cond !== 'Graded') return cond;
+    return `${root.querySelector('#ef-company').value} ${root.querySelector('#ef-score').value}`;
+  }
+  function gradeBadgeHtml(grade){
+    if (!grade) return '';
+    const p = parseGrade(grade);
+    let cls = 'grade-cond';
+    if (p.cond === 'Graded') cls = p.score === 'BL' ? 'grade-bl' : 'grade-' + p.company.toLowerCase();
+    return `<span class="grade-badge ${cls}">${W.escapeHtml(grade)}</span>`;
+  }
+
   function openEditModal(copy){
     const el = ensureModal('edit-modal');
     el.innerHTML = `<div class="modal"><button type="button" class="modal-close" aria-label="Close">×</button>
       <div class="edit-form">
         <h2>Edit copy #${copy.copy_number} — ${W.escapeHtml(copy.card.name)}</h2>
-        <label for="ef-grade">Grade</label>
-        <input type="text" id="ef-grade" value="${W.escapeHtml(copy.grade || '')}" placeholder="e.g. PSA 10">
+        <label for="ef-cond">Grade</label>
+        <div style="display:flex;gap:6px;">
+          <select id="ef-cond" style="flex:1;"></select>
+          <select id="ef-company" style="flex:1;display:none;"></select>
+          <select id="ef-score" style="flex:1;display:none;"></select>
+        </div>
         <label for="ef-frame">Frame</label>
         <select id="ef-frame">
           ${Object.entries(FRAME_LABELS).map(([v,l]) => `<option value="${v}" ${copy.frame_type===v?'selected':''}>${l}</option>`).join('')}
@@ -530,6 +610,8 @@
     el.querySelector('.modal-close').addEventListener('click', () => el.hidden = true);
     el.querySelector('[data-act="cancel"]').addEventListener('click', () => el.hidden = true);
 
+    wireGradeSelects(el, copy.grade);
+
     const priceInput = el.querySelector('#ef-price');
     const priceCurrency = el.querySelector('#ef-price-currency');
     priceCurrency.value = W.getCurrency();
@@ -551,7 +633,7 @@
         purchasePriceJpy = Math.round(yen);
       }
       const body = {
-        grade: el.querySelector('#ef-grade').value || null,
+        grade: readGradeSelects(el),
         frame_type: el.querySelector('#ef-frame').value,
         note: el.querySelector('#ef-note').value || null,
         purchase_price_jpy: purchasePriceJpy,
@@ -619,7 +701,7 @@
         <div class="tile-media" data-act="zoom">
           ${img ? `<img src="${W.escapeHtml(img)}" alt="${W.escapeHtml(card.name)}" loading="lazy">` : '<div class="tile-noimg">No image</div>'}
           <span class="copy-badge">#${copy.copy_number}</span>
-          ${copy.grade ? `<span class="grade-badge">${W.escapeHtml(copy.grade)}</span>` : ''}
+          ${gradeBadgeHtml(copy.grade)}
           <button type="button" class="tile-add" data-act="add" title="Add another copy to this collection">+</button>
           <button type="button" class="tile-binder ${card.in_binder?'active':''}" data-act="binder" data-picker-trigger title="Send to a binder">📘</button>
           <button type="button" class="tile-wish" data-act="wish" data-picker-trigger title="Add to a wishlist">♡</button>
