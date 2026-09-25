@@ -17,6 +17,12 @@
   .tile-del{right:40px;color:var(--red);}
   .tile-notes{position:absolute;bottom:8px;right:72px;width:26px;height:26px;border-radius:50%;border:none;cursor:pointer;
     background:rgba(255,255,255,0.92);font-size:13px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,0.35);opacity:0.55;}
+  .tile-sell{position:absolute;bottom:10px;right:136px;height:22px;padding:0 6px;border-radius:4px;border:1px solid var(--green);cursor:pointer;
+    background:rgba(255,255,255,0.95);color:var(--green);font:700 10px/1 var(--sans);letter-spacing:0.06em;box-shadow:0 1px 4px rgba(0,0,0,0.35);}
+  .tile-sell:hover{background:var(--green);color:#fff;}
+  .tile-cost{position:absolute;bottom:8px;right:104px;width:26px;height:26px;border-radius:50%;border:none;cursor:pointer;
+    background:rgba(255,255,255,0.92);font-size:13px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,0.35);opacity:0.55;}
+  .tile-cost.has-cost{opacity:1;box-shadow:0 0 0 2px var(--green), 0 1px 4px rgba(0,0,0,0.35);}
   .tile-notes.has-note{opacity:1;box-shadow:0 0 0 2px var(--gold), 0 1px 4px rgba(0,0,0,0.35);}
   .copy-badge{
     position:absolute;bottom:8px;left:8px;background:rgba(60,107,74,0.92);color:#fff;
@@ -127,7 +133,7 @@
   .tile-info.slabbed{gap:6px;padding:8px 10px;flex:none;}
   .tile-info.slabbed .tile-prices{margin-top:0;border-top:none;padding-top:0;}
   .slab-actions{display:flex;align-items:center;gap:6px;padding-top:6px;border-top:1px solid var(--line-soft);}
-  .slab-actions .copy-badge, .slab-actions .tile-del, .slab-actions .tile-gear, .slab-actions .tile-notes{position:static;}
+  .slab-actions .copy-badge, .slab-actions .tile-del, .slab-actions .tile-gear, .slab-actions .tile-notes, .slab-actions .tile-cost, .slab-actions .tile-sell{position:static;}
   .slab-actions .copy-badge{margin-right:auto;}
   #collection-value{display:flex;flex-direction:column;gap:2px;line-height:1.35;}
   .profit-pos{color:var(--green);font-weight:600;}
@@ -182,7 +188,10 @@
     <button type="button" id="price-check-btn">Price check</button>
     <button type="button" id="price-update-btn">Price update</button>
     <span id="price-check-status" style="font-size:12px;color:var(--ink-soft);"></span>
-    <div style="position:relative;margin-left:auto;">
+    <form id="mercari-form" style="margin-left:auto;display:flex;" title="Opens Mercari's sold listings for this code in a new tab">
+      <input type="text" id="mercari-input" placeholder="Mercari sold: card code…" style="font-family:var(--sans);font-size:13.5px;padding:7px 10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);width:190px;">
+    </form>
+    <div style="position:relative;">
       <input type="text" id="quickadd-input" placeholder="Quick add a card…" style="font-family:var(--sans);font-size:13.5px;padding:7px 10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);width:180px;">
       <div id="quickadd-results" class="quickadd-results"></div>
     </div>
@@ -402,14 +411,16 @@
   }
   // Signed, colored money: green "+¥…" when >= 0, red "−¥…" when negative.
   function fmtProfit(v){
-    const pos = v >= 0;
-    return `<span class="${pos ? 'profit-pos' : 'profit-neg'}">${pos ? '+' : '−'}${W.fmtYenConverted(Math.abs(v))}</span>`;
+    const pos = v >= 0, sign = pos ? '+' : '−';
+    // "+¥24,128 (~+$161)" / "−¥17,985 (~−$120)": the sign goes on the converted amount too.
+    const txt = sign + W.fmtYenConverted(Math.abs(v)).replace(/\((~?)/, `($1${sign}`);
+    return `<span class="${pos ? 'profit-pos' : 'profit-neg'}">${txt}</span>`;
   }
   function refreshCollectionValue(){
     const el = document.getElementById('collection-value');
     if (!currentCollectionId) { el.textContent = 'Value: —'; return; }
     W.get(`/collections/${currentCollectionId}/value`).then(v => {
-      const value = `Value: ${W.fmtYenConverted(v.total_sell_value_jpy)} sell · ${W.fmtYenConverted(v.total_buy_value_jpy)} buylist (${v.total_copies} cop${v.total_copies===1?'y':'ies'})`;
+      const value = `Value: ${W.fmtYenConverted(v.total_sell_value_jpy)} sell (${v.total_copies} cop${v.total_copies===1?'y':'ies'})`;
       let cost, profit;
       if (v.costed_copies > 0) {
         cost = `Cost: ${W.fmtYenConverted(v.total_purchase_cost_jpy)}`
@@ -421,7 +432,12 @@
         cost = `Cost: — <span title="Set a purchase price in ⚙ to track cost and profit">(no paid prices yet)</span>`;
         profit = 'Profit: —';
       }
-      el.innerHTML = `<div>${value}</div><div>${cost}</div><div>${profit}</div>`;
+      let historic = 'Historic profit: —';
+      if (v.sales_count > 0) {
+        historic = `Historic profit: ${v.costed_sales > 0 ? fmtProfit(v.historic_profit_jpy) : '—'} <span>(${v.sales_count} sale${v.sales_count===1?'':'s'}`
+          + (v.costed_sales < v.sales_count ? `, ${v.sales_count - v.costed_sales} without a paid price` : '') + ')</span>';
+      }
+      el.innerHTML = `<div>${value}</div><div>${cost}</div><div>${profit}</div><div>${historic}</div>`;
     }).catch(() => { el.textContent = 'Value: —'; });
   }
 
@@ -560,6 +576,12 @@
   currencySelect.value = W.getCurrency();
   currencySelect.addEventListener('change', () => { W.setCurrency(currencySelect.value); refreshCollectionValue(); render(); });
   searchInput.addEventListener('input', () => { page = 1; render(); });
+  document.getElementById('mercari-form').addEventListener('submit', (ev) => {
+    ev.preventDefault();
+    const code = document.getElementById('mercari-input').value.trim();
+    if (!code) return;
+    window.open('https://jp.mercari.com/search?keyword=' + encodeURIComponent(code) + '&status=sold_out', '_blank', 'noopener');
+  });
   W.initQuickAdd(document.getElementById('quickadd-input'), document.getElementById('quickadd-results'), async (card) => {
     if (!currentCollectionId) { alert('Pick a collection first.'); return; }
     try {
@@ -765,6 +787,117 @@
     return `<span class="grade-badge ${cls}">${W.escapeHtml(grade)}</span>`;
   }
 
+  // Money box with a currency picker; returns helpers to read the value in yen.
+  function moneyFieldHtml(id, yenValue){
+    const cur = W.getCurrency();
+    const shown = yenValue == null ? ''
+      : cur !== 'JPY' && W.yenToCurrency(yenValue, cur) != null ? Math.round(W.yenToCurrency(yenValue, cur) * 100) / 100 : yenValue;
+    return `<div style="display:flex;gap:6px;">
+      <input type="number" id="${id}" value="${shown}" min="0" step="any" style="flex:1;">
+      <select id="${id}-cur" style="width:80px;">${['JPY','USD','GBP','NOK'].map(c => `<option value="${c}" ${c===cur?'selected':''}>${c}</option>`).join('')}</select>
+    </div>`;
+  }
+  function readYen(root, id){
+    const v = root.querySelector('#' + id).value;
+    if (v === '') return null;
+    const yen = W.currencyToYen(Number(v), root.querySelector('#' + id + '-cur').value);
+    return yen == null ? NaN : Math.round(yen);
+  }
+
+  function openSellModal(copy){
+    const el = ensureModal('sell-modal');
+    el.innerHTML = `<div class="modal"><button type="button" class="modal-close" aria-label="Close">×</button>
+      <div class="edit-form">
+        <h2>Sell copy #${copy.copy_number} · ${W.escapeHtml(copy.card.name)}</h2>
+        <label for="sf-sold">Sold for</label>
+        ${moneyFieldHtml('sf-sold', null)}
+        <label for="sf-paid">Paid</label>
+        ${moneyFieldHtml('sf-paid', copy.purchase_price_jpy)}
+        <div id="sf-profit" style="margin-top:8px;font-size:14px;">Profit: —</div>
+        <p style="font-size:12px;color:var(--ink-soft);margin:6px 0 0;">This removes the copy from the collection and adds the sale to Historic profit.</p>
+        <div class="edit-form-actions">
+          <button type="button" class="cancel-btn" data-act="cancel">Cancel</button>
+          <button type="button" class="save-btn" data-act="save">Record sale</button>
+        </div>
+      </div>
+    </div>`;
+    const profitEl = el.querySelector('#sf-profit');
+    // Untouched "Paid" box = send the exact saved yen (a USD round-trip can drift by ¥1).
+    let paidEdited = false;
+    ['#sf-paid', '#sf-paid-cur'].forEach(s => el.querySelector(s).addEventListener('input', () => paidEdited = true));
+    const paidYen = () => paidEdited ? readYen(el, 'sf-paid') : copy.purchase_price_jpy;
+    const update = () => {
+      const sold = readYen(el, 'sf-sold'), paid = paidYen();
+      profitEl.innerHTML = sold == null || Number.isNaN(sold) ? 'Profit: —'
+        : paid == null ? 'Profit: — <span style="color:var(--ink-soft);font-size:12px;">(add what you paid to count it)</span>'
+        : Number.isNaN(paid) ? 'Profit: —' : 'Profit: ' + fmtProfit(sold - paid);
+    };
+    el.querySelectorAll('input, select').forEach(x => x.addEventListener('input', update));
+    const close = () => el.hidden = true;
+    el.querySelector('.modal-close').addEventListener('click', close);
+    el.querySelector('[data-act="cancel"]').addEventListener('click', close);
+    el.querySelector('[data-act="save"]').addEventListener('click', async () => {
+      const sold = readYen(el, 'sf-sold'), paid = paidYen();
+      if (sold == null) { alert('Enter what you sold it for.'); return; }
+      if (Number.isNaN(sold) || Number.isNaN(paid)) { alert("Exchange rates haven't loaded yet — try again in a moment, or pick JPY."); return; }
+      try {
+        await W.post(`/copies/${copy.id}/sell`, {sold_price_jpy: sold, purchase_price_jpy: paid});
+        close();
+        W.toast ? W.toast('Sale recorded.') : null;
+        await refreshCopies();   // copy disappears, Historic profit updates
+      } catch (e) { alert(e.message); }
+    });
+    el.hidden = false;
+    el.querySelector('#sf-sold').focus();
+  }
+
+  function openCostModal(copy){
+    const el = ensureModal('cost-modal');
+    const cur = W.getCurrency();
+    const shownVal = copy.purchase_price_jpy == null ? ''
+      : cur !== 'JPY' && W.yenToCurrency(copy.purchase_price_jpy, cur) != null
+        ? Math.round(W.yenToCurrency(copy.purchase_price_jpy, cur) * 100) / 100 : copy.purchase_price_jpy;
+    el.innerHTML = `<div class="modal"><button type="button" class="modal-close" aria-label="Close">×</button>
+      <div class="edit-form">
+        <h2>What you paid — copy #${copy.copy_number} · ${W.escapeHtml(copy.card.name)}</h2>
+        <div style="display:flex;gap:6px;">
+          <input type="number" id="cf-price" value="${shownVal}" min="0" step="any" style="flex:1;">
+          <select id="cf-currency" style="width:80px;">
+            <option value="JPY">JPY</option><option value="USD">USD</option><option value="GBP">GBP</option><option value="NOK">NOK</option>
+          </select>
+        </div>
+        <div class="edit-form-actions">
+          <button type="button" class="cancel-btn" data-act="cancel">Cancel</button>
+          <button type="button" class="save-btn" data-act="save">Save</button>
+        </div>
+      </div>
+    </div>`;
+    const input = el.querySelector('#cf-price'), curSel = el.querySelector('#cf-currency');
+    curSel.value = cur;
+    curSel.addEventListener('change', () => {           // re-derive from the saved yen, never from the typed value
+      if (copy.purchase_price_jpy == null) return;
+      const c = W.yenToCurrency(copy.purchase_price_jpy, curSel.value);
+      if (c != null) input.value = Math.round(c * 100) / 100;
+    });
+    const close = () => el.hidden = true;
+    el.querySelector('.modal-close').addEventListener('click', close);
+    el.querySelector('[data-act="cancel"]').addEventListener('click', close);
+    const save = async () => {
+      if (input.value === '') { alert('Enter what you paid.'); return; }
+      const yen = W.currencyToYen(Number(input.value), curSel.value);
+      if (yen == null) { alert("Exchange rates haven't loaded yet — try again in a moment, or pick JPY."); return; }
+      try {
+        await W.patch(`/copies/${copy.id}`, {purchase_price_jpy: Math.round(yen)});
+        close();
+        await refreshCopies();   // also refreshes Cost / Profit at the top
+      } catch (e) { alert(e.message); }
+    };
+    el.querySelector('[data-act="save"]').addEventListener('click', save);
+    input.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') save(); });
+    el.hidden = false;
+    input.focus(); input.select();
+  }
+
   function openNotesModal(copy){
     const el = ensureModal('notes-modal');
     el.innerHTML = `<div class="modal"><button type="button" class="modal-close" aria-label="Close">×</button>
@@ -958,18 +1091,18 @@
           <button type="button" class="tile-add" data-act="add" title="Add another copy to this collection">+</button>
           <button type="button" class="tile-binder ${card.in_binder?'active':''}" data-act="binder" data-picker-trigger title="Send to a binder">📘</button>
           <button type="button" class="tile-wish" data-act="wish" data-picker-trigger title="Add to a wishlist">♡</button>
-          ${psa ? '' : `<button type="button" class="tile-notes${copy.note ? ' has-note' : ''}" data-act="notes" title="${copy.note ? W.escapeHtml(copy.note) : 'Add a note'}">📝</button>
+          ${psa ? '' : `<button type="button" class="tile-sell" data-act="sell" title="Record a sale">SELL</button><button type="button" class="tile-cost${copy.purchase_price_jpy != null ? ' has-cost' : ''}" data-act="cost" title="${copy.purchase_price_jpy != null ? 'Paid ' + W.fmtYenConverted(copy.purchase_price_jpy) : 'Set what you paid'}">💲</button><button type="button" class="tile-notes${copy.note ? ' has-note' : ''}" data-act="notes" title="${copy.note ? W.escapeHtml(copy.note) : 'Add a note'}">📝</button>
             <button type="button" class="tile-del" data-act="del" title="Remove this copy (e.g. sold)">🗑</button>
           <button type="button" class="tile-gear" data-act="edit" title="Edit grade / note">⚙</button>`}
         </div>
         <div class="tile-info${psa ? ' slabbed' : ''}">
           ${psa ? '' : `<div class="tile-name" data-act="info" style="cursor:pointer;" title="Card details">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>`}
           ${psa ? '' : `<div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span></div>`}
-          <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}${W.trendArrow(card.sell_trend)}</span><span>Buy ${W.fmtYenConverted(card.buy_price_jpy)}${W.trendArrow(card.buy_trend)}</span></div>
+          <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}${W.trendArrow(card.sell_trend)}</span></div>
           ${copy.purchase_price_jpy != null ? `<div class="tile-prices" style="margin-top:2px;"><span style="color:var(--ink-soft);">Paid ${W.fmtYenConverted(copy.purchase_price_jpy)}</span>${card.sell_price_jpy != null ? `<span>Profit ${fmtProfit(card.sell_price_jpy - copy.purchase_price_jpy)}</span>` : ''}</div>` : ''}
           ${psa ? `<div class="slab-actions">
             <span class="copy-badge">#${copy.copy_number}</span>
-            <button type="button" class="tile-notes${copy.note ? ' has-note' : ''}" data-act="notes" title="${copy.note ? W.escapeHtml(copy.note) : 'Add a note'}">📝</button>
+            <button type="button" class="tile-sell" data-act="sell" title="Record a sale">SELL</button><button type="button" class="tile-cost${copy.purchase_price_jpy != null ? ' has-cost' : ''}" data-act="cost" title="${copy.purchase_price_jpy != null ? 'Paid ' + W.fmtYenConverted(copy.purchase_price_jpy) : 'Set what you paid'}">💲</button><button type="button" class="tile-notes${copy.note ? ' has-note' : ''}" data-act="notes" title="${copy.note ? W.escapeHtml(copy.note) : 'Add a note'}">📝</button>
             <button type="button" class="tile-del" data-act="del" title="Remove this copy (e.g. sold)">🗑</button>
             <button type="button" class="tile-gear" data-act="edit" title="Edit grade / note">⚙</button>
           </div>` : ''}
@@ -995,7 +1128,7 @@
         <div class="tile-info">
           <div class="tile-name" data-act="info" style="cursor:pointer;" title="Card details">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>
           <div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span><span class="frame-badge">${n} copies</span></div>
-          <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}${W.trendArrow(card.sell_trend)}</span><span>Buy ${W.fmtYenConverted(card.buy_price_jpy)}${W.trendArrow(card.buy_trend)}</span></div>
+          <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}${W.trendArrow(card.sell_trend)}</span></div>
         </div>
       </div>`;
   }
@@ -1044,6 +1177,8 @@
         tile.querySelector('[data-act="info"]').addEventListener('click', (ev) => { ev.stopPropagation(); openInfo(card); });
         tile.querySelector('[data-act="edit"]').addEventListener('click', (ev) => { ev.stopPropagation(); openEditModal(copy); });
         tile.querySelector('[data-act="notes"]').addEventListener('click', (ev) => { ev.stopPropagation(); openNotesModal(copy); });
+        tile.querySelector('[data-act="cost"]').addEventListener('click', (ev) => { ev.stopPropagation(); openCostModal(copy); });
+        tile.querySelector('[data-act="sell"]').addEventListener('click', (ev) => { ev.stopPropagation(); openSellModal(copy); });
         tile.querySelector('[data-act="wish"]').addEventListener('click', (ev) => { ev.stopPropagation(); handleAddWish(ev.currentTarget, card); });
         tile.querySelector('[data-act="binder"]').addEventListener('click', (ev) => { ev.stopPropagation(); handleSendToBinder(ev.currentTarget, copy); });
         tile.querySelector('[data-act="add"]').addEventListener('click', async (ev) => {
