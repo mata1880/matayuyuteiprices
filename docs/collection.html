@@ -129,6 +129,8 @@
   .slab-actions{display:flex;align-items:center;gap:6px;padding-top:6px;border-top:1px solid var(--line-soft);}
   .slab-actions .copy-badge, .slab-actions .tile-del, .slab-actions .tile-gear, .slab-actions .tile-notes{position:static;}
   .slab-actions .copy-badge{margin-right:auto;}
+  .profit-pos{color:var(--green);font-weight:600;}
+  .profit-neg{color:var(--red);font-weight:600;}
   .frame-badge{
     font-family:var(--mono);font-size:9.5px;color:var(--ink-soft);text-transform:uppercase;
     letter-spacing:0.03em;
@@ -397,11 +399,25 @@
       render();
     });
   }
+  // Signed, colored money: green "+¥…" when >= 0, red "−¥…" when negative.
+  function fmtProfit(v){
+    const pos = v >= 0;
+    return `<span class="${pos ? 'profit-pos' : 'profit-neg'}">${pos ? '+' : '−'}${W.fmtYenConverted(Math.abs(v))}</span>`;
+  }
   function refreshCollectionValue(){
     const el = document.getElementById('collection-value');
     if (!currentCollectionId) { el.textContent = 'Value: —'; return; }
     W.get(`/collections/${currentCollectionId}/value`).then(v => {
-      el.textContent = `Value: ${W.fmtYenConverted(v.total_sell_value_jpy)} sell · ${W.fmtYenConverted(v.total_buy_value_jpy)} buylist (${v.total_copies} cop${v.total_copies===1?'y':'ies'})`;
+      let html = `Value: ${W.fmtYenConverted(v.total_sell_value_jpy)} sell · ${W.fmtYenConverted(v.total_buy_value_jpy)} buylist (${v.total_copies} cop${v.total_copies===1?'y':'ies'})`;
+      if (v.costed_copies > 0) {
+        html += ` · Cost: ${W.fmtYenConverted(v.total_purchase_cost_jpy)} · Profit: ${fmtProfit(v.profit_jpy)}`;
+        if (v.costed_copies < v.total_copies) {
+          html += ` <span title="Only copies with a paid price are counted in Cost and Profit">(${v.costed_copies} of ${v.total_copies} copies have a paid price)</span>`;
+        }
+      } else {
+        html += ` · Cost: — <span title="Set a purchase price in ⚙ to track cost and profit">(no paid prices yet)</span>`;
+      }
+      el.innerHTML = html;
     }).catch(() => { el.textContent = 'Value: —'; });
   }
 
@@ -946,7 +962,7 @@
           ${psa ? '' : `<div class="tile-name" data-act="info" style="cursor:pointer;" title="Card details">${W.escapeHtml(card.name)} <button type="button" class="tile-info-btn" data-act="info" title="Card details">ⓘ</button></div>`}
           ${psa ? '' : `<div class="tile-meta">${card.rarity ? `<span class="rarity-badge">${W.escapeHtml(card.rarity)}</span>` : ''}<span class="tile-number">${W.escapeHtml(card.card_number)}</span></div>`}
           <div class="tile-prices"><span class="${W.stockClass(card.availability)}">Sell ${W.fmtYenConverted(card.sell_price_jpy)}${W.trendArrow(card.sell_trend)}</span><span>Buy ${W.fmtYenConverted(card.buy_price_jpy)}${W.trendArrow(card.buy_trend)}</span></div>
-          ${copy.purchase_price_jpy != null ? `<div class="tile-prices" style="margin-top:2px;"><span style="color:var(--ink-soft);">Paid ${W.fmtYenConverted(copy.purchase_price_jpy)}</span></div>` : ''}
+          ${copy.purchase_price_jpy != null ? `<div class="tile-prices" style="margin-top:2px;"><span style="color:var(--ink-soft);">Paid ${W.fmtYenConverted(copy.purchase_price_jpy)}</span>${card.sell_price_jpy != null ? `<span>Profit ${fmtProfit(card.sell_price_jpy - copy.purchase_price_jpy)}</span>` : ''}</div>` : ''}
           ${psa ? `<div class="slab-actions">
             <span class="copy-badge">#${copy.copy_number}</span>
             <button type="button" class="tile-notes${copy.note ? ' has-note' : ''}" data-act="notes" title="${copy.note ? W.escapeHtml(copy.note) : 'Add a note'}">📝</button>
