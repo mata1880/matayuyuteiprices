@@ -129,6 +129,7 @@
   .slab-actions{display:flex;align-items:center;gap:6px;padding-top:6px;border-top:1px solid var(--line-soft);}
   .slab-actions .copy-badge, .slab-actions .tile-del, .slab-actions .tile-gear, .slab-actions .tile-notes{position:static;}
   .slab-actions .copy-badge{margin-right:auto;}
+  #collection-value{display:flex;flex-direction:column;gap:2px;line-height:1.35;}
   .profit-pos{color:var(--green);font-weight:600;}
   .profit-neg{color:var(--red);font-weight:600;}
   .frame-badge{
@@ -408,16 +409,19 @@
     const el = document.getElementById('collection-value');
     if (!currentCollectionId) { el.textContent = 'Value: —'; return; }
     W.get(`/collections/${currentCollectionId}/value`).then(v => {
-      let html = `Value: ${W.fmtYenConverted(v.total_sell_value_jpy)} sell · ${W.fmtYenConverted(v.total_buy_value_jpy)} buylist (${v.total_copies} cop${v.total_copies===1?'y':'ies'})`;
+      const value = `Value: ${W.fmtYenConverted(v.total_sell_value_jpy)} sell · ${W.fmtYenConverted(v.total_buy_value_jpy)} buylist (${v.total_copies} cop${v.total_copies===1?'y':'ies'})`;
+      let cost, profit;
       if (v.costed_copies > 0) {
-        html += ` · Cost: ${W.fmtYenConverted(v.total_purchase_cost_jpy)} · Profit: ${fmtProfit(v.profit_jpy)}`;
-        if (v.costed_copies < v.total_copies) {
-          html += ` <span title="Only copies with a paid price are counted in Cost and Profit">(${v.costed_copies} of ${v.total_copies} copies have a paid price)</span>`;
-        }
+        cost = `Cost: ${W.fmtYenConverted(v.total_purchase_cost_jpy)}`
+          + (v.costed_copies < v.total_copies
+              ? ` <span title="Only copies with a paid price are counted in Cost and Profit">(${v.costed_copies} of ${v.total_copies} copies have a paid price)</span>`
+              : '');
+        profit = `Profit: ${fmtProfit(v.profit_jpy)}`;
       } else {
-        html += ` · Cost: — <span title="Set a purchase price in ⚙ to track cost and profit">(no paid prices yet)</span>`;
+        cost = `Cost: — <span title="Set a purchase price in ⚙ to track cost and profit">(no paid prices yet)</span>`;
+        profit = 'Profit: —';
       }
-      el.innerHTML = html;
+      el.innerHTML = `<div>${value}</div><div>${cost}</div><div>${profit}</div>`;
     }).catch(() => { el.textContent = 'Value: —'; });
   }
 
