@@ -414,7 +414,11 @@
     const pos = v >= 0, sign = pos ? '+' : '−';
     // "+¥24,128 (~+$161)" / "−¥17,985 (~−$120)": the sign goes on the converted amount too.
     const txt = sign + W.fmtYenConverted(Math.abs(v)).replace(/\((~?)/, `($1${sign}`);
-    return `<span class="${pos ? 'profit-pos' : 'profit-neg'}">${txt}</span>`;
+    // Keep "−¥16,693" and "(~−$112)" each unbroken; if space runs out, the
+    // converted part wraps as a whole instead of splitting after "(~".
+    const i = txt.indexOf(' (');
+    const parts = i === -1 ? [txt] : [txt.slice(0, i), txt.slice(i + 1)];
+    return `<span class="${pos ? 'profit-pos' : 'profit-neg'}">${parts.map(p => `<span style="white-space:nowrap;">${p}</span>`).join(' ')}</span>`;
   }
   function refreshCollectionValue(){
     const el = document.getElementById('collection-value');
