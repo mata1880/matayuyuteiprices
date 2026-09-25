@@ -15,6 +15,9 @@
   }
   .tile-gear{right:8px;color:var(--ink-soft);}
   .tile-del{right:40px;color:var(--red);}
+  .tile-notes{position:absolute;bottom:8px;right:72px;width:26px;height:26px;border-radius:50%;border:none;cursor:pointer;
+    background:rgba(255,255,255,0.92);font-size:13px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,0.35);opacity:0.55;}
+  .tile-notes.has-note{opacity:1;box-shadow:0 0 0 2px var(--gold), 0 1px 4px rgba(0,0,0,0.35);}
   .copy-badge{
     position:absolute;bottom:8px;left:8px;background:rgba(60,107,74,0.92);color:#fff;
     font-family:var(--mono);font-size:10.5px;padding:2px 6px;border-radius:3px;
@@ -45,12 +48,11 @@
   .slab-label-left span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .slab-label-name{font-weight:700;}
   .slab-label{cursor:pointer;}
-  .slab-code{margin-top:auto;font-family:var(--mono);font-size:9.5px;letter-spacing:0.02em;font-weight:700;color:inherit;text-decoration:none;align-self:flex-start;}
+  .slab-code{margin-top:auto;font-family:var(--mono);font-size:9px;letter-spacing:-0.01em;font-weight:700;color:inherit;text-decoration:none;align-self:flex-start;}
   a.slab-code:hover{text-decoration:underline;}
   .slab-code{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
   .slab-label{container-type:inline-size;}
-  .slab-label:not(.ot):not(.bgs) .slab-code{font-size:8.5px;max-width:calc(50cqw - 18px);}   /* PSA: always stop before the centered logo */
-  .slab-label.bgs .slab-code{font-size:8px;}                      /* Beckett: narrower label, keep on one line */
+  .slab-label:not(.ot):not(.bgs) .slab-code{max-width:calc(50cqw - 15px);letter-spacing:-0.04em;}   /* PSA: always stop before the centered logo */
   .slab-label-right{display:flex;flex-direction:column;align-items:flex-end;text-align:right;white-space:nowrap;}
   .slab-grade{font-size:13px;font-weight:700;line-height:1.1;}
   .slab-label .slab-logo{
@@ -125,7 +127,7 @@
   .tile-info.slabbed{gap:6px;padding:8px 10px;flex:none;}
   .tile-info.slabbed .tile-prices{margin-top:0;border-top:none;padding-top:0;}
   .slab-actions{display:flex;align-items:center;gap:6px;padding-top:6px;border-top:1px solid var(--line-soft);}
-  .slab-actions .copy-badge, .slab-actions .tile-del, .slab-actions .tile-gear{position:static;}
+  .slab-actions .copy-badge, .slab-actions .tile-del, .slab-actions .tile-gear, .slab-actions .tile-notes{position:static;}
   .slab-actions .copy-badge{margin-right:auto;}
   .frame-badge{
     font-family:var(--mono);font-size:9.5px;color:var(--ink-soft);text-transform:uppercase;
@@ -743,6 +745,32 @@
     return `<span class="grade-badge ${cls}">${W.escapeHtml(grade)}</span>`;
   }
 
+  function openNotesModal(copy){
+    const el = ensureModal('notes-modal');
+    el.innerHTML = `<div class="modal"><button type="button" class="modal-close" aria-label="Close">×</button>
+      <div class="edit-form">
+        <h2>Notes — copy #${copy.copy_number} · ${W.escapeHtml(copy.card.name)}</h2>
+        <textarea id="nf-note" rows="6" placeholder="e.g. where you bought it, condition details, who it's reserved for…">${W.escapeHtml(copy.note || '')}</textarea>
+        <div class="edit-form-actions">
+          <button type="button" class="cancel-btn" data-act="cancel">Cancel</button>
+          <button type="button" class="save-btn" data-act="save">Save</button>
+        </div>
+      </div>
+    </div>`;
+    el.querySelector('.modal-close').addEventListener('click', () => el.hidden = true);
+    el.querySelector('[data-act="cancel"]').addEventListener('click', () => el.hidden = true);
+    el.querySelector('[data-act="save"]').addEventListener('click', async () => {
+      try {
+        // Send "" rather than null so clearing the box actually clears the note.
+        await W.patch(`/copies/${copy.id}`, {note: el.querySelector('#nf-note').value});
+        el.hidden = true;
+        await refreshCopies();
+      } catch (e) { alert(e.message); }
+    });
+    el.hidden = false;
+    el.querySelector('#nf-note').focus();
+  }
+
   function openEditModal(copy){
     const el = ensureModal('edit-modal');
     el.innerHTML = `<div class="modal"><button type="button" class="modal-close" aria-label="Close">×</button>
@@ -910,7 +938,8 @@
           <button type="button" class="tile-add" data-act="add" title="Add another copy to this collection">+</button>
           <button type="button" class="tile-binder ${card.in_binder?'active':''}" data-act="binder" data-picker-trigger title="Send to a binder">📘</button>
           <button type="button" class="tile-wish" data-act="wish" data-picker-trigger title="Add to a wishlist">♡</button>
-          ${psa ? '' : `<button type="button" class="tile-del" data-act="del" title="Remove this copy (e.g. sold)">🗑</button>
+          ${psa ? '' : `<button type="button" class="tile-notes${copy.note ? ' has-note' : ''}" data-act="notes" title="${copy.note ? W.escapeHtml(copy.note) : 'Add a note'}">📝</button>
+            <button type="button" class="tile-del" data-act="del" title="Remove this copy (e.g. sold)">🗑</button>
           <button type="button" class="tile-gear" data-act="edit" title="Edit grade / note">⚙</button>`}
         </div>
         <div class="tile-info${psa ? ' slabbed' : ''}">
@@ -920,6 +949,7 @@
           ${copy.purchase_price_jpy != null ? `<div class="tile-prices" style="margin-top:2px;"><span style="color:var(--ink-soft);">Paid ${W.fmtYenConverted(copy.purchase_price_jpy)}</span></div>` : ''}
           ${psa ? `<div class="slab-actions">
             <span class="copy-badge">#${copy.copy_number}</span>
+            <button type="button" class="tile-notes${copy.note ? ' has-note' : ''}" data-act="notes" title="${copy.note ? W.escapeHtml(copy.note) : 'Add a note'}">📝</button>
             <button type="button" class="tile-del" data-act="del" title="Remove this copy (e.g. sold)">🗑</button>
             <button type="button" class="tile-gear" data-act="edit" title="Edit grade / note">⚙</button>
           </div>` : ''}
@@ -993,6 +1023,7 @@
         tile.querySelector('[data-act="zoom"]').addEventListener('click', () => openZoom(card));
         tile.querySelector('[data-act="info"]').addEventListener('click', (ev) => { ev.stopPropagation(); openInfo(card); });
         tile.querySelector('[data-act="edit"]').addEventListener('click', (ev) => { ev.stopPropagation(); openEditModal(copy); });
+        tile.querySelector('[data-act="notes"]').addEventListener('click', (ev) => { ev.stopPropagation(); openNotesModal(copy); });
         tile.querySelector('[data-act="wish"]').addEventListener('click', (ev) => { ev.stopPropagation(); handleAddWish(ev.currentTarget, card); });
         tile.querySelector('[data-act="binder"]').addEventListener('click', (ev) => { ev.stopPropagation(); handleSendToBinder(ev.currentTarget, copy); });
         tile.querySelector('[data-act="add"]').addEventListener('click', async (ev) => {
