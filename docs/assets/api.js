@@ -78,7 +78,31 @@ window.WSAPI = (function(){
     window.location.href = "login.html";
   }
 
+  // ---------- which game you're looking at (shared across pages, like the theme) ----------
+  const GAME_KEY = "ws-game-pref";
+  const GAMES = {ws: "Weiss", gcg: "Gundam"};
+  function getGame(){ try { const g = localStorage.getItem(GAME_KEY); return GAMES[g] ? g : "ws"; } catch (e) { return "ws"; } }
+  function setGame(g){ try { localStorage.setItem(GAME_KEY, g); } catch (e) {} }
+  // Every request passes through here, so the game is added in one place:
+  // lists only return that game's cards/collections/wishlists/binders, and
+  // new collections/wishlists/binders (and price scrapes) are tagged with it.
+  function withGame(path, options){
+    const game = getGame();
+    const method = (options.method || "GET").toUpperCase();
+    if (method === "GET" && /^\/(cards|collections|wishlists|binders)(\?|$)/.test(path)) {
+      path += (path.includes("?") ? "&" : "?") + "game=" + encodeURIComponent(game);
+    }
+    if (method === "POST" && ["/collections", "/wishlists", "/binders", "/scrape/prices"].includes(path) && options.body) {
+      try { const b = JSON.parse(options.body); if (b.game == null) { b.game = game; options = {...options, body: JSON.stringify(b)}; } } catch (e) {}
+    }
+    if (method === "POST" && path === "/scrape/catalog" && game !== "ws") {
+      throw new Error(`Card info for ${GAMES[game]} isn't supported yet — this button only reads the official Weiss site.`);
+    }
+    return [path, options];
+  }
+
   async function api(path, options = {}) {
+    [path, options] = withGame(path, options);
     const token = getToken();
     const headers = {"Content-Type": "application/json"};
     if (token) headers["Authorization"] = "Bearer " + token;
@@ -306,9 +330,17 @@ window.WSAPI = (function(){
   // page, passing the element to fill (usually the header's status area).
   function themeToggleHtml(){
     const isDark = getTheme() === "dark";
-    return `<button type="button" id="ws-theme-toggle" title="Switch light/dark" style="font-family:var(--sans);font-size:12px;padding:6px 10px;border:1px solid var(--line);background:var(--card-bg);color:var(--ink);cursor:pointer;border-radius:999px;">${isDark ? '☀ Light' : '☾ Dark'}</button>`;
+    const g = getGame();
+    const gameSel = `<select id="ws-game-toggle" title="Switch game" style="font-family:var(--sans);font-size:12px;padding:5px 8px;border:1px solid var(--line);background:var(--card-bg);color:var(--ink);cursor:pointer;border-radius:999px;margin-right:6px;">${Object.entries(GAMES).map(([k,l]) => `<option value="${k}" ${k===g?'selected':''}>${l}</option>`).join('')}</select>`;
+    return gameSel + `<button type="button" id="ws-theme-toggle" title="Switch light/dark" style="font-family:var(--sans);font-size:12px;padding:6px 10px;border:1px solid var(--line);background:var(--card-bg);color:var(--ink);cursor:pointer;border-radius:999px;">${isDark ? '☀ Light' : '☾ Dark'}</button>`;
   }
   function wireThemeToggle(){
+    const gameSel = document.getElementById('ws-game-toggle');
+    if (gameSel) gameSel.addEventListener('change', () => {
+      setGame(gameSel.value);
+      // Reload without ?id=… — an id from the other game's collection/binder wouldn't belong here.
+      window.location.href = window.location.pathname;
+    });
     const btn = document.getElementById('ws-theme-toggle');
     if (!btn) return;
     btn.addEventListener('click', () => {
@@ -822,7 +854,7 @@ window.WSAPI = (function(){
     fmtYen, escapeHtml, normForMatch, sortRarities,
     getCurrency, setCurrency, loadRates, fmtYenConverted, stockClass, trendArrow, yenToCurrency, currencyToYen,
     loadSidebarData, sidebarHtml, wireSidebar, getUrlId, sendCardToBinder, addCardToBinder,
-    getTheme, setTheme, applyTheme, initTheme, themeToggleHtml, wireThemeToggle,
+    getTheme, setTheme, applyTheme, initTheme, themeToggleHtml, wireThemeToggle, getGame, setGame, GAMES,
     logoutButtonHtml, wireLogoutButton,
     toast, titlePrefix, setCodePrefix, PAGE_SIZE, resolvedLayout, pageSlotLabel, showPriceChanges,
     paginate, renderPagination,
