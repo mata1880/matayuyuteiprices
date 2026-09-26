@@ -719,7 +719,7 @@
       const p = pageNumberFromSlot(Number(slotIndex));
       return `<div class="binder-search-hit" data-page="${p}" style="padding:7px 10px;cursor:pointer;font-size:12.5px;border-bottom:1px solid var(--line-soft);">
         <strong>${W.escapeHtml(s.card.name)}</strong><br>
-        <span style="color:var(--ink-soft);font-family:var(--mono);font-size:11px;">${W.escapeHtml(s.card.card_number)} — page ${p}</span>
+        <span style="color:var(--ink-soft);font-family:var(--mono);font-size:11px;">${W.escapeHtml(W.printedCode(s.card))} — page ${p}</span>
       </div>`;
     }).join('');
     binderSearchResults.style.display = 'block';

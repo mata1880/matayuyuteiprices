@@ -177,6 +177,13 @@ window.WSAPI = (function(){
     if (Number.isNaN(n)) return "—";
     return "¥" + n.toLocaleString("en-US");
   }
+  // The number printed on the card. Gundam parallels are stored as GD01-001_p1
+  // (parallels share the printed number, but each needs its own id); show GD01-001.
+  // Weiss numbers never contain "_", so they pass through unchanged.
+  function printedCode(c){
+    const n = typeof c === 'string' ? c : ((c && c.card_number) || '');
+    return n.split('_')[0];
+  }
   function escapeHtml(s){
     return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({
       "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
@@ -310,7 +317,7 @@ window.WSAPI = (function(){
       const sellChanged = c.old_sell_price_jpy !== c.new_sell_price_jpy;
       const buyChanged = c.old_buy_price_jpy !== c.new_buy_price_jpy;
       return `<tr>
-        <td style="padding:6px 10px;border-bottom:1px solid var(--line-soft);">${escapeHtml(c.name)}<br><span style="font-family:monospace;font-size:11px;color:var(--ink-soft);">${escapeHtml(c.card_number)}</span></td>
+        <td style="padding:6px 10px;border-bottom:1px solid var(--line-soft);">${escapeHtml(c.name)}<br><span style="font-family:monospace;font-size:11px;color:var(--ink-soft);">${escapeHtml(printedCode(c))}</span></td>
         <td style="padding:6px 10px;border-bottom:1px solid var(--line-soft);font-family:monospace;font-size:12.5px;${sellChanged?'color:var(--red);font-weight:600;':''}">${fmtYen(c.old_sell_price_jpy)} → ${fmtYen(c.new_sell_price_jpy)}</td>
         <td style="padding:6px 10px;border-bottom:1px solid var(--line-soft);font-family:monospace;font-size:12.5px;${buyChanged?'color:var(--red);font-weight:600;':''}">${fmtYen(c.old_buy_price_jpy)} → ${fmtYen(c.new_buy_price_jpy)}</td>
       </tr>`;
@@ -868,7 +875,7 @@ window.WSAPI = (function(){
   return {
     API_BASE, get, post, put, patch, del,
     getToken, isLoggedIn, requireLogin, login, logout, currentProfile, requireAdmin, revealAdminOnly,
-    fmtYen, escapeHtml, normForMatch, sortRarities,
+    fmtYen, escapeHtml, printedCode, normForMatch, sortRarities,
     getCurrency, setCurrency, loadRates, fmtYenConverted, stockClass, trendArrow, yenToCurrency, currencyToYen,
     loadSidebarData, sidebarHtml, wireSidebar, getUrlId, sendCardToBinder, addCardToBinder,
     getTheme, setTheme, applyTheme, initTheme, themeToggleHtml, wireThemeToggle, getGame, setGame, GAMES,
