@@ -30,7 +30,7 @@
 <aside class="sidebar" id="sidebar"></aside>
 <main>
   <div class="wl-toolbar">
-    <label for="scrape-input" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);">Add a title:</label>
+    <label for="scrape-input" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);" id="scrape-label">Add a title:</label>
     <input type="text" id="scrape-input" placeholder="e.g. MTI or OSK" style="min-width:160px;font-family:var(--sans);font-size:13.5px;padding:7px 10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);">
     <button type="button" id="scrape-btn">Get card info</button>
     <span id="scrape-status" style="font-size:12.5px;color:var(--ink-soft);"></span>
@@ -44,7 +44,7 @@
         <div class="panel" id="rarity-panel" hidden></div>
       </div>
     </div>
-    <div class="field">
+    <div class="field" id="title-field">
       <label>Title</label>
       <div class="multiselect" id="title-multiselect">
         <button type="button" id="title-toggle">All titles</button>
@@ -133,6 +133,14 @@
   refreshSidebar();
   const rarityToggle = document.getElementById('rarity-toggle');
   const rarityPanel = document.getElementById('rarity-panel');
+  // Gundam is a single IP, so the per-title (series) filter only applies to Weiss.
+  // Gundam cards are added by set code instead of title.
+  if (W.getGame() === 'gcg') {
+    document.getElementById('title-field').style.display = 'none';
+    document.getElementById('scrape-label').textContent = 'Add a set:';
+    document.getElementById('scrape-input').placeholder = 'e.g. GD01 or ST01';
+    document.getElementById('search-input').placeholder = 'e.g. ガンダム or GD01-001';
+  }
   const titleToggle = document.getElementById('title-toggle');
   const ownedToggle = document.getElementById('owned-toggle');
   const binderFilterToggle = document.getElementById('binder-filter-toggle');
