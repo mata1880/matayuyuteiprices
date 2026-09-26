@@ -92,11 +92,8 @@ window.WSAPI = (function(){
     if (method === "GET" && /^\/(cards|collections|wishlists|binders)(\?|$)/.test(path)) {
       path += (path.includes("?") ? "&" : "?") + "game=" + encodeURIComponent(game);
     }
-    if (method === "POST" && ["/collections", "/wishlists", "/binders", "/scrape/prices"].includes(path) && options.body) {
+    if (method === "POST" && ["/collections", "/wishlists", "/binders", "/scrape/prices", "/scrape/catalog"].includes(path) && options.body) {
       try { const b = JSON.parse(options.body); if (b.game == null) { b.game = game; options = {...options, body: JSON.stringify(b)}; } } catch (e) {}
-    }
-    if (method === "POST" && path === "/scrape/catalog" && game !== "ws") {
-      throw new Error(`Card info for ${GAMES[game]} isn't supported yet — this button only reads the official Weiss site.`);
     }
     return [path, options];
   }
