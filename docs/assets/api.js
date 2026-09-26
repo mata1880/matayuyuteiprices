@@ -6,6 +6,26 @@ window.WSAPI = (function(){
   const API_BASE = "https://ws-backend-z28t.onrender.com";
   const TOKEN_KEY = "ws-auth-token";
 
+  // ---------- card images from sites with hotlink protection ----------
+  // 1) Don't tell image hosts which page is asking (the referrer); many
+  //    hotlink checks only block requests that name another site.
+  // 2) If an official Gundam image still fails, retry it once through the
+  //    backend's /cards/image relay, which only accepts gundam-gcg.com.
+  try {
+    if (!document.querySelector('meta[name="referrer"]')) {
+      const m = document.createElement('meta'); m.name = 'referrer'; m.content = 'no-referrer';
+      document.head.appendChild(m);
+    }
+  } catch (e) {}
+  document.addEventListener('error', (ev) => {
+    const img = ev.target;
+    if (!(img instanceof HTMLImageElement) || img.dataset.relayed) return;
+    const src = img.currentSrc || img.src || '';
+    if (!/^https:\/\/(www\.)?gundam-gcg\.com\//.test(src)) return;
+    img.dataset.relayed = '1';
+    img.src = API_BASE + '/cards/image?url=' + encodeURIComponent(src);
+  }, true);   // capture: image errors don't bubble
+
   function getToken(){ return localStorage.getItem(TOKEN_KEY); }
   function setToken(t){ localStorage.setItem(TOKEN_KEY, t); }
   function clearToken(){ localStorage.removeItem(TOKEN_KEY); }
