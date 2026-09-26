@@ -715,11 +715,12 @@
   // yuyu-tei's own card pages use internal IDs we don't store, so this opens
   // their search for the exact card code, which lands on that card's listing.
   function slabCodeLink(card){
-    // Printed code: Gundam parallels are stored as GD01-001_p1, but the card says GD01-001.
-    const code = (card.card_number || '').replace(/_p\d+$/, '');
+    // Printed code: Gundam versions are stored as GD01-001_p1 / EXR-007_SP, but the card says GD01-001.
+    const code = card.game === 'gcg' ? (card.card_number || '').split('_')[0] : (card.card_number || '');
     if (!code) return '';
-    const game = card.game === 'gcg' ? 'gcg' : 'ws';   // open the matching game's yuyu-tei section
-    const url = `https://yuyu-tei.jp/sell/${game}/s/search?search_word=` + encodeURIComponent(code);
+    const game = card.game === 'gcg' ? 'gcg' : 'ws';
+    // This exact version's own page once a price scrape has seen it; until then, a search for the code.
+    const url = card.yuyutei_url || `https://yuyu-tei.jp/sell/${game}/s/search?search_word=` + encodeURIComponent(code);
     return `<a class="slab-code" href="${url}" target="_blank" rel="noopener" title="Open on yuyu-tei" onclick="event.stopPropagation()">${W.escapeHtml(code)}</a>`;
   }
   const PSA_DESCRIPTORS = {'10':'GEM MT','9':'MINT','8':'NM-MT','7':'NM','6':'EX-MT','5':'EX','4':'VG-EX','3':'VG','2':'GOOD','1':'PR'};
